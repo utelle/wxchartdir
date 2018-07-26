@@ -78,8 +78,9 @@ Microsoft Visual Studio solution files in the `build` folder.
 
 For Visual C++ the debugging properties are set up in such a way that
 debugging the sample applications should work right out of the box. For
-release builds you may need to copy the wxSQLite3 DLL or add the
-`lib` folder path to the Windows search path (PATH environment variable).
+release builds you may need to copy the ChartDirector DLL and -
+depending on the build - the wxChartDir DLL or add the appropriate
+`lib` folder paths to the Windows search path (PATH environment variable).
 
 ### wxGTK / wxMac
 
