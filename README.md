@@ -84,7 +84,7 @@ depending on the build - the wxChartDir DLL or add the appropriate
 
 ### wxGTK / wxMac
 
-Cureently **wxGTK** and **wxMac** are not yet supported. It is intended to
+Currently **wxGTK** and **wxMac** are not yet supported. It is intended to
 add support for these wxWidgets builds with one of next versions of **wxChartDir**.
 
 ## <a name="documentation" />Documentation
