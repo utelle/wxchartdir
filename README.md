@@ -1,11 +1,11 @@
-# wxChartDir - Support for using the ChartDirector charting library in wxWidgets applications
+# ![wxChartDir Logo](docs/wxchartdir.png) wxChartDir - ChartDirector based charting components for wxWidgets applications
 
-![wxChartDir Logo](docs/wxchartdir.png) **wxChartDir** provides components for the integration
+**wxChartDir** provides components for the integration
 and use of the _commercial_ C++ library [ChartDirector](https://www.advsofteng.com/index.html),
 a universal chart component developed by **Advanced Software Engineering Ltd**,
 in [wxWidgets](https://www.wxwidgets.org) based applications.
 
-ChartDirector is an extremely versatile, stable and affordable charting library, that
+**ChartDirector** is an extremely versatile, stable and affordable charting library, that
 supports many different chart types like pie, donut, bar, line, spline, step line,
 trend line, curve-fitting, inter-line filling, area, band, scatter, bubble, floating box,
 box-whisker, waterfall, contour, heat map, surface, vector, finance, gantt, radar, polar,
