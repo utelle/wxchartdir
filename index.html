@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>wxChartDir website</title>
+  <META NAME="keywords" CONTENT="Ulrich Telle, wxWidgets, wxChartDir, ChartDirector">
+  <link href="wxwidgets.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+
+<h1>wxChartDir</h1>
+
+<table cellspacing="2" cellpadding="1" style="table-layout:fixed;" border="0">
+<tr><td valign="top" rowspan="5" width="175"><img src="wxchartdir.png"></td>
+<td width="230"><b>Author:</b></td><td width=!100">Ulrich Telle</td><td rowspan="5" width="20">&nbsp;</td><td width="300"><b>wxWidgets supported ports:</b></td><td>wxMSW<!--, wxGTK, wxMac--></td></tr>
+<tr><td><b>Current maintainer:</b></td><td>Ulrich Telle</td><td><b>wxWidgets supported versions:</b></td><td>3.0.x, 3.1.x</td></tr>
+<tr><td><b>Latest version:</b></td><td>1.0.0</td><td><b>Build system:</b></td><td>Premake5 / autoconf</td></tr>
+<tr><td><b>Programming language:</b></td><td>C++</td><td><b>Code repository:</b></td><td><a href="https://github.com/utelle/wxchartdir">GitHub</a></td></tr>
+<tr><td><b>External dependencies:</b></td><td><a href="https://www.advsofteng.com/" target="_blank">ChartDirector</a></td><td><b>API documentation:</b></td><td><a href="http://utelle.github.io/wxchartdir/docs/html/index.html">Doxygen</a></td></tr>
+<tr><td colspan="7">
+<p><b>wxChartDir</b> provides components for the integration and use of the <i>commercial</i> C++ library <a href="https://www.advsofteng.com/index.html"><b>ChartDirector</b></a>, a universal chart component developed by <b>Advanced Software Engineering Ltd</b>, in <a href="https://www.wxwidgets.org/"><b>wxWidgets</b></a> based applications.
+
+<p><b>ChartDirector</b> is an extremely versatile, stable and affordable charting library, that supports many different chart types like pie, donut, bar, line, spline, step line, trend line, curve-fitting, inter-line filling, area, band, scatter, bubble, floating box, box-whisker, waterfall, contour, heat map, surface, vector, finance, gantt, radar, polar, rose, pyramid, cone, funnel and more. Charts can be created as vector graphics in PDF and SVG and as raster graphics in PNG, JPG, GIF and BMP. Please visit the <a href="https://www.advsofteng.com/gallery.html"><b>ChartDirector gallery</b></a> to get an impression of the capabilities of this library.</p>
+
+<p><b>Bugs</b> or other issues can be reported on the <a href="https://github.com/utelle/wxchartdir/issues">wxChartDir issues page on GitHub</a>.</p>
+
+</td></tr>
+</table>
+
+<h1>Documentation</h1>
+
+<p>The doxygen-generated documentation for this component is available online <a href="http://utelle.github.io/wxchartdir/docs/html/index.html">here</a>. Please let me know if you think something is missing.</p>
+
+<p>The table below shows screenshots of the sample applications included in <b>wxChartDir</b>. Click on the charts to display them in their original size.</p>
+
+<center>
+<table cellspacing="15" width="800" class="Text_smaller">
+
+<tr valign="bottom">
+  <td><a href="helloworld.png"><img src="helloworld.png" alt="Hello World" width="250"></a></td>
+  <td><a href="wxdemo.png"><img src="wxdemo.png" alt="wxDemo Charts" width="250"></a></td>
+  <td><a href="crosshair.png"><img src="crosshair.png" alt="" width="250"></a></td>
+</tr>
+<tr>
+  <td>Figure 1: Hello World</td>
+  <td>Figure 2: wxDemo Charts</td>
+  <td>Figure 3: Crosshair Cursor</td>
+</tr>
+<tr hspace="5"></tr>
+<tr valign="bottom">
+  <td><a href="simplezoomscroll.png"><img src="simplezoomscroll.png" alt="" width="250"></a></td>
+  <td><a href="trackaxis.png"><img src="trackaxis.png" alt="" width="250"></a></td>
+  <td><a href="trackbox.png"><img src="trackbox.png" alt="" width="250"></a></td>
+</tr>
+<tr>
+  <td>Figure 4: Simple Zooming &amp; Scrolling</td>
+  <td>Figure 5: Track Line with Axis Labels</td>
+  <td>Figure 6: Track Box with Legend</td>
+</tr>
+<tr hspace="5"></tr>
+<tr valign="bottom">
+  <td><a href="tracklabel.png"><img src="tracklabel.png" alt="" width="250"></a></td>
+  <td><a href="tracklegend.png"><img src="tracklegend.png" alt="" width="250"></a></td>
+  <td><a href="viewportcontroldemo.png"><img src="viewportcontroldemo.png" alt="" width="250"></a></td>
+</tr>
+<tr>
+  <td>Figure 7: Track Line with Data Labels</td>
+  <td>Figure 8: Track Line with Legend</td>
+  <td>Figure 9: Viewport Control Demo</td>
+</tr>
+<tr hspace="5"></tr>
+<tr valign="bottom">
+  <td><a href="xyzoomscroll.png"><img src="xyzoomscroll.png" alt="" width="250"></a></td>
+  <td><a href="zoomscrolltrack.png"><img src="zoomscrolltrack.png" alt="" width="250"></a></td>
+  <td><a href="zoomscrolltrack2.png"><img src="zoomscrolltrack2.png" alt="" width="250"></a></td>
+</tr>
+<tr>
+  <td>Figure 10: XY Zooming &amp; Scrolling</td>
+  <td>Figure 11: Zoom &amp; Scroll with Track Line (1)</td>
+  <td>Figure 12: Zoom &amp; Scroll with Track Line (2)</td>
+</tr>
+<tr hspace="5"></tr>
+<tr valign="bottom">
+  <td><a href="realtimedemo.png"><img src="realtimedemo.png" alt="" width="250"></a></td>
+  <td><a href="realtimetrack.png"><img src="realtimetrack.png" alt="" width="250"></a></td>
+  <td><a href="realtimezoomscroll.png"><img src="realtimezoomscroll.png" alt="" width="250"></a></td>
+</tr>
+<tr>
+  <td>Figure 13: Simple Realtime Chart</td>
+  <td>Figure 14: Realtime with Track Line</td>
+  <td>Figure 15: Realtime with Zoom &amp; Scroll</td>
+</tr>
+<tr hspace="5"></tr>
+<tr valign="bottom">
+  <td><a href="extra-realtimemeasure.png"><img src="extra-realtimemeasure.png" alt="" width="250"></a></td>
+  <td><a href="extra-realtimemultithread.png"><img src="extra-realtimemultithread.png" alt="" width="250"></a></td>
+  <td><a href="extra-realtimesweep.png"><img src="extra-realtimesweep.png" alt="" width="250"></a></td>
+</tr>
+<tr>
+  <td>Figure 16: Realtime with Measurment Cursors</td>
+  <td>Figure 17: Multi-threaded Realtime Demo</td>
+  <td>Figure 18: Resizable Realtime Sweep Chart</td>
+</tr>
+<tr hspace="5"></tr>
+<tr valign="bottom">
+  <td><a href="extra-realtimeviewport.png"><img src="extra-realtimeviewport.png" alt="" width="250"></a></td>
+  <td><a href="financedemo.png"><img src="financedemo.png" alt="Financial Chart Demo" width="250"></a></td>
+</tr>
+<tr>
+  <td>Figure 19: Realtime with Viewport Control</td>
+  <td>Figure 20: Financial Chart Demo</td>
+</tr>
+
+</table>
+</center>
+
+<h1>Future enhancements</h1>
+
+<p>Enhancements planned for the next versions:
+<ul>
+<li><p>Support for other wxWidgets ports, namely wxGTK and wxMac.</p></li>
+</ul>
+</p>
+    
+<p>To submit a feature request please look at <a href="https://github.com/utelle/wxchartdir/issues">wxChartDir issues page on GitHub</a>.</p>
+
+<hr>
+Copyright &copy; 2018 Ulrich Telle
+
+</body>
+</html>
