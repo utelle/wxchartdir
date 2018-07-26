@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Win64|Win32">
+      <Configuration>Debug Win64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug Win64|x64">
+      <Configuration>Debug Win64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Win64|Win32">
+      <Configuration>Release Win64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release Win64|x64">
+      <Configuration>Release Win64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C64C4E1E-B204-906B-1B0C-69C707E32A5C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>cppdemoall</RootNamespace>
+    <ProjectName>cppdemoall</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="wx_setup.props" />
+    <Import Project="wx_local.props" Condition="Exists('wx_local.props')" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\bin\vc10\Win32\Debug\</OutDir>
+    <IntDir>obj\vc10\Win32\Debug\</IntDir>
+    <TargetName>cppdemoall</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\bin\vc10\Win64\Debug\</OutDir>
+    <IntDir>obj\vc10\Win64\Debug\</IntDir>
+    <TargetName>cppdemoall_x64</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\vc10\Win32\Release\</OutDir>
+    <IntDir>obj\vc10\Win32\Release\</IntDir>
+    <TargetName>cppdemoall</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>bin\Win64\Release\</OutDir>
+    <IntDir>obj\vc10\Win64\Release\</IntDir>
+    <TargetName>cppdemoall_x64</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>chartdir60.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST $(SolutionDir)\..\background\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\background\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\customsymbolline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\enhancedarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\errline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\fontpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\hboxwhisker\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconameter\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\icondonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie2\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\linecompare\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\multistackbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\patternarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polararea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polarline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\scattersymbols\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\splineline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\texturedonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\yzonecolor\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>chartdir60.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST $(SolutionDir)\..\background\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\background\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\customsymbolline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\enhancedarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\errline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\fontpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\hboxwhisker\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconameter\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\icondonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie2\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\linecompare\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\multistackbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\patternarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polararea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polarline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\scattersymbols\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\splineline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\texturedonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\yzonecolor\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>chartdir60.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST $(SolutionDir)\..\background\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\background\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\customsymbolline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\enhancedarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\errline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\fontpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\hboxwhisker\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconameter\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\icondonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie2\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\linecompare\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\multistackbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\patternarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polararea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polarline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\scattersymbols\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\splineline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\texturedonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\yzonecolor\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>chartdir60.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST $(SolutionDir)\..\background\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\background\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\background\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\customsymbolline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\customsymbolline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\enhancedarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\enhancedarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\errline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\errline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\fontpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\fontpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\hboxwhisker\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\hboxwhisker\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconameter\*.gif\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconameter\*.gif $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\icondonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\icondonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\iconpie2\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\iconpie2\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\linecompare\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\linecompare\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\multistackbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\multistackbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\patternarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\patternarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentarea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentarea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\percentbar\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\percentbar\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polararea\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polararea\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\polarline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\polarline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\scattersymbols\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\scattersymbols\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\splineline\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\splineline\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\texturedonut\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\texturedonut\*.png $(SolutionDir)\..\bin &gt; nul)
+IF EXIST $(SolutionDir)\..\yzonecolor\*.png\ (xcopy /Q /E /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul) ELSE (xcopy /Q /Y /I $(SolutionDir)\..\yzonecolor\*.png $(SolutionDir)\..\bin &gt; nul)</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\cppdemo.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

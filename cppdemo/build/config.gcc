@@ -1,0 +1,9 @@
+# =====================================================================
+# Configuration file for gcc builds
+# =====================================================================
+
+# Set default compilers
+CC = gcc
+CXX = g++
+
+### Configuration dependent settings
