@@ -21,6 +21,8 @@
 #include "financedemo.h"
 #include "FinanceChart.h"
 
+#include "mondrian.xpm"
+
 /*
  * FinanceDemo type definition
  */

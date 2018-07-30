@@ -24,6 +24,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 static const int gs_dataInterval = 250;
 
 /*

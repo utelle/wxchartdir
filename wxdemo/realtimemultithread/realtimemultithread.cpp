@@ -24,6 +24,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 /*
  * RealTimeMultiThread type definition
  */

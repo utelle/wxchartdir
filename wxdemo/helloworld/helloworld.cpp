@@ -21,6 +21,8 @@
 #include "helloworld.h"
 #include "wxchartviewer.h"
 
+#include "mondrian.xpm"
+
 /*
  * HelloWorld type definition
  */

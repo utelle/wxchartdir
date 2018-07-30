@@ -25,6 +25,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 // CrossHair type definition
 
 IMPLEMENT_DYNAMIC_CLASS( CrossHair, wxFrame )

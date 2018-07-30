@@ -233,7 +233,7 @@ void wxChartViewer::OnMouseMove(wxMouseEvent& event)
   unsigned int timeBetweenMouseMove = (((unsigned int)clock()) - m_lastMouseMove) * 1000 / CLOCKS_PER_SEC ;
   if ((m_delayedMouseEvent != NULL && (timeBetweenMouseMove < 250)) || (timeBetweenMouseMove < 10))
   {
-    if (!m_delayedMouseEvent != NULL)
+    if (m_delayedMouseEvent == NULL)
     {
       m_delayedMouseEventTimer.Start(1);
     }

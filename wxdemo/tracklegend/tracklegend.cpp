@@ -25,6 +25,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 /*
  * TrackLegend type definition
  */

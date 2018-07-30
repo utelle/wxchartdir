@@ -26,6 +26,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 /*
  * ZoomScrollTrack2 type definition
  */

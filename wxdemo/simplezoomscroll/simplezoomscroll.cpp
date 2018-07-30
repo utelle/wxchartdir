@@ -20,6 +20,8 @@
 
 #include "simplezoomscroll.h"
 
+#include "mondrian.xpm"
+
 /*
  * SimpleZoomScroll type definition
  */

@@ -36,3 +36,5 @@ lib/**.lic
 # Do NOT ignore the ChartDirector link libraries and DLLs
 !chartdir*.lib
 !chartdir*.dll
+!chartdir*.so
+!chartdir*.dylib

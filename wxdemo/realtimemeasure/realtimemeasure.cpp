@@ -24,6 +24,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 /*
  * RealTimeMeasure type definition
  */

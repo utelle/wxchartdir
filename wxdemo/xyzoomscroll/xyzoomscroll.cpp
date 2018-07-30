@@ -28,6 +28,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 /*
  * XyZoomScroll type definition
  */

@@ -23,6 +23,8 @@
 #include "democharts.h"
 #include "hotspotdialog.h" 
 
+#include "mondrian.xpm"
+
 /*
  * WxDemo type definition
  */

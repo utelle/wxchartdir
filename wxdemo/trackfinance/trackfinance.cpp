@@ -27,6 +27,8 @@
 
 using namespace std;
 
+#include "mondrian.xpm"
+
 /*
  * TrackFinance type definition
  */
