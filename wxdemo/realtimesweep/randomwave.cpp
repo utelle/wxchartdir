@@ -13,6 +13,7 @@
 #include <wx/stopwatch.h>
 
 #include "randomwave.h"
+#include <math.h>
 
 // The period of the data series in milliseconds. This random series implementation just use the 
 // windows timer for timing. In many computers, the default windows timer resolution is 1/64 sec,

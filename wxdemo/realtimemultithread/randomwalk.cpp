@@ -10,9 +10,10 @@
 **              and condition of the ChartDirector license.
 */
 
-#include "randomwalk.h"
-
 #include <wx/stopwatch.h>
+
+#include "randomwalk.h"
+#include <math.h>
 
 // The period of the data series in milliseconds. This random series implementation just use the 
 // windows timer for timing. In many computers, the default windows timer resolution is 1/64 sec,
