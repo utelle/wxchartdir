@@ -84,8 +84,40 @@ depending on the build - the wxChartDir DLL or add the appropriate
 
 ### wxGTK / wxMac
 
-Currently **wxGTK** and **wxMac** are not yet supported. It is intended to
-add support for these wxWidgets builds with one of next versions of **wxChartDir**.
+When building on an autoconf-based system (like Linux/GNU-based
+systems), the first step is to recreate the configure script from
+the root directory of the component doing:
+
+```
+  autoreconf
+```
+
+Thereafter you should create a
+
+```
+  mkdir build-gtk [or any other suitable name]
+  cd build-gtk
+  ../configure [here you should use the same flags you used to configure wxWidgets]
+  make
+```
+
+Optionally, the directory where the **ChartDirector** binaries are installed can be
+specified with the configure option `--with-cddir=PATH`. If the option is not given
+the binaries coming with **wxChartDir** will be used.
+
+Type `../configure --help` for more info.
+
+In principle, the autoconf-based system also supports a `make install` target which
+builds the library and then copies the headers of the component to
+`/usr/local/include` and the lib to `/usr/local/lib` by default (you can use
+`pkg-config --cflags` and `--libs` to find the required compilation and
+linking flags in general). However, at the moment this option should not be used,
+since it is not yet decided how to resolve the dependency on **ChartDirector**.
+
+The sample applications will be built in subdirectories `cppdemo` and `wxdemo` of
+the build directory where `configure` was executed. Each sample application is
+located in a separate subdirectory and should be executed from its own subdirectory,
+so that it can locate required graphics files.
 
 ## <a name="documentation" />Documentation
 
