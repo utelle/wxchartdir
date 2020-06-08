@@ -24,6 +24,7 @@
 #include "FinanceChart.h"
 
 #include <sstream>
+#include <vector>
 
 using namespace std;
 

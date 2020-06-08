@@ -21,6 +21,7 @@
 #include "zoomscrolltrack.h"
 
 #include <sstream>
+#include <vector>
 
 using namespace std;
 

@@ -21,6 +21,7 @@
 #include "viewportcontroldemo.h"
 
 #include <sstream>
+#include <vector>
 
 using namespace std;
 

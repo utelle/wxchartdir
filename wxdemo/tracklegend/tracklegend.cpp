@@ -22,6 +22,7 @@
 #include "wxchartviewer.h"
 
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
