@@ -205,7 +205,13 @@ namespace Chart
 	static inline int brushedGoldColor(int texture = 2, int angle = 90)  {return brushedMetalColor(0xffee44, texture, angle); }
 
 	enum AntiAliasMode { NoAntiAlias, AntiAlias, AutoAntiAlias, ClearType, CompatAntiAlias = 6 };
-	enum PaletteMode { TryPalette, ForcePalette, NoPalette };
+	
+   	static inline int ClearTypeMono(double gamma = 0)
+	{ return CChart_ClearTypeMono(gamma); }
+	static inline int ClearTypeColor(double gamma = 0)
+	{ return CChart_ClearTypeColor(gamma); }
+    
+    enum PaletteMode { TryPalette, ForcePalette, NoPalette };
 	enum DitherMethod { Quantize, OrderedDither, ErrorDiffusion };
 
 	enum CDFilterType { BoxFilter, LinearFilter, QuadraticFilter, BSplineFilter, HermiteFilter,
@@ -489,6 +495,9 @@ namespace Chart
 	{ return CChart_cylinderEffect(orientation, ambientIntensity, diffuseIntensity, specularIntensity, shininess); }
 	static inline int flatBorder(int thickness)
 	{ return CChart_flatBorder(thickness); }
+	static inline int phongLighting(double ambientIntensity = 0.5, double diffuseIntensity = 0.5, 
+		double specularIntensity = 0.75, int shininess = 8)
+	{ return CChart_phongLighting(ambientIntensity, diffuseIntensity, specularIntensity, shininess); }
 
 	enum
 	{
@@ -521,18 +530,8 @@ namespace Chart
         TreeMapNoLayout = 6
 	};
 
-	//
-	// Ver 5.1 
-	//
 	static inline double bSearch(DoubleArray a, double v)
 	{ return CChart_bSearch(a.data, a.len, v); }
-	static inline int ClearTypeMono(double gamma = 0)
-	{ return CChart_ClearTypeMono(gamma); }
-	static inline int ClearTypeColor(double gamma = 0)
-	{ return CChart_ClearTypeColor(gamma); }
-	static inline int phongLighting(double ambientIntensity = 0.5, double diffuseIntensity = 0.5, 
-		double specularIntensity = 0.75, int shininess = 8)
-	{ return CChart_phongLighting(ambientIntensity, diffuseIntensity, specularIntensity, shininess); }
 
 	enum 
 	{
@@ -541,7 +540,6 @@ namespace Chart
 		ScrollWithMax = 2,
 		ScrollWithMin = 3
 	};
-
 }  //namespace Chart
 
 
@@ -697,6 +695,7 @@ public :
 	bool loadJPG(const char *filename) { return CDrawArea_loadJPG(ptr, filename); }
 	bool loadWMP(const char *filename) { return CDrawArea_loadWMP(ptr, filename); }
 	bool load(const char *filename)	{ return CDrawArea_load(ptr, filename); }
+    bool load(MemBlock img, int imgType = -1) { return CDrawArea_load2(ptr, img.data, img.len, imgType); }
 
 	void rAffineTransform(double a, double b, double c, double d, double e, double f,
 		int bgColor = 0xffffff, int filter = Chart::LinearFilter, double blur = 1)
@@ -805,15 +804,24 @@ public :
 	void setFontTable(int index, const char *font)
 	{ CDrawArea_setFontTable(ptr, index, font); }
 
-	//
-	// Ver 5.1 
-	//
 	void initDynamicLayer()
 	{ CDrawArea_initDynamicLayer(ptr); }
 	void removeDynamicLayer(bool keepOriginal = false)
 	{ CDrawArea_removeDynamicLayer(ptr, keepOriginal); }
+
+    void setResource(const char *id, MemBlock m)
+    { CDrawArea_setResource(ptr, id, m.data, m.len); }
+    void setResource(const char *id, DrawArea *d) 
+    { CDrawArea_setResource2(ptr, id, d->getInternalPtr()); }
 };
 
+namespace Chart
+{
+    static inline void setResourceLoader(bool (*loader)(const char *id, char *(*allocator)(int), char **data, int *len))
+    { CChart_setResourceLoader(loader); }
+    static inline void setResource(const char *id, MemBlock m) { CChart_setResource(id, m.data, m.len); }
+    static inline void setResource(const char *id, DrawArea *d) { CChart_setResource2(id, d->getInternalPtr()); }
+}
 
 class DrawObj : public AutoDestroy
 {
@@ -1078,6 +1086,8 @@ public :
 	//	drawing primitives
 	//////////////////////////////////////////////////////////////////////////////////////
 	DrawArea *getDrawArea() { return regDrawArea(CBaseChart_getDrawArea(ptr)); }
+    void setResource(const char *id, MemBlock m) { return CBaseChart_setResource(ptr, id, m.data, m.len); }
+    void setResource(const char *id, DrawArea *d) { return CBaseChart_setResource2(ptr, id, d->getInternalPtr()); }
 	TextBox *addText(int x, int y, const char *text, const char *font = 0, double fontSize = 8,
 		int fontColor = Chart::TextColor, int alignment = Chart::TopLeft, double angle = 0, bool vertical = false)
 	{ TextBox *ret = new TextBox(CBaseChart_addText(ptr, x, y, text, font, fontSize, fontColor, alignment, angle, vertical)); reg(ret); return ret; }
@@ -1170,10 +1180,10 @@ public :
 	{ return CBaseChart_getHTMLImageMap(ptr, url, queryFormat, extraAttr, offsetX, offsetY); }
 	const char *getChartMetrics() { return CBaseChart_getChartMetrics(ptr); }	
 
-	//
-	// Ver 5.1 
-	//
-	int getAbsOffsetX() const
+	//////////////////////////////////////////////////////////////////////////////////////
+	//	dynamic layer support
+	//////////////////////////////////////////////////////////////////////////////////////
+    int getAbsOffsetX() const
 	{ return CBaseChart_getAbsOffsetX(ptr); }
 	int getAbsOffsetY() const
 	{ return CBaseChart_getAbsOffsetY(ptr); }
@@ -2361,10 +2371,6 @@ public :
 	{ CXYChart_packPlotArea(ptr, leftX, topY, rightX, bottomY, minWidth, minHeight); }
 };
 
-
-//
-// Ver 5.1
-//
 class ThreeDChart : public BaseChart
 {
 private :

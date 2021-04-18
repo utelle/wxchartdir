@@ -22,6 +22,9 @@
 
 extern "C" {
 
+// Forward declarations
+class DrawAreaInternal;
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //	chartdir.h
@@ -30,6 +33,9 @@ CHARTDIR_DLLAPI int __cdecl CChart_getVersion();
 CHARTDIR_DLLAPI const char * __cdecl CChart_getDescription();
 CHARTDIR_DLLAPI const char * __cdecl CChart_getCopyright();
 CHARTDIR_DLLAPI void __cdecl CChart_getBootLog(char *buffer);
+CHARTDIR_DLLAPI void __cdecl CChart_setResourceLoader(bool (*loader)(const char *id, char *(*allocator)(int), char **data, int *len));
+CHARTDIR_DLLAPI void __cdecl CChart_setResource(const char *id, const char *data, int len);
+CHARTDIR_DLLAPI void __cdecl CChart_setResource2(const char *id, DrawAreaInternal *d);
 
 CHARTDIR_DLLAPI bool __cdecl CChart_testFont(const char *font, int fontIndex, double fontHeight,
 		double fontWidth, double angle, char *buffer);
@@ -72,7 +78,6 @@ CHARTDIR_DLLAPI int __cdecl CTTFText_getLineHeight(TTFTextInternal *ptr);
 CHARTDIR_DLLAPI int __cdecl CTTFText_getLineDistance(TTFTextInternal *ptr);
 CHARTDIR_DLLAPI void __cdecl CTTFText_draw(TTFTextInternal *ptr, int x, int y, int color, int align);
 
-class DrawAreaInternal;
 CHARTDIR_DLLAPI DrawAreaInternal * __cdecl CDrawArea_create();
 CHARTDIR_DLLAPI void __cdecl CDrawArea_destroy(DrawAreaInternal *ptr);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_enableVectorOutput(DrawAreaInternal *ptr);
@@ -137,6 +142,7 @@ CHARTDIR_DLLAPI bool __cdecl CDrawArea_loadPNG(DrawAreaInternal *ptr, const char
 CHARTDIR_DLLAPI bool __cdecl CDrawArea_loadJPG(DrawAreaInternal *ptr, const char *filename);
 CHARTDIR_DLLAPI bool __cdecl CDrawArea_loadWMP(DrawAreaInternal *ptr, const char *filename);
 CHARTDIR_DLLAPI bool __cdecl CDrawArea_load(DrawAreaInternal *ptr, const char *filename);
+CHARTDIR_DLLAPI bool __cdecl CDrawArea_load2(DrawAreaInternal *ptr, const char *data, int len, int imgType);
 
 CHARTDIR_DLLAPI void __cdecl CDrawArea_rAffineTransform(DrawAreaInternal *ptr, double a, double b, double c, double d, double e, double f, int bgColor, int ft, double blur);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_affineTransform(DrawAreaInternal *ptr, double a, double b, double c, double d, double e, double f, int bgColor, int ft, double blur);
@@ -169,7 +175,6 @@ CHARTDIR_DLLAPI bool __cdecl CDrawArea_outPDF2(DrawAreaInternal *ptr, const char
 CHARTDIR_DLLAPI bool __cdecl CDrawArea_outAGF2(DrawAreaInternal *ptr, const char **data, int *len);
 
 CHARTDIR_DLLAPI void __cdecl CDrawArea_setOutputOptions(DrawAreaInternal *ptr, const char *options);
-CHARTDIR_DLLAPI bool __cdecl CDrawArea_cacheOutput(DrawAreaInternal *ptr, const char *id);
 
 CHARTDIR_DLLAPI void __cdecl CDrawArea_setPaletteMode(DrawAreaInternal *ptr, int p);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_setDitherMethod(DrawAreaInternal *ptr, int m);
@@ -201,6 +206,8 @@ CHARTDIR_DLLAPI void __cdecl CDrawArea_setFontTable(DrawAreaInternal *ptr, int i
 
 CHARTDIR_DLLAPI void __cdecl CDrawArea_initDynamicLayer(DrawAreaInternal *ptr);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_removeDynamicLayer(DrawAreaInternal *ptr, bool keepOriginal);
+CHARTDIR_DLLAPI void __cdecl CDrawArea_setResource(DrawAreaInternal *ptr, const char *id, const char *data, int len);
+CHARTDIR_DLLAPI void __cdecl CDrawArea_setResource2(DrawAreaInternal *ptr, const char *id, DrawAreaInternal *d);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -321,6 +328,8 @@ CHARTDIR_DLLAPI LegendBoxInternal * __cdecl CBaseChart_addLegend2(BaseChartInter
 CHARTDIR_DLLAPI LegendBoxInternal * __cdecl CBaseChart_getLegend(BaseChartInternal *ptr);
 
 CHARTDIR_DLLAPI DrawAreaInternal * __cdecl CBaseChart_getDrawArea(BaseChartInternal *ptr);
+CHARTDIR_DLLAPI void __cdecl CBaseChart_setResource(BaseChartInternal *ptr, const char *id, const char *data, int len);
+CHARTDIR_DLLAPI void __cdecl CBaseChart_setResource2(BaseChartInternal *ptr, const char *id, DrawAreaInternal *d);
 CHARTDIR_DLLAPI TextBoxInternal * __cdecl CBaseChart_addText(BaseChartInternal *ptr, int x, int y, const char *text, const char *font, double fontSize, int fontColor, int alignment, double angle, bool vertical);
 CHARTDIR_DLLAPI LineInternal * __cdecl CBaseChart_addLine(BaseChartInternal *ptr, int x1, int y1, int x2, int y2, int color, int lineWidth);
 CHARTDIR_DLLAPI CDMLTableInternal * __cdecl CBaseChart_addTable(BaseChartInternal *ptr, int x, int y, int alignment, int col, int row);
