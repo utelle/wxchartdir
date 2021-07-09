@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 
     // Create an LinearMeter object of size 260 x 66 pixels with a very light grey (0xeeeeee)
     // background, and a rounded 3-pixel thick light grey (0xaaaaaa) border
-    LinearMeter *m = new LinearMeter(260, 66, 0xeeeeee, 0xaaaaaa);
+    LinearMeter* m = new LinearMeter(260, 66, 0xeeeeee, 0xaaaaaa);
     m->setRoundedFrame(Chart::Transparent);
     m->setThickFrame(3);
 
@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
     // Add a 5-pixel thick smooth color scale to the meter at y = 48 (below the meter scale)
     double smoothColorScale[] = {0, 0x0000ff, 25, 0x0088ff, 50, 0x00ff00, 75, 0xffff00, 100,
         0xff0000};
-    m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-        smoothColorScale[0]))), 48, 5);
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
+    m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 48, 5);
 
     // Add a light blue (0x0088ff) bar from 0 to the data value with glass effect and 4 pixel
     // rounded corners
@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete m;
+
     return 0;
 }
 

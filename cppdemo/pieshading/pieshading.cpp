@@ -4,13 +4,15 @@ void createChart(int chartIndex, const char *filename)
 {
     // The data for the pie chart
     double data[] = {18, 30, 20, 15};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The colors to use for the sectors
     int colors[] = {0x66aaee, 0xeebb22, 0xbbbbbb, 0x8844ff};
+    const int colors_size = (int)(sizeof(colors)/sizeof(*colors));
 
     // Create a PieChart object of size 200 x 220 pixels. Use a vertical gradient color from blue
     // (0000cc) to deep blue (000044) as background. Use rounded corners of 16 pixels radius.
-    PieChart *c = new PieChart(200, 220);
+    PieChart* c = new PieChart(200, 220);
     c->setBackground(c->linearGradientColor(0, 0, 0, c->getHeight(), 0x0000cc, 0x000044));
     c->setRoundedFrame(0xffffff, 16);
 
@@ -18,10 +20,10 @@ void createChart(int chartIndex, const char *filename)
     c->setPieSize(100, 120, 80);
 
     // Set the pie data
-    c->setData(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))));
+    c->setData(DoubleArray(data, data_size));
 
     // Set the sector colors
-    c->setColors(Chart::DataColor, IntArray(colors, (int)(sizeof(colors) / sizeof(colors[0]))));
+    c->setColors(Chart::DataColor, IntArray(colors, colors_size));
 
     // Demonstrates various shading modes
     if (chartIndex == 0) {
@@ -51,6 +53,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete c;
+
 }
 
 int main(int argc, char *argv[])

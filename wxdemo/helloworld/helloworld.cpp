@@ -3,7 +3,7 @@
 ** Purpose:     Hello World sample application
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -119,14 +119,13 @@ void
 HelloWorld::CreateControls()
 {    
   SetIcon(wxICON(mondrian)); 
-  HelloWorld* itemDialog1 = this;
 
-  wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
-  itemDialog1->SetSizer(itemBoxSizer2);
+  wxBoxSizer* itemBoxSizer = new wxBoxSizer(wxVERTICAL);
+  SetSizer(itemBoxSizer);
 
-  wxChartViewer* chartViewer = new wxChartViewer( itemDialog1 /*, ID_PANEL, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER|wxTAB_TRAVERSAL*/ );
+  wxChartViewer* chartViewer = new wxChartViewer(this);
   chartViewer->SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
-  itemBoxSizer2->Add(chartViewer, 1, wxGROW | wxALL, 3);
+  itemBoxSizer->Add(chartViewer, 1, wxGROW, FromDIP(3));
 
   // Output the chart
   chartViewer->setChart(m_chart);
@@ -143,7 +142,7 @@ HelloWorld::OnExitClick(wxCommandEvent& event)
 }
 
 /*
-* wxEVT_CLOSE_WINDOW event handler for ID_HELLOWORLD
+* wxEVT_CLOSE_WINDOW event handler
 */
 
 void
@@ -151,38 +150,4 @@ HelloWorld::OnCloseWindow(wxCloseEvent& event)
 {
   delete m_chart;
   event.Skip();
-}
-
-/*
- * Should we show tooltips?
- */
-
-bool
-HelloWorld::ShowToolTips()
-{
-  return true;
-}
-
-/*
- * Get bitmap resources
- */
-
-wxBitmap
-HelloWorld::GetBitmapResource( const wxString& name )
-{
-  // Bitmap retrieval
-  wxUnusedVar(name);
-  return wxNullBitmap;
-}
-
-/*
- * Get icon resources
- */
-
-wxIcon
-HelloWorld::GetIconResource( const wxString& name )
-{
-  // Icon retrieval
-  wxUnusedVar(name);
-  return wxNullIcon;
 }

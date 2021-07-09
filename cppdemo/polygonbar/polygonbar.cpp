@@ -4,23 +4,24 @@ int main(int argc, char *argv[])
 {
     // The data for the bar chart
     double data[] = {85, 156, 179.5, 211, 123, 176, 195};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The labels for the bar chart
-    const char *labels[] = {"Square", "Star(8)", "Polygon(6)", "Cross", "Cross2", "Diamond",
+    const char* labels[] = {"Square", "Star(8)", "Polygon(6)", "Cross", "Cross2", "Diamond",
         "Custom"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 500 x 280 pixels.
-    XYChart *c = new XYChart(500, 280);
+    XYChart* c = new XYChart(500, 280);
 
     // Set the plotarea at (50, 40) with alternating light grey (f8f8f8) / white (ffffff) background
     c->setPlotArea(50, 40, 400, 200, 0xf8f8f8, 0xffffff);
 
     // Add a title to the chart using 14pt Arial Bold Italic font
-    c->addTitle("    Bar Shape Demonstration", "arialbi.ttf", 14);
+    c->addTitle("    Bar Shape Demonstration", "Arial Bold Italic", 14);
 
     // Add a multi-color bar chart layer
-    BarLayer *layer = c->addBarLayer(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))),
-        IntArray(0, 0));
+    BarLayer* layer = c->addBarLayer(DoubleArray(data, data_size), IntArray(0, 0));
 
     // Set layer to 3D with 10 pixels 3D depth
     layer->set3D(10);
@@ -44,11 +45,12 @@ int main(int argc, char *argv[])
 
     // Set the last bar to a custom shape, specified as an array of (x, y) points in normalized
     // coordinates
-    int pattern1[] = {-500, 0, 0, 500, 500, 0, 500, 1000, 0, 500, -500, 1000};
-    layer->setBarShape(IntArray(pattern1, (int)(sizeof(pattern1) / sizeof(pattern1[0]))), 0, 6);
+    int customShape[] = {-500, 0, 0, 500, 500, 0, 500, 1000, 0, 500, -500, 1000};
+    const int customShape_size = (int)(sizeof(customShape)/sizeof(*customShape));
+    layer->setBarShape(IntArray(customShape, customShape_size), 0, 6);
 
     // Set the labels on the x axis.
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Add a title to the y axis
     c->yAxis()->setTitle("Frequency");
@@ -61,6 +63,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

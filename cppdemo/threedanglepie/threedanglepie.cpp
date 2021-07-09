@@ -3,16 +3,17 @@
 
 void createChart(int chartIndex, const char *filename)
 {
-    char buffer[256];
+    char buffer[1024];
 
     // the tilt angle of the pie
     int angle = chartIndex * 15;
 
     // The data for the pie chart
     double data[] = {25, 18, 15, 12, 8, 30, 35};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // Create a PieChart object of size 100 x 110 pixels
-    PieChart *c = new PieChart(100, 110);
+    PieChart* c = new PieChart(100, 110);
 
     // Set the center of the pie at (50, 55) and the radius to 38 pixels
     c->setPieSize(50, 55, 38);
@@ -22,10 +23,10 @@ void createChart(int chartIndex, const char *filename)
 
     // Add a title showing the tilt angle
     sprintf(buffer, "Tilt = %d deg", angle);
-    c->addTitle(buffer, "arial.ttf", 8);
+    c->addTitle(buffer, "Arial", 8);
 
     // Set the pie data
-    c->setData(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))));
+    c->setData(DoubleArray(data, data_size));
 
     // Disable the sector labels by setting the color to Transparent
     c->setLabelStyle("", 8, Chart::Transparent);
@@ -35,6 +36,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete c;
+
 }
 
 int main(int argc, char *argv[])

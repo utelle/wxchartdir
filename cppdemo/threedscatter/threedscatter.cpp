@@ -3,16 +3,16 @@
 int main(int argc, char *argv[])
 {
     // The XYZ data for the 3D scatter chart as 3 random data series
-    RanSeries *r = new RanSeries(0);
+    RanSeries* r = new RanSeries(0);
     DoubleArray xData = r->getSeries(100, 100, -10, 10);
     DoubleArray yData = r->getSeries(100, 0, 0, 20);
     DoubleArray zData = r->getSeries(100, 100, -10, 10);
 
     // Create a ThreeDScatterChart object of size 720 x 600 pixels
-    ThreeDScatterChart *c = new ThreeDScatterChart(720, 600);
+    ThreeDScatterChart* c = new ThreeDScatterChart(720, 600);
 
     // Add a title to the chart using 20 points Times New Roman Italic font
-    c->addTitle("3D Scatter Chart (1)  ", "timesi.ttf", 20);
+    c->addTitle("3D Scatter Chart (1)  ", "Times New Roman Italic", 20);
 
     // Set the center of the plot region at (350, 280), and set width x depth x height to 360 x 360
     // x 270 pixels
@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
     c->setColorAxis(645, 270, Chart::Left, 200, Chart::Right);
 
     // Set the x, y and z axis titles using 10 points Arial Bold font
-    c->xAxis()->setTitle("X-Axis Place Holder", "arialbd.ttf", 10);
-    c->yAxis()->setTitle("Y-Axis Place Holder", "arialbd.ttf", 10);
-    c->zAxis()->setTitle("Z-Axis Place Holder", "arialbd.ttf", 10);
+    c->xAxis()->setTitle("X-Axis Place Holder", "Arial Bold", 10);
+    c->yAxis()->setTitle("Y-Axis Place Holder", "Arial Bold", 10);
+    c->zAxis()->setTitle("Z-Axis Place Holder", "Arial Bold", 10);
 
     // Output the chart
     c->makeChart("threedscatter.png");
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     //free up resources
     delete r;
     delete c;
+
     return 0;
 }
 

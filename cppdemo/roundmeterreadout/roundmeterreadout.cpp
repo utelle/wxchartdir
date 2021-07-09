@@ -8,6 +8,7 @@ void createChart(int chartIndex, const char *filename)
     // The main color of the four meters in this example. The other colors and gradients are derived
     // from the main color.
     int colorList[] = {0x0033dd, 0xaaaa00};
+    const int colorList_size = (int)(sizeof(colorList)/sizeof(*colorList));
     int mainColor = colorList[chartIndex];
 
     //
@@ -49,7 +50,7 @@ void createChart(int chartIndex, const char *filename)
 
     // Create an AngularMeter object of the specified size. In this demo, we use black (0x000000) as
     // the background color. You can also use transparent or other colors.
-    AngularMeter *m = new AngularMeter(size, size, 0x000000);
+    AngularMeter* m = new AngularMeter(size, size, 0x000000);
 
     // Set the default text and line colors to white (0xffffff)
     m->setColor(Chart::TextColor, 0xffffff);
@@ -61,17 +62,19 @@ void createChart(int chartIndex, const char *filename)
     // Background gradient with the mainColor at the center and become darker near the border
     double bgGradient[] = {0, (double)(mainColor), 0.5, (double)(m->adjustBrightness(mainColor, 0.75
         )), 1, (double)(m->adjustBrightness(mainColor, 0.15))};
+    const int bgGradient_size = (int)(sizeof(bgGradient)/sizeof(*bgGradient));
 
     // Fill the meter background with the background gradient
-    m->addRing(0, outerRadius, m->relativeRadialGradient(DoubleArray(bgGradient, (int)(sizeof(
-        bgGradient) / sizeof(bgGradient[0]))), outerRadius * 0.66));
+    m->addRing(0, outerRadius, m->relativeRadialGradient(DoubleArray(bgGradient, bgGradient_size),
+        outerRadius * 0.66));
 
     // Gradient for the neon backlight, with the main color at the scale radius fading to
     // transparent
     double neonGradient[] = {0.89, Chart::Transparent, 1, (double)(mainColor), 1.07,
         Chart::Transparent};
+    const int neonGradient_size = (int)(sizeof(neonGradient)/sizeof(*neonGradient));
     m->addRing(scaleRadius * 85 / 100, outerRadius, m->relativeRadialGradient(DoubleArray(
-        neonGradient, (int)(sizeof(neonGradient) / sizeof(neonGradient[0])))));
+        neonGradient, neonGradient_size)));
 
     // The neon ring at the scale radius with width equal to 1/80 of the scale radius, creating
     // using a brighter version of the main color
@@ -83,25 +86,26 @@ void createChart(int chartIndex, const char *filename)
     // Set the scale label style, tick length and tick width. The minor and micro tick lengths are
     // 80% and 60% of the major tick length, and their widths are around half of the major tick
     // width.
-    m->setLabelStyle("ariali.ttf", fontSize);
-    m->setTickLength(-tickLength, -tickLength * 80 / 100, -tickLength * 60 / 100);
+    m->setLabelStyle("Arial Italic", fontSize);
+    m->setTickLength(-tickLength, -(tickLength * 80 / 100), -(tickLength * 60 / 100));
     m->setLineWidth(0, tickWidth, (tickWidth + 1) / 2, (tickWidth + 1) / 2);
 
     // Demostrate different types of color scales and putting them at different positions.
     double smoothColorScale[] = {0, 0x0000ff, 25, 0x0088ff, 50, 0x00ff00, 75, 0xdddd00, 100,
         0xff0000};
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
     double highColorScale[] = {70, Chart::Transparent, 100, 0xff0000};
+    const int highColorScale_size = (int)(sizeof(highColorScale)/sizeof(*highColorScale));
 
     if (chartIndex == 0) {
         // Add the smooth color scale
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), colorScaleRadius, colorScaleWidth);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), colorScaleRadius,
+            colorScaleWidth);
         // Add a red (0xff0000) pointer
         m->addPointer2(value, 0xff0000);
     } else {
         // Add the high color scale at the default position
-        m->addColorScale(DoubleArray(highColorScale, (int)(sizeof(highColorScale) / sizeof(
-            highColorScale[0]))));
+        m->addColorScale(DoubleArray(highColorScale, highColorScale_size));
         // Add a red (0xff0000) triangular pointer starting from 40% and ending at 60% of scale
         // radius, with a width 6 times the default
         m->addPointer2(value, 0xff0000, -1, Chart::TriangularPointer2, 0.4, 0.6, 6);
@@ -116,7 +120,7 @@ void createChart(int chartIndex, const char *filename)
 
     // Add value label at the center using a brighter version of the main color and Arial Italic
     // font
-    m->addText(size / 2, size / 2, m->formatValue(value, "{value|0}"), "ariali.ttf",
+    m->addText(size / 2, size / 2, m->formatValue(value, "{value|0}"), "Arial Italic",
         readOutFontSize, m->adjustBrightness(mainColor, 2.5), Chart::Center)->setMargin(0);
 
     // Add glare up to the scale radius
@@ -127,6 +131,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

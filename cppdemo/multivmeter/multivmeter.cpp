@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     // Create an LinearMeter object of size 60 x 245 pixels, using silver background with a 2 pixel
     // black 3D depressed border.
-    LinearMeter *m = new LinearMeter(60, 245, Chart::silverColor(), 0, -2);
+    LinearMeter* m = new LinearMeter(60, 245, Chart::silverColor(), 0, -2);
 
     // Set the scale region top-left corner at (25, 30), with size of 20 x 200 pixels. The scale
     // labels are located on the left (default - implies vertical meter)
@@ -32,14 +32,15 @@ int main(int argc, char *argv[])
 
     // Add a text box label at top-center (30, 5) using Arial Bold/8pt/deep blue (000088), with a
     // light blue (9999ff) background
-    m->addText(30, 5, "Temp C", "arialbd.ttf", 8, 0x000088, Chart::TopCenter)->setBackground(
-        0x9999ff);
+    m->addText(30, 5, "Temp C", "Arial Bold", 8, 0x000088, Chart::TopCenter)->setBackground(0x9999ff
+        );
 
     // Output the chart
     m->makeChart("multivmeter.png");
 
     //free up resources
     delete m;
+
     return 0;
 }
 

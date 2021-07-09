@@ -4,23 +4,27 @@ int main(int argc, char *argv[])
 {
     // The data for the bar chart
     double data0[] = {100, 125, 245, 147, 67};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double data1[] = {85, 156, 179, 211, 123};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
     double data2[] = {97, 87, 56, 267, 157};
+    const int data2_size = (int)(sizeof(data2)/sizeof(*data2));
 
     // The labels for the bar chart
-    const char *labels[] = {"Mon", "Tue", "Wed", "Thu", "Fri"};
+    const char* labels[] = {"Mon", "Tue", "Wed", "Thu", "Fri"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 500 x 320 pixels. Use a vertical gradient color from pale
     // blue (e8f0f8) to sky blue (aaccff) spanning half the chart height as background. Set border
     // to blue (88aaee). Use rounded corners. Enable soft drop shadow.
-    XYChart *c = new XYChart(500, 320);
+    XYChart* c = new XYChart(500, 320);
     c->setBackground(c->linearGradientColor(0, 0, 0, c->getHeight() / 2, 0xe8f0f8, 0xaaccff),
         0x88aaee);
     c->setRoundedFrame();
     c->setDropShadow();
 
     // Add a title to the chart using 15 points Arial Italic. Set top/bottom margins to 15 pixels.
-    TextBox *title = c->addTitle("Weekly Product Sales", "ariali.ttf", 15);
+    TextBox* title = c->addTitle("Weekly Product Sales", "Arial Italic", 15);
     title->setMargin(0, 0, 15, 15);
 
     // Tentatively set the plotarea to 50 pixels from the left edge, and to just under the title.
@@ -31,8 +35,7 @@ int main(int argc, char *argv[])
 
     // Add a legend box where the top-right corner is anchored at 10 pixels from the right edge, and
     // just under the title. Use vertical layout and 8 points Arial font.
-    LegendBox *legendBox = c->addLegend(c->getWidth() - 10, title->getHeight(), true, "arial.ttf", 8
-        );
+    LegendBox* legendBox = c->addLegend(c->getWidth() - 10, title->getHeight(), true, "Arial", 8);
     legendBox->setAlignment(Chart::TopRight);
 
     // Set the legend box background and border to transparent
@@ -46,17 +49,17 @@ int main(int argc, char *argv[])
     c->yAxis()->setColors(Chart::Transparent);
 
     // Set the labels on the x axis
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Add a percentage bar layer
-    BarLayer *layer = c->addBarLayer(Chart::Percentage);
+    BarLayer* layer = c->addBarLayer(Chart::Percentage);
 
     // Add the three data sets to the bar layer, using icons images with labels as data set names
-    layer->addDataSet(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0]))), 0x66aaee,
+    layer->addDataSet(DoubleArray(data0, data0_size), 0x66aaee,
         "<*block,valign=absmiddle*><*img=service.png*> Service<*/*>");
-    layer->addDataSet(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0]))), 0xeebb22,
+    layer->addDataSet(DoubleArray(data1, data1_size), 0xeebb22,
         "<*block,valign=absmiddle*><*img=software.png*> Software<*/*>");
-    layer->addDataSet(DoubleArray(data2, (int)(sizeof(data2) / sizeof(data2[0]))), 0xcc88ff,
+    layer->addDataSet(DoubleArray(data2, data2_size), 0xcc88ff,
         "<*block,valign=absmiddle*><*img=computer.png*> Hardware<*/*>");
 
     // Use soft lighting effect with light direction from top
@@ -81,6 +84,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

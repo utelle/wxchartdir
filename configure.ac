@@ -1,10 +1,10 @@
 dnl Process this script with autoconf to create configure for wxchartdir library
 dnl
-dnl Copyright (C) 2018 Ulrich Telle <ulrich@telle-online.de>
+dnl Copyright (C) 2018-2021 Ulrich Telle <ulrich@telle-online.de>
 dnl
 dnl This file is covered by the same licence as the entire wxChartDir package.
 
-AC_INIT([wxchartdir], [1.0.0], [ulrich@telle-online.de])
+AC_INIT([wxchartdir], [2.0.0], [ulrich@telle-online.de])
 
 dnl This is the version tested with, might work with earlier ones.
 AC_PREREQ([2.69])
@@ -87,78 +87,8 @@ AC_SUBST( LIBDIR, "lib" )
 
 dnl Ensure that the samples can find the files they need when running from the
 dnl build directory.
-AC_CONFIG_LINKS([wxdemo/realtimedemo/pause.png:wxdemo/realtimedemo/pause.png
-     wxdemo/realtimedemo/play.png:wxdemo/realtimedemo/play.png
-     wxdemo/realtimemeasure/pointer.png:wxdemo/realtimemeasure/pointer.png
-     wxdemo/realtimemeasure/save.png:wxdemo/realtimemeasure/save.png
-     wxdemo/realtimemeasure/zoomin.png:wxdemo/realtimemeasure/zoomin.png
-     wxdemo/realtimemeasure/zoomout.png:wxdemo/realtimemeasure/zoomout.png
-     wxdemo/realtimemultithread/pointer.png:wxdemo/realtimemultithread/pointer.png
-     wxdemo/realtimemultithread/save.png:wxdemo/realtimemultithread/save.png
-     wxdemo/realtimemultithread/zoomin.png:wxdemo/realtimemultithread/zoomin.png
-     wxdemo/realtimemultithread/zoomout.png:wxdemo/realtimemultithread/zoomout.png
-     wxdemo/realtimetrack/pause.png:wxdemo/realtimetrack/pause.png
-     wxdemo/realtimetrack/play.png:wxdemo/realtimetrack/play.png
-     wxdemo/realtimeviewport/pointer.png:wxdemo/realtimeviewport/pointer.png
-     wxdemo/realtimeviewport/save.png:wxdemo/realtimeviewport/save.png
-     wxdemo/realtimeviewport/zoomin.png:wxdemo/realtimeviewport/zoomin.png
-     wxdemo/realtimeviewport/zoomout.png:wxdemo/realtimeviewport/zoomout.png
-     wxdemo/realtimezoomscroll/pointer.png:wxdemo/realtimezoomscroll/pointer.png
-     wxdemo/realtimezoomscroll/save.png:wxdemo/realtimezoomscroll/save.png
-     wxdemo/realtimezoomscroll/zoomin.png:wxdemo/realtimezoomscroll/zoomin.png
-     wxdemo/realtimezoomscroll/zoomout.png:wxdemo/realtimezoomscroll/zoomout.png
-     wxdemo/simplezoomscroll/pointer.png:wxdemo/simplezoomscroll/pointer.png
-     wxdemo/simplezoomscroll/zoomin.png:wxdemo/simplezoomscroll/zoomin.png
-     wxdemo/simplezoomscroll/zoomout.png:wxdemo/simplezoomscroll/zoomout.png
-     wxdemo/viewportcontroldemo/pointer.png:wxdemo/viewportcontroldemo/pointer.png
-     wxdemo/viewportcontroldemo/save.png:wxdemo/viewportcontroldemo/save.png
-     wxdemo/viewportcontroldemo/zoomin.png:wxdemo/viewportcontroldemo/zoomin.png
-     wxdemo/viewportcontroldemo/zoomout.png:wxdemo/viewportcontroldemo/zoomout.png
-     wxdemo/wxdemo/angry.png:wxdemo/wxdemo/angry.png
-     wxdemo/wxdemo/bg.png:wxdemo/wxdemo/bg.png
-     wxdemo/wxdemo/clock.png:wxdemo/wxdemo/clock.png
-     wxdemo/wxdemo/cloud.png:wxdemo/wxdemo/cloud.png
-     wxdemo/wxdemo/computer.png:wxdemo/wxdemo/computer.png
-     wxdemo/wxdemo/doc.png:wxdemo/wxdemo/doc.png
-     wxdemo/wxdemo/laugh.png:wxdemo/wxdemo/laugh.png
-     wxdemo/wxdemo/marble.png:wxdemo/wxdemo/marble.png
-     wxdemo/wxdemo/marble2.png:wxdemo/wxdemo/marble2.png
-     wxdemo/wxdemo/marble3.png:wxdemo/wxdemo/marble3.png
-     wxdemo/wxdemo/molecule.png:wxdemo/wxdemo/molecule.png
-     wxdemo/wxdemo/nocomment.png:wxdemo/wxdemo/nocomment.png
-     wxdemo/wxdemo/rain.png:wxdemo/wxdemo/rain.png
-     wxdemo/wxdemo/robot1.png:wxdemo/wxdemo/robot1.png
-     wxdemo/wxdemo/robot2.png:wxdemo/wxdemo/robot2.png
-     wxdemo/wxdemo/robot3.png:wxdemo/wxdemo/robot3.png
-     wxdemo/wxdemo/robot4.png:wxdemo/wxdemo/robot4.png
-     wxdemo/wxdemo/robot5.png:wxdemo/wxdemo/robot5.png
-     wxdemo/wxdemo/rock.png:wxdemo/wxdemo/rock.png
-     wxdemo/wxdemo/sad.png:wxdemo/wxdemo/sad.png
-     wxdemo/wxdemo/service.png:wxdemo/wxdemo/service.png
-     wxdemo/wxdemo/small_computer.png:wxdemo/wxdemo/small_computer.png
-     wxdemo/wxdemo/small_molecule.png:wxdemo/wxdemo/small_molecule.png
-     wxdemo/wxdemo/small_user.png:wxdemo/wxdemo/small_user.png
-     wxdemo/wxdemo/smile.png:wxdemo/wxdemo/smile.png
-     wxdemo/wxdemo/snow.png:wxdemo/wxdemo/snow.png
-     wxdemo/wxdemo/snowy.png:wxdemo/wxdemo/snowy.png
-     wxdemo/wxdemo/software.png:wxdemo/wxdemo/software.png
-     wxdemo/wxdemo/star.png:wxdemo/wxdemo/star.png
-     wxdemo/wxdemo/sun.png:wxdemo/wxdemo/sun.png
-     wxdemo/wxdemo/wood.png:wxdemo/wxdemo/wood.png
-     wxdemo/wxdemo/gas.gif:wxdemo/wxdemo/gas.gif
-     wxdemo/wxdemo/tile.gif:wxdemo/wxdemo/tile.gif
-     wxdemo/xyzoomscroll/pointer.png:wxdemo/xyzoomscroll/pointer.png
-     wxdemo/xyzoomscroll/save.png:wxdemo/xyzoomscroll/save.png
-     wxdemo/xyzoomscroll/zoomin.png:wxdemo/xyzoomscroll/zoomin.png
-     wxdemo/xyzoomscroll/zoomout.png:wxdemo/xyzoomscroll/zoomout.png
-     wxdemo/zoomscrolltrack/pointer.png:wxdemo/zoomscrolltrack/pointer.png
-     wxdemo/zoomscrolltrack/zoomin.png:wxdemo/zoomscrolltrack/zoomin.png
-     wxdemo/zoomscrolltrack/zoomout.png:wxdemo/zoomscrolltrack/zoomout.png
-     wxdemo/zoomscrolltrack2/pointer.png:wxdemo/zoomscrolltrack2/pointer.png
-     wxdemo/zoomscrolltrack2/zoomin.png:wxdemo/zoomscrolltrack2/zoomin.png
-     wxdemo/zoomscrolltrack2/zoomout.png:wxdemo/zoomscrolltrack2/zoomout.png
-     cppdemo/bg.png:cppdemo/background/bg.png
-     cppdemo/tile.gif:cppdemo/background/tile.gif
+AC_CONFIG_LINKS([cppdemo/bg.png:cppdemo/background/bg.png
+     cppdemo/tile.png:cppdemo/background/tile.png
      cppdemo/small_computer.png:cppdemo/customsymbolline/small_computer.png
      cppdemo/small_user.png:cppdemo/customsymbolline/small_user.png
      cppdemo/small_molecule.png:cppdemo/enhancedarea/small_molecule.png
@@ -170,7 +100,7 @@ AC_CONFIG_LINKS([wxdemo/realtimedemo/pause.png:wxdemo/realtimedemo/pause.png
      cppdemo/robot1.png:cppdemo/hboxwhisker/robot1.png
      cppdemo/robot2.png:cppdemo/hboxwhisker/robot2.png
      cppdemo/robot5.png:cppdemo/hboxwhisker/robot5.png
-     cppdemo/gas.gif:cppdemo/iconameter/gas.gif
+     cppdemo/gas.png:cppdemo/iconameter/gas.png
      cppdemo/cloud.png:cppdemo/icondonut/cloud.png
      cppdemo/rain.png:cppdemo/icondonut/rain.png
      cppdemo/snowy.png:cppdemo/icondonut/snowy.png
@@ -188,6 +118,7 @@ AC_CONFIG_LINKS([wxdemo/realtimedemo/pause.png:wxdemo/realtimedemo/pause.png
      cppdemo/snow.png:cppdemo/patternarea/snow.png
      cppdemo/robot3.png:cppdemo/scattersymbols/robot3.png
      cppdemo/robot4.png:cppdemo/scattersymbols/robot4.png
+     cppdemo/maptexture.png:cppdemo/surfacetexture/maptexture.png
      cppdemo/marble3.png:cppdemo/texturedonut/marble3.png
      cppdemo/rock.png:cppdemo/texturedonut/rock.png
 ])

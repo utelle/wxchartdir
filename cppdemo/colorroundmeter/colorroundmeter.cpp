@@ -7,10 +7,12 @@ void createChart(int chartIndex, const char *filename)
 
     // The background and border colors of the meters
     int bgColor[] = {0x88ccff, 0xffdddd, 0xffddaa, 0xffccff, 0xdddddd, 0xccffcc};
+    const int bgColor_size = (int)(sizeof(bgColor)/sizeof(*bgColor));
     int borderColor[] = {0x000077, 0x880000, 0xee6600, 0x440088, 0x000000, 0x006000};
+    const int borderColor_size = (int)(sizeof(borderColor)/sizeof(*borderColor));
 
     // Create an AngularMeter object of size 250 x 250 pixels with transparent background
-    AngularMeter *m = new AngularMeter(250, 250, Chart::Transparent);
+    AngularMeter* m = new AngularMeter(250, 250, Chart::Transparent);
 
     // Demonstration two different meter scale angles
     if (chartIndex % 2 == 0) {
@@ -24,9 +26,9 @@ void createChart(int chartIndex, const char *filename)
     // Background gradient color with brighter color at the center
     double bgGradient[] = {0, (double)(m->adjustBrightness(bgColor[chartIndex], 3)), 0.75, (double)(
         bgColor[chartIndex])};
+    const int bgGradient_size = (int)(sizeof(bgGradient)/sizeof(*bgGradient));
     // Add circle with radius 123 pixels as background using the background gradient
-    m->addRing(0, 123, m->relativeRadialGradient(DoubleArray(bgGradient, (int)(sizeof(bgGradient) /
-        sizeof(bgGradient[0])))));
+    m->addRing(0, 123, m->relativeRadialGradient(DoubleArray(bgGradient, bgGradient_size)));
     // Add a ring between radii 116 and 123 pixels as border
     m->addRing(116, 123, borderColor[chartIndex]);
 
@@ -35,25 +37,26 @@ void createChart(int chartIndex, const char *filename)
 
     // Set the scale label style to 15pt Arial Italic. Set the major/minor/micro tick lengths to
     // 12/9/6 pixels pointing inwards, and their widths to 2/1/1 pixels.
-    m->setLabelStyle("ariali.ttf", 15);
+    m->setLabelStyle("Arial Italic", 15);
     m->setTickLength(-12, -9, -6);
     m->setLineWidth(0, 2, 1, 1);
 
     // Demostrate different types of color scales and putting them at different positions
     double smoothColorScale[] = {0, 0x3333ff, 25, 0x0088ff, 50, 0x00ff00, 75, 0xdddd00, 100,
         0xff0000};
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
     double stepColorScale[] = {0, 0x00cc00, 60, 0xffdd00, 80, 0xee0000, 100};
+    const int stepColorScale_size = (int)(sizeof(stepColorScale)/sizeof(*stepColorScale));
     double highLowColorScale[] = {0, 0x00ff00, 70, Chart::Transparent, 100, 0xff0000};
+    const int highLowColorScale_size = (int)(sizeof(highLowColorScale)/sizeof(*highLowColorScale));
 
     if (chartIndex == 0) {
         // Add the smooth color scale at the default position
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))));
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size));
     } else if (chartIndex == 1) {
         // Add the smooth color scale starting at radius 62 with zero width and ending at radius 40
         // with 22 pixels outer width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 62, 0, 40, 22);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 62, 0, 40, 22);
     } else if (chartIndex == 2) {
         // Add green, yellow and red zones between radii 44 and 60
         m->addZone(0, 60, 44, 60, 0x00dd00);
@@ -61,29 +64,26 @@ void createChart(int chartIndex, const char *filename)
         m->addZone(80, 100, 44, 60, 0xff0000);
     } else if (chartIndex == 3) {
         // Add the high/low color scale at the default position
-        m->addColorScale(DoubleArray(highLowColorScale, (int)(sizeof(highLowColorScale) / sizeof(
-            highLowColorScale[0]))));
+        m->addColorScale(DoubleArray(highLowColorScale, highLowColorScale_size));
     } else if (chartIndex == 4) {
         // Add the smooth color scale at radius 44 with 16 pixels outer width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 44, 16);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 44, 16);
     } else {
         // Add the step color scale at the default position
-        m->addColorScale(DoubleArray(stepColorScale, (int)(sizeof(stepColorScale) / sizeof(
-            stepColorScale[0]))));
+        m->addColorScale(DoubleArray(stepColorScale, stepColorScale_size));
     }
 
     // Add a text label centered at (125, 175) with 15pt Arial Italic font
-    m->addText(125, 175, "CPU", "ariali.ttf", 15, Chart::TextColor, Chart::Center);
+    m->addText(125, 175, "CPU", "Arial Italic", 15, Chart::TextColor, Chart::Center);
 
     // Add a readout to some of the charts as demonstration
-    if (chartIndex == 0 || chartIndex == 2) {
+    if ((chartIndex == 0) || (chartIndex == 2)) {
         // Put the value label center aligned at (125, 232), using white (0xffffff) 14pt Arial font
         // on a black (0x000000) background. Set box width to 50 pixels with 5 pixels rounded
         // corners.
-        TextBox *t = m->addText(125, 232, m->formatValue(value,
-            "<*block,width=50,halign=center*>{value|1}"), "arial.ttf", 14, 0xffffff,
-            Chart::BottomCenter);
+        TextBox* t = m->addText(125, 232, m->formatValue(value,
+            "<*block,width=50,halign=center*>{value|1}"), "Arial", 14, 0xffffff, Chart::BottomCenter
+            );
         t->setBackground(0x000000);
         t->setRoundedCorners(5);
     }
@@ -96,6 +96,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

@@ -3,7 +3,7 @@
 ** Purpose:     wxWidgets Demo sample application
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 

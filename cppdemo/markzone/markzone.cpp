@@ -5,18 +5,20 @@ int main(int argc, char *argv[])
     // The data for the chart
     double data[] = {40, 45, 37, 24, 32, 39, 53, 52, 63, 49, 46, 40, 54, 50, 57, 57, 48, 49, 63, 67,
         74, 72, 70, 89, 74};
-    const char *labels[] = {"0\nJun 4", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
+    const char* labels[] = {"0\nJun 4", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
         "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "0\nJun 5"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 400 x 270 pixels
-    XYChart *c = new XYChart(400, 270);
+    XYChart* c = new XYChart(400, 270);
 
     // Set the plotarea at (80, 60) and of size 300 x 200 pixels. Turn off the grid lines by setting
     // their colors to Transparent.
     c->setPlotArea(80, 28, 300, 200)->setGridColor(Chart::Transparent);
 
     // Add a title to the y axis
-    TextBox *textbox = c->yAxis()->setTitle("Temperature");
+    TextBox* textbox = c->yAxis()->setTitle("Temperature");
 
     // Set the y axis title upright (font angle = 0)
     textbox->setFontAngle(0);
@@ -38,7 +40,7 @@ int main(int argc, char *argv[])
 
     // Add a legend box at (165, 0) (top right of the chart) using 8pt Arial font. and horizontal
     // layout.
-    LegendBox *legend = c->addLegend(165, 0, false, "arialbd.ttf", 8);
+    LegendBox* legend = c->addLegend(165, 0, false, "Arial Bold", 8);
 
     // Disable the legend box boundary by setting the colors to Transparent
     legend->setBackground(Chart::Transparent, Chart::Transparent);
@@ -49,14 +51,13 @@ int main(int argc, char *argv[])
     legend->addKey("Critical", 0xff8080);
 
     // Set the labels on the x axis.
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Display 1 out of 3 labels on the x-axis. Show minor ticks for remaining labels.
     c->xAxis()->setLabelStep(3, 1);
 
     // Add a 3D bar layer with the given data
-    BarLayer *layer = c->addBarLayer(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))),
-        0xbbbbff);
+    BarLayer* layer = c->addBarLayer(DoubleArray(data, data_size), 0xbbbbff);
 
     // Set the bar gap to 0 so that the bars are packed tightly
     layer->setBarGap(0);
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

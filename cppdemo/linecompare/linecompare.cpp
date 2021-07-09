@@ -4,18 +4,23 @@ int main(int argc, char *argv[])
 {
     // The data for the upper and lower bounding lines
     double upperY[] = {60, 60, 100, 100, 60, 60};
+    const int upperY_size = (int)(sizeof(upperY)/sizeof(*upperY));
     double lowerY[] = {40, 40, 80, 80, 40, 40};
+    const int lowerY_size = (int)(sizeof(lowerY)/sizeof(*lowerY));
     double zoneX[] = {0, 2.5, 3.5, 5.5, 6.5, 10};
+    const int zoneX_size = (int)(sizeof(zoneX)/sizeof(*zoneX));
 
     // The data for the spline curve
     double curveY[] = {50, 44, 54, 48, 58, 50, 90, 85, 104, 82, 96, 90, 74, 52, 35, 58, 46, 54, 48,
         52, 50};
+    const int curveY_size = (int)(sizeof(curveY)/sizeof(*curveY));
     double curveX[] = {0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9,
         9.5, 10};
+    const int curveX_size = (int)(sizeof(curveX)/sizeof(*curveX));
 
     // Create a XYChart object of size 600 x 300 pixels, with a light grey (cccccc) background,
     // black border, and 1 pixel 3D border effect.
-    XYChart *c = new XYChart(600, 300, 0xcccccc, 0x000000, 1);
+    XYChart* c = new XYChart(600, 300, 0xcccccc, 0x000000, 1);
 
     // Set the plotarea at (55, 58) and of size 520 x 195 pixels, with white background. Turn on
     // both horizontal and vertical grid lines with light grey color (cccccc)
@@ -23,15 +28,15 @@ int main(int argc, char *argv[])
 
     // Add a legend box at (55, 32) (top of the chart) with horizontal layout. Use 9pt Arial Bold
     // font. Set the background and border color to Transparent.
-    c->addLegend(55, 32, false, "arialbd.ttf", 9)->setBackground(Chart::Transparent);
+    c->addLegend(55, 32, false, "Arial Bold", 9)->setBackground(Chart::Transparent);
 
     // Add a title box to the chart using 15pt Times Bold Italic font. The title is in CDML and
     // includes embedded images for highlight. The text is white (ffffff) on a black background,
     // with a 1 pixel 3D border.
     c->addTitle(
         "<*block,valign=absmiddle*><*img=star.png*><*img=star.png*> Performance Enhancer "
-        "<*img=star.png*><*img=star.png*><*/*>", "timesbi.ttf", 15, 0xffffff)->setBackground(
-        0x000000, -1, 1);
+        "<*img=star.png*><*img=star.png*><*/*>", "Times New Roman Bold Italic", 15, 0xffffff
+        )->setBackground(0x000000, -1, 1);
 
     // Add a title to the y axis
     c->yAxis()->setTitle("Temperature");
@@ -44,18 +49,17 @@ int main(int argc, char *argv[])
     c->yAxis()->setWidth(2);
 
     // Add a purple (800080) spline layer to the chart with a line width of 2 pixels
-    SplineLayer *splineLayer = c->addSplineLayer(DoubleArray(curveY, (int)(sizeof(curveY) / sizeof(
-        curveY[0]))), 0x800080, "Molecular Temperature");
-    splineLayer->setXData(DoubleArray(curveX, (int)(sizeof(curveX) / sizeof(curveX[0]))));
+    SplineLayer* splineLayer = c->addSplineLayer(DoubleArray(curveY, curveY_size), 0x800080,
+        "Molecular Temperature");
+    splineLayer->setXData(DoubleArray(curveX, curveX_size));
     splineLayer->setLineWidth(2);
 
     // Add a line layer to the chart with two dark green (338033) data sets, and a line width of 2
     // pixels
-    LineLayer *lineLayer = c->addLineLayer();
-    lineLayer->addDataSet(DoubleArray(upperY, (int)(sizeof(upperY) / sizeof(upperY[0]))), 0x338033,
-        "Target Zone");
-    lineLayer->addDataSet(DoubleArray(lowerY, (int)(sizeof(lowerY) / sizeof(lowerY[0]))), 0x338033);
-    lineLayer->setXData(DoubleArray(zoneX, (int)(sizeof(zoneX) / sizeof(zoneX[0]))));
+    LineLayer* lineLayer = c->addLineLayer();
+    lineLayer->addDataSet(DoubleArray(upperY, upperY_size), 0x338033, "Target Zone");
+    lineLayer->addDataSet(DoubleArray(lowerY, lowerY_size), 0x338033);
+    lineLayer->setXData(DoubleArray(zoneX, zoneX_size));
     lineLayer->setLineWidth(2);
 
     // Color the zone between the upper zone line and lower zone line as semi-transparent light
@@ -74,15 +78,16 @@ int main(int argc, char *argv[])
 
     // Add a custom CDML text at the bottom right of the plot area as the logo
     c->addText(575, 250,
-        "<*block,valign=absmiddle*><*img=small_molecule.png*> <*block*>"
-        "<*font=timesbi.ttf,size=10,color=804040*>Molecular\nEngineering<*/*>")->setAlignment(
-        Chart::BottomRight);
+        "<*block,valign=absmiddle*><*img=small_molecule.png*> <*block*><*font=Times New Roman Bold "
+        "Italic,size=10,color=804040*>Molecular\nEngineering<*/*>")->setAlignment(Chart::BottomRight
+        );
 
     // Output the chart
     c->makeChart("linecompare.png");
 
     //free up resources
     delete c;
+
     return 0;
 }
 

@@ -1,10 +1,10 @@
 #include "chartdir.h"
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
-    char buffer[256];
+    char buffer[1024];
 
     //
     // This example demonstrates creating a histogram with a bell curve from raw data. About half of
@@ -13,22 +13,22 @@ int main(int argc, char *argv[])
     //
 
     // Generate a random guassian distributed data series as the input data for this example.
-    RanSeries *r = new RanSeries(66);
+    RanSeries* r = new RanSeries(66);
     DoubleArray samples = r->getGaussianSeries(200, 100, 10);
 
     //
     // Classify the numbers into slots. In this example, the slot width is 5 units.
     //
-    int slotSize = 5;
+    double slotSize = 5;
 
     // Compute the min and max values, and extend them to the slot boundary.
     ArrayMath m = ArrayMath(samples);
-    double minX = floor(m.minValue() / slotSize) * slotSize;
-    double maxX = floor(m.maxValue() / slotSize) * slotSize + slotSize;
+    double minX = (int)(m.minValue() / slotSize) * slotSize;
+    double maxX = (int)(m.maxValue() / slotSize) * slotSize + slotSize;
 
     // We can now determine the number of slots
-    int slotCount = (int)((maxX - minX + 0.5) / slotSize);
-    double *frequency = new double[slotCount];
+    int slotCount = (int)((maxX - minX) / slotSize + 0.5);
+    double* frequency = new double[slotCount];
     memset(frequency, 0, sizeof(*frequency) * slotCount);
 
     // Count the data points contained in each slot
@@ -47,14 +47,14 @@ int main(int argc, char *argv[])
 
     // The normal distribution curve (bell curve) is a standard statistics curve. We need to
     // vertically scale it to make it proportion to the frequency count.
-    double scaleFactor = slotSize * (samples.len) / stdDev / sqrt(6.2832);
+    double scaleFactor = slotSize * samples.len / stdDev / sqrt(2 * 3.1416);
 
     // In this example, we plot the bell curve up to 3 standard deviations.
     double stdDevWidth = 3.0;
 
     // We generate 4 points per standard deviation to be joined with a spline curve.
     int bellCurveResolution = (int)(stdDevWidth * 4 + 1);
-    double *bellCurve = new double[bellCurveResolution];
+    double* bellCurve = new double[bellCurveResolution];
     for(int i = 0; i < bellCurveResolution; ++i) {
         double z = 2 * i * stdDevWidth / (bellCurveResolution - 1) - stdDevWidth;
         bellCurve[i] = exp(-z * z / 2) * scaleFactor;
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     //
 
     // Create a XYChart object of size 600 x 360 pixels
-    XYChart *c = new XYChart(600, 360);
+    XYChart* c = new XYChart(600, 360);
 
     // Set the plotarea at (50, 30) and of size 500 x 300 pixels, with transparent background and
     // border and light grey (0xcccccc) horizontal grid lines
@@ -73,24 +73,24 @@ int main(int argc, char *argv[])
 
     // Display the mean and standard deviation on the chart
     sprintf(buffer, "Mean = %.1f, Standard Deviation = %.1f", mean, stdDev);
-    c->addTitle(buffer, "arial.ttf");
+    c->addTitle(buffer, "Arial");
 
     // Set the x and y axis label font to 12pt Arial
-    c->xAxis()->setLabelStyle("arial.ttf", 12);
-    c->yAxis()->setLabelStyle("arial.ttf", 12);
+    c->xAxis()->setLabelStyle("Arial", 12);
+    c->yAxis()->setLabelStyle("Arial", 12);
 
     // Set the x and y axis stems to transparent, and the x-axis tick color to grey (0x888888)
     c->xAxis()->setColors(Chart::Transparent, Chart::TextColor, Chart::TextColor, 0x888888);
     c->yAxis()->setColors(Chart::Transparent);
 
     // Draw the bell curve as a spline layer in red (0xdd0000) with 2-pixel line width
-    SplineLayer *bellLayer = c->addSplineLayer(DoubleArray(bellCurve, bellCurveResolution), 0xdd0000
+    SplineLayer* bellLayer = c->addSplineLayer(DoubleArray(bellCurve, bellCurveResolution), 0xdd0000
         );
     bellLayer->setXData(mean - stdDevWidth * stdDev, mean + stdDevWidth * stdDev);
     bellLayer->setLineWidth(2);
 
     // Draw the histogram as bars in blue (0x6699bb) with dark blue (0x336688) border
-    BarLayer *histogramLayer = c->addBarLayer(DoubleArray(frequency, slotCount), 0x6699bb);
+    BarLayer* histogramLayer = c->addBarLayer(DoubleArray(frequency, slotCount), 0x6699bb);
     histogramLayer->setBorderColor(0x336688);
     // The center of the bars span from minX + half_bar_width to maxX - half_bar_width
     histogramLayer->setXData(minX + slotSize / 2.0, maxX - slotSize / 2.0);
@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
     delete[] frequency;
     delete[] bellCurve;
     delete c;
+
     return 0;
 }
 

@@ -3,7 +3,7 @@
 ** Purpose:     wxChartViewer class declaration
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -76,10 +76,35 @@ by the following terms:
 > and conditions of the ChartDirector license.
 A copy of the \b ChartDirector license is included in the \b wxChartDir distribution.
 
+\section apidoc Documentation
+
+The API documentation for the <b>ChartDirector library</b> itself is part of the
+<a href="https://www.advsofteng.com/doc/cdcpp.htm"><b>ChartDirector documentation</b></a>. 
+
+All methods of the classes \b wxChartViewer and \b wxViewPortControl are documented here. However, the documentation of the base classes
+<a href="https://www.advsofteng.com/doc/cdcpp.htm#ViewPortManager.htm"><b>ViewPortManager</b></a> resp
+<a href="https://www.advsofteng.com/doc/cdcpp.htm#ViewPortControlBase.htm"><b>ViewPortControlBase</b></a>
+can be found in the <a href="https://www.advsofteng.com/doc/cdcpp.htm"><b>ChartDirector documentation</b></a>.
+The documentation for the base class <a href="https://docs.wxwidgets.org/3.1/classwx_panel.html"><b>wxPanel</b></a>
+is part of the <a href="https://docs.wxwidgets.org/3.1/index.html"><b>wxWidgets documentation</b></a>.
+
+Please note that the implementation of \b wxChartViewer closely follows that of
+<a href="https://www.advsofteng.com/doc/cdcpp.htm#QChartViewer.htm"><b>QChartViewer</b></a>,
+the official implementation chart viewer for QT. Therefore the
+<a href="https://www.advsofteng.com/doc/cdcpp.htm#QChartViewer.htm"><b>QChartViewer documentation</b></a>
+can be used as a reference in large parts, too.
+
 \section version Version history
 
 <dl>
 
+<dt><b>2.0.0</b> - <i>July 2021</i></dt>
+<dd>
+Update to ChartDirector 7.0<br>
+Enhance drawing of selection box<br>
+Add support for DPI awareness<br>
+Remove support for wxWidgets versions 2.x
+</dd>
 <dt><b>1.0.0</b> - <i>July 2018</i></dt>
 <dd>
 First public release
@@ -111,6 +136,7 @@ his excellent support during the development of this component.
 #include <wx/timer.h>
 #include <wx/graphics.h>
 #include <wx/overlay.h>
+#include <wx/popupwin.h>
 
 #include "chartdir.h"
 
@@ -136,6 +162,7 @@ namespace Chart
 #endif
 
 // Forward declarations
+class WXDLLIMPEXP_FWD_WXCHARTVIEWER wxEnhancedTooltip;
 class WXDLLIMPEXP_FWD_WXCHARTVIEWER wxViewPortControl;
 
 /// Class representing a ChartDirector chart viewer control.
@@ -159,6 +186,37 @@ public:
 
   /// Destructor for a chart viewer control.
   ~wxChartViewer();
+
+  /// Sets the DPI (scale factor) of the chart on the screen.
+  /**
+   * Due to historical reasons, in programming, the display is assumed to be 96dpi (dot per inch).
+   * Modern operating systems also allows using higher DPI. For example, on Windows 10,
+   * in "Settings / System / Display", it is possible set a display scale factor
+   * such as 150%, which corresponds to 144dpi.
+   *
+   * If the application is configured as "not DPI aware", the OS will assume the application GUI is 96dpi.
+   * The operating system will then resize the application output before displaying it on the screen.
+   *
+   * If the application is configured as "DPI aware", the OS will assume the application will resize
+   * its GUI to match the display DPI, and the OS will not resize the application output again.
+   *
+   * wxChartViewer will automatically detect if the application is "DPI aware" or not,
+   * and will automatically resize the chart to match the display DPI.
+   *
+   * The setDPI method can be used to configure an alternative scale factor.
+   * For example, if the user code has already resized the chart, it is not necessary for the
+   * wxChartViewer to resize the chart again. In this case, setDPI can be used to set the DPI
+   * to 96 to disable the wxChartViewer from resizing the chart.
+   *
+   * \param dpi The DPI to display the chart on the screen. A value of 0 means the DPI will be automatically determined.
+   */
+  virtual void setDPI(int dpi);
+
+  /// Gets the DPI (scale factor) of the chart on the screen. 
+  /**
+   * \return The DPI of the chart on the screen.
+   */
+  virtual int getDPI();
 
   /// Sets a BaseChart object for display.
   /**
@@ -207,6 +265,23 @@ public:
    */
   virtual void setDefaultToolTip(const wxString& text);
 
+  /// Sets the CDML tooltip prefix.
+  /**
+   * wxChartViewer supports both standard tooltips and CDML tooltips.
+   * If the tooltip content starts with a CDML tag, it will be processed as a CDML tooltip,
+   * otherwise it will be processed as a standard tooltip. Standard tooltips are drawn by the GUI framework,
+   * so their style will be the same as in other GUI controls. CDML tooltips are drawn by ChartDirector,
+   * and can use multiple fonts and colors, contain tables and icons, and be semi-transparent.
+   *
+   * For CDML tooltips, if the tooltip content starts with "<*cdml*>", wxChartViewer will substitute it
+   * with the following CDML. It configures a white rounded rectangle with grey border as the tooltip container
+   * and sets the tooltip font color to black. The setCDMLToolTipPrefix method can be use to change CDML that
+   * substitute the "<*cdml*>" tag.
+   *
+   * \param prefix The text used to substitute the leading <*cdml*> tag.
+   */
+  virtual void setCDMLToolTipPrefix(const wxString& prefix);
+
   /// Sets the viewport control to be associated with this chart viewer control.
   /**
    * \param vpc The viewport control to be associated with this chart viewer.
@@ -243,7 +318,6 @@ public:
    */
   virtual wxColour getSelectionBorderColor();
 
-#if wxCHECK_VERSION(3,0,0)
   /// Sets the border style of the zoom selection box.
   /**
    * \param style The border style of the zoom selection box.
@@ -255,19 +329,6 @@ public:
    * \return The border style of the zoom selection box.
    */
   virtual wxPenStyle getSelectionBorderStyle();
-#else
-  /// Sets the border style of the zoom selection box.
-  /**
-  * \param style The border style of the zoom selection box.
-  */
-  virtual void setSelectionBorderStyle(int style);
-
-  /// Gets the border style of the zoom selection box.
-  /**
-  * \return The border style of the zoom selection box.
-  */
-  virtual int getSelectionBorderStyle();
-#endif
 
   /// Sets the mouse usage mode.
   /**
@@ -669,6 +730,24 @@ public:
    */
   virtual int getPlotAreaMouseY();
 
+  ///  Gets the position of the right side of the viewport.
+  /**
+   * The position of the viewport right side is its distance from the right side of the underlying surface,
+   * as a fraction of the width of the underlying surface. It should be between 0 and 1. 
+   *
+   * \return The position of the right side of the viewport.
+   */
+  virtual double getViewPortRight() { return getViewPortLeft() + getViewPortWidth(); }
+
+  ///  Gets the position of the bottom side of the viewport.
+  /**
+   * The position of the viewport bottom side is its distance from the bottom side of the underlying surface,
+   * as a fraction of the height of the underlying surface. It should be between 0 and 1.
+   *
+   * \return The position of the bottom side of the viewport.
+   */
+  virtual double getViewPortBottom() { return getViewPortTop() + getViewPortHeight(); }
+
   /// Convert from wxDateTime to chartTime
   /**
    * Many functions in the ChartDirector API accept dates/times as parameters, in which
@@ -779,14 +858,11 @@ private:
   /// wxChartViewer configurable properties
   BaseChart*       m_currentChart;             ///< Current BaseChart object
   ImageMapHandler* m_hotSpotTester;            ///< ImageMapHander representing the image map
+  BaseChart*       m_imageMapChart;            ///< BaseChart object for handling dynamic map
   wxString         m_defaultToolTip;           ///< Default tool tip text
   wxColour         m_selectBoxLineColor;       ///< Selectiom box border color
   int              m_selectBoxLineWidth;       ///< Selectiom box border width
-#if wxCHECK_VERSION(3,0,0)
   wxPenStyle       m_selectBoxLineStyle;       ///< Selection box pen style
-#else
-  int              m_selectBoxLineStyle;       ///< Selection box pen style
-#endif
 
   int    m_mouseUsage;             ///< Mouse usage mode
   int    m_zoomDirection;          ///< Zoom direction
@@ -817,6 +893,9 @@ private:
   /// Checks if mouse is dragging.
   bool IsDrag(int direction, wxMouseEvent& event);
 
+  /// Determines drag/zoom rectangle
+  void GetDragZoomRect(int px, int py, int& x, int& y, int& w, int& h);
+
   /// Handles mouse dragging.
   void OnPlotAreaMouseDrag(wxMouseEvent& point);
 
@@ -824,6 +903,7 @@ private:
 
   bool   m_rectVisible; ///< Current selection box is visible on screen
   wxRect m_currentRect; ///< Current selection box
+  wxRect m_previousRect; ///< Previous selection box
 
   /// Sets position and dimension of selection box.
   void SetSelectionRect(int x, int y, int width, int height);
@@ -831,10 +911,12 @@ private:
   /// Shows or hides the selection box.
   void SetRectVisible(bool b);
 
+  /// Draw the selection box.
+  void DrawSelectionRect(wxDC& dc);
+
   // Chart update rate control
 
   bool       m_holdTimerActive;               ///< Delay chart update to limit update frequency
-  int        m_holdTimerId;                   ///< The id of the hold timer.
   wxTimer    m_holdTimer;
   bool       m_isInViewPortChanged;           ///< Flag to avoid infinite update loops
 
@@ -846,7 +928,6 @@ private:
 
   unsigned int  m_lastMouseMove;              ///< The timestamp of the last mouse move event.
   wxMouseEvent* m_delayedMouseEvent;	        ///< The delayed mouse move event.
-  int           m_delayedMouseEventTimerId;   ///< The id of the delayed mouse move timer.
   wxTimer       m_delayedMouseEventTimer;
   void CommitMouseMove(wxMouseEvent& event);  ///< Raise the delayed mouse move event.
 
@@ -863,12 +944,27 @@ private:
   /// Attempts to remove the dynamic layer with the given message.
   void ApplyAutoHide(const wxString& msg);
 
+  // Enhanced tooltip support
+  wxEnhancedTooltip* m_enhancedToolTip;
+  wxString m_cdmlToolTipPrefix;
+  void ShowToolTip(const wxString& text, const wxPoint& cursorPosition);
+  void ShowEnhancedToolTip(const wxString& text, const wxPoint& cursorPosition = wxPoint(0,0));
+  void MoveEnhancedToolTip(const wxPoint& cursorPosition, const wxRect& rFrom);
+
   // wxViewPortControl support
   wxViewPortControl* m_vpControl;             ///< Associated wxViewPortControl      
   bool               m_reentrantGuard;				///< Prevents infinite calling loops
 
   wxBitmap  m_chartBitmap;  ///< Chart converted to a wxBitmap
-  wxOverlay m_overlay;      ///< Overlay for drawing the selection box on the overlay device context
+
+  // High DPI support
+  double ToImageX(int x);
+  double ToImageY(int y);
+  int ToDisplayX(double x);
+  int ToDisplayY(double y);
+  int m_dpi;
+  double m_toImageScaleX;
+  double m_toImageScaleY;
 };
 
 /// Class representing a ChartDirector viewport control.
@@ -1017,7 +1113,6 @@ private:
   bool m_isPlotAreaMouseDown;             ///< Mouse left button is down in the plot area.
 };
 
-#if wxCHECK_VERSION(3,0,0)
 /// Declaration of chart viewer event wxEVT_CHARTVIEWER_CLICKED
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_WXCHARTVIEWER, wxEVT_CHARTVIEWER_CLICKED, wxCommandEvent);
 /// Declaration of chart viewer event wxEVT_CHARTVIEWER_VIEWPORT_CHANGED
@@ -1032,22 +1127,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_WXCHARTVIEWER, wxEVT_CHARTVIEWER_MOUSEMOVE_
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_WXCHARTVIEWER, wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA, wxCommandEvent);
 /// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEWHEEL
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_WXCHARTVIEWER, wxEVT_CHARTVIEWER_MOUSEWHEEL, wxCommandEvent);
-#else
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_CLICKED
-extern WXDLLIMPEXP_WXCHARTVIEWER const wxEventType wxEVT_CHARTVIEWER_CLICKED;
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_VIEWPORT_CHANGED
-extern WXDLLIMPEXP_WXCHARTVIEWER const wxEventType wxEVT_CHARTVIEWER_VIEWPORT_CHANGED;
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEMOVE_CHART
-extern WXDLLIMPEXP_WXCHARTVIEWER const wxEventType wxEVT_CHARTVIEWER_MOUSEMOVE_CHART;
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSELEAVE_CHART
-extern WXDLLIMPEXP_WXCHARTVIEWER const wxEventType wxEVT_CHARTVIEWER_MOUSELEAVE_CHART;
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEMOVE_PLOTAREA
-extern WXDLLIMPEXP_WXCHARTVIEWER const wxEventType wxEVT_CHARTVIEWER_MOUSEMOVE_PLOTAREA;
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA
-extern WXDLLIMPEXP_WXCHARTVIEWER const wxEventType wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA;
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEWHEEL
-extern WXDLLIMPEXP_WXCHARTVIEWER const wxEventType wxEVT_CHARTVIEWER_MOUSEWHEEL;
-#endif
 
 /// Event emitted on left mouse button clicked on chart
 #define EVT_CHARTVIEWER_CLICKED(winid, fn) \

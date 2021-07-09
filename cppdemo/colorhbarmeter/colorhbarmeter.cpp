@@ -7,11 +7,14 @@ void createChart(int chartIndex, const char *filename)
 
     // The background, border and bar colors of the meters
     int bgColor[] = {0xbbddff, 0xccffcc, 0xffddff, 0xffffaa, 0xffdddd, 0xeeeeee};
+    const int bgColor_size = (int)(sizeof(bgColor)/sizeof(*bgColor));
     int borderColor[] = {0x000088, 0x006600, 0x880088, 0xee6600, 0x880000, 0x666666};
+    const int borderColor_size = (int)(sizeof(borderColor)/sizeof(*borderColor));
     int barColor[] = {0x0088ff, 0x00cc00, 0x8833dd, 0xff8800, 0xee3333, 0x888888};
+    const int barColor_size = (int)(sizeof(barColor)/sizeof(*barColor));
 
     // Create a LinearMeter object of size 260 x 80 pixels with a 3-pixel thick rounded frame
-    LinearMeter *m = new LinearMeter(260, 80, bgColor[chartIndex], borderColor[chartIndex]);
+    LinearMeter* m = new LinearMeter(260, 80, bgColor[chartIndex], borderColor[chartIndex]);
     m->setRoundedFrame(Chart::Transparent);
     m->setThickFrame(3);
 
@@ -26,24 +29,24 @@ void createChart(int chartIndex, const char *filename)
         // Add a 5-pixel thick smooth color scale at y = 48 (below the meter scale)
         double smoothColorScale[] = {0, 0x0000ff, 25, 0x0088ff, 50, 0x00ff00, 75, 0xdddd00, 100,
             0xff0000};
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 48, 5);
+        const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 48, 5);
     } else if (chartIndex % 4 == 1) {
         // Add a 5-pixel thick step color scale at y = 48 (below the meter scale)
         double stepColorScale[] = {0, 0x00cc00, 50, 0xffdd00, 80, 0xff3333, 100};
-        m->addColorScale(DoubleArray(stepColorScale, (int)(sizeof(stepColorScale) / sizeof(
-            stepColorScale[0]))), 48, 5);
+        const int stepColorScale_size = (int)(sizeof(stepColorScale)/sizeof(*stepColorScale));
+        m->addColorScale(DoubleArray(stepColorScale, stepColorScale_size), 48, 5);
     } else if (chartIndex % 4 == 2) {
         // Add a 5-pixel thick high/low color scale at y = 48 (below the meter scale)
         double highLowColorScale[] = {0, 0x0000ff, 40, Chart::Transparent, 60, Chart::Transparent,
             100, 0xff0000};
-        m->addColorScale(DoubleArray(highLowColorScale, (int)(sizeof(highLowColorScale) / sizeof(
-            highLowColorScale[0]))), 48, 5);
+        const int highLowColorScale_size = (int)(sizeof(highLowColorScale)/sizeof(*highLowColorScale));
+        m->addColorScale(DoubleArray(highLowColorScale, highLowColorScale_size), 48, 5);
     } else {
         // Add a 5-pixel thick high only color scale at y = 48 (below the meter scale)
         double highColorScale[] = {70, Chart::Transparent, 100, 0xff0000};
-        m->addColorScale(DoubleArray(highColorScale, (int)(sizeof(highColorScale) / sizeof(
-            highColorScale[0]))), 48, 0, 48, 8);
+        const int highColorScale_size = (int)(sizeof(highColorScale)/sizeof(*highColorScale));
+        m->addColorScale(DoubleArray(highColorScale, highColorScale_size), 48, 0, 48, 8);
     }
 
     // Add a bar from 0 to value with glass effect and 4 pixel rounded corners
@@ -51,12 +54,11 @@ void createChart(int chartIndex, const char *filename)
         ;
 
     // Add a label right aligned to (243, 65) using 8pt Arial Bold font
-    m->addText(243, 65, "Temperature C", "arialbd.ttf", 8, Chart::TextColor, Chart::Right);
+    m->addText(243, 65, "Temperature C", "Arial Bold", 8, Chart::TextColor, Chart::Right);
 
     // Add a text box left aligned to (18, 65). Display the value using white (0xffffff) 8pt Arial
     // Bold font on a black (0x000000) background with depressed rounded border.
-    TextBox *t = m->addText(18, 65, m->formatValue(value, "2"), "arial.ttf", 8, 0xffffff,
-        Chart::Left);
+    TextBox* t = m->addText(18, 65, m->formatValue(value, "2"), "Arial", 8, 0xffffff, Chart::Left);
     t->setBackground(0x000000, 0x000000, -1);
     t->setRoundedCorners(3);
 
@@ -65,6 +67,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

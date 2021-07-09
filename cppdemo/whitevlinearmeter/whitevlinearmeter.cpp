@@ -7,7 +7,7 @@ void createChart(int chartIndex, const char *filename)
 
     // Create a LinearMeter object of size 250 x 75 pixels with very light grey (0xeeeeee)
     // backgruond and a light grey (0xccccccc) 3-pixel thick rounded frame
-    LinearMeter *m = new LinearMeter(70, 260, 0xeeeeee, 0xcccccc);
+    LinearMeter* m = new LinearMeter(70, 260, 0xeeeeee, 0xcccccc);
     m->setRoundedFrame(Chart::Transparent);
     m->setThickFrame(3);
 
@@ -21,36 +21,33 @@ void createChart(int chartIndex, const char *filename)
     // Demostrate different types of color scales and putting them at different positions
     double smoothColorScale[] = {0, 0x6666ff, 25, 0x00bbbb, 50, 0x00ff00, 75, 0xffff00, 100,
         0xff0000};
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
     double stepColorScale[] = {0, 0x33ff33, 50, 0xffff33, 80, 0xff3333, 100};
+    const int stepColorScale_size = (int)(sizeof(stepColorScale)/sizeof(*stepColorScale));
     double highLowColorScale[] = {0, 0x6666ff, 70, Chart::Transparent, 100, 0xff0000};
+    const int highLowColorScale_size = (int)(sizeof(highLowColorScale)/sizeof(*highLowColorScale));
 
     if (chartIndex == 0) {
         // Add the smooth color scale at the default position
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))));
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size));
     } else if (chartIndex == 1) {
         // Add the step color scale at the default position
-        m->addColorScale(DoubleArray(stepColorScale, (int)(sizeof(stepColorScale) / sizeof(
-            stepColorScale[0]))));
+        m->addColorScale(DoubleArray(stepColorScale, stepColorScale_size));
     } else if (chartIndex == 2) {
         // Add the high low scale at the default position
-        m->addColorScale(DoubleArray(highLowColorScale, (int)(sizeof(highLowColorScale) / sizeof(
-            highLowColorScale[0]))));
+        m->addColorScale(DoubleArray(highLowColorScale, highLowColorScale_size));
     } else if (chartIndex == 3) {
         // Add the smooth color scale starting at x = 28 (left of scale) with zero width and ending
         // at x = 28 with 20 pixels width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 28, 0, 28, 20);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 28, 0, 28, 20);
     } else if (chartIndex == 4) {
         // Add the smooth color scale starting at x = 38 (center of scale) with zero width and
         // ending at x = 28 with 20 pixels width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 38, 0, 28, 20);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 38, 0, 28, 20);
     } else {
         // Add the smooth color scale starting at x = 48 (right of scale) with zero width and ending
         // at x = 28 with 20 pixels width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 48, 0, 28, 20);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 48, 0, 28, 20);
     }
 
     // In this demo, we demostrate pointers of different shapes
@@ -63,12 +60,12 @@ void createChart(int chartIndex, const char *filename)
     }
 
     // Add a title using 8pt Arial Bold font with a border color background
-    m->addTitle("Temp C", "arialbd.ttf", 8, Chart::TextColor)->setBackground(0xcccccc);
+    m->addTitle("Temp C", "Arial Bold", 8, Chart::TextColor)->setBackground(0xcccccc);
 
     // Add a text box at the bottom-center. Display the value using white (0xffffff) 8pt Arial Bold
     // font on a black (0x000000) background with rounded border.
-    TextBox *t = m->addText(m->getWidth() / 2, m->getHeight() - 8, m->formatValue(value, "2"),
-        "arialbd.ttf", 8, 0xffffff, Chart::Bottom);
+    TextBox* t = m->addText(m->getWidth() / 2, m->getHeight() - 8, m->formatValue(value, "2"),
+        "Arial Bold", 8, 0xffffff, Chart::Bottom);
     t->setBackground(0x000000);
     t->setRoundedCorners(3);
     t->setMargin(5, 5, 2, 1);
@@ -78,6 +75,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

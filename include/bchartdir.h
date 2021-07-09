@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Advanced Software Engineering Limited.
+ * Copyright (C) 2021 Advanced Software Engineering Limited.
  *
  * This file is part of the ChartDirector software. Usage of this file is
  * subjected to the ChartDirector license agreement. See the LICENSE.TXT
@@ -24,6 +24,8 @@ extern "C" {
 
 // Forward declarations
 class DrawAreaInternal;
+class BaseChartInternal;
+class DataAcceleratorInternal;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -33,6 +35,7 @@ CHARTDIR_DLLAPI int __cdecl CChart_getVersion();
 CHARTDIR_DLLAPI const char * __cdecl CChart_getDescription();
 CHARTDIR_DLLAPI const char * __cdecl CChart_getCopyright();
 CHARTDIR_DLLAPI void __cdecl CChart_getBootLog(char *buffer);
+CHARTDIR_DLLAPI void* __cdecl CChart_getResourceLoader();
 CHARTDIR_DLLAPI void __cdecl CChart_setResourceLoader(bool (*loader)(const char *id, char *(*allocator)(int), char **data, int *len));
 CHARTDIR_DLLAPI void __cdecl CChart_setResource(const char *id, const char *data, int len);
 CHARTDIR_DLLAPI void __cdecl CChart_setResource2(const char *id, DrawAreaInternal *d);
@@ -60,11 +63,13 @@ CHARTDIR_DLLAPI	int __cdecl CChart_cylinderEffect(int orientation, double ambien
 	double diffuseIntensity, double specularIntensity, int shininess);
 CHARTDIR_DLLAPI	int __cdecl CChart_flatBorder(int thickness);
 CHARTDIR_DLLAPI int __cdecl CChart_arrowShape(double angle, double widthRatio, double stemWidthRatio, double stemLengthRatio);
+CHARTDIR_DLLAPI int __cdecl CChart_xySize(int w, int h);
 
 CHARTDIR_DLLAPI	double __cdecl CChart_bSearch(const double *a, int len, double v);
 CHARTDIR_DLLAPI	int __cdecl CChart_ClearTypeMono(double gamma);
 CHARTDIR_DLLAPI	int __cdecl CChart_ClearTypeColor(double gamma);
 CHARTDIR_DLLAPI	int __cdecl CChart_phongLighting(double ambientIntensity, double diffuseIntensity, double specularIntensity, int shininess);
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +85,7 @@ CHARTDIR_DLLAPI void __cdecl CTTFText_draw(TTFTextInternal *ptr, int x, int y, i
 
 CHARTDIR_DLLAPI DrawAreaInternal * __cdecl CDrawArea_create();
 CHARTDIR_DLLAPI void __cdecl CDrawArea_destroy(DrawAreaInternal *ptr);
-CHARTDIR_DLLAPI void __cdecl CDrawArea_enableVectorOutput(DrawAreaInternal *ptr);
+CHARTDIR_DLLAPI void __cdecl CDrawArea_enableVectorOutput(DrawAreaInternal* ptr); 
 CHARTDIR_DLLAPI void __cdecl CDrawArea_setSize(DrawAreaInternal *ptr, int width, int height, int bgColor);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_resize(DrawAreaInternal *ptr, int newWidth, int newHeight, int f, double blur);
 CHARTDIR_DLLAPI int __cdecl CDrawArea_getWidth(DrawAreaInternal *ptr);
@@ -105,6 +110,7 @@ CHARTDIR_DLLAPI void __cdecl CDrawArea_arc(DrawAreaInternal *ptr, int cx, int cy
 CHARTDIR_DLLAPI void __cdecl CDrawArea_rect(DrawAreaInternal *ptr, int x1, int y1, int x2, int y2, int edgeColor, int fillColor, int raisedEffect);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_polygon2(DrawAreaInternal *ptr, const int *xData, int xLen, const int *yData, int yLen, int edgeColor, int fillColor);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_polygon(DrawAreaInternal *ptr, const double *xData, int xLen, const double *yData, int yLen, int edgeColor, int fillColor);
+CHARTDIR_DLLAPI void __cdecl CDrawArea_polyShape(DrawAreaInternal* ptr, const int* xyData, int xyLen, int edgeColor, int fillColor);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_surface(DrawAreaInternal *ptr, double x1, double y1, double x2, double y2, int depthX, int depthY,
 	int edgeColor, int fillColor);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_sector(DrawAreaInternal *ptr, int cx, int cy, int rx, int ry, double a1, double a2, int edgeColor, int fillColor);
@@ -198,6 +204,7 @@ CHARTDIR_DLLAPI int __cdecl CDrawArea_linearGradientColor(DrawAreaInternal *ptr,
 CHARTDIR_DLLAPI int __cdecl CDrawArea_linearGradientColor2(DrawAreaInternal *ptr, int startX, int startY, int endX, int endY, const int *cData, int cLen, bool periodic);
 CHARTDIR_DLLAPI int __cdecl CDrawArea_radialGradientColor(DrawAreaInternal *ptr, int cx, int cy, int rx, int ry, int startColor, int endColor, bool periodic);
 CHARTDIR_DLLAPI int __cdecl CDrawArea_radialGradientColor2(DrawAreaInternal *ptr, int cx, int cy, int rx, int ry, const int *cData, int cLen, bool periodic);
+CHARTDIR_DLLAPI int __cdecl CDrawArea_angleGradientColor(DrawAreaInternal* ptr, double cx, double cy, double a1, double a2, double r1, double r2, const int *data, int len);
 
 CHARTDIR_DLLAPI int __cdecl CDrawArea_reduceColors(DrawAreaInternal *ptr, int colorCount, bool blackAndWhite);
 
@@ -209,6 +216,7 @@ CHARTDIR_DLLAPI void __cdecl CDrawArea_removeDynamicLayer(DrawAreaInternal *ptr,
 CHARTDIR_DLLAPI void __cdecl CDrawArea_setResource(DrawAreaInternal *ptr, const char *id, const char *data, int len);
 CHARTDIR_DLLAPI void __cdecl CDrawArea_setResource2(DrawAreaInternal *ptr, const char *id, DrawAreaInternal *d);
 
+CHARTDIR_DLLAPI void __cdecl CDrawArea_renderCDML(DrawAreaInternal* ptr, const char* cdml);
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //	drawobj.h
@@ -302,7 +310,7 @@ CHARTDIR_DLLAPI const char * __cdecl CLegendBox_getHTMLImageMap(LegendBoxInterna
 
 class BaseChartInternal;
 CHARTDIR_DLLAPI void __cdecl CBaseChart_destroy(BaseChartInternal *ptr);
-CHARTDIR_DLLAPI void __cdecl CBaseChart_enableVectorOutput(BaseChartInternal *ptr);
+CHARTDIR_DLLAPI void __cdecl CBaseChart_enableVectorOutput(BaseChartInternal* ptr);
 
 CHARTDIR_DLLAPI void __cdecl CBaseChart_setSize(BaseChartInternal *ptr, int width, int height);
 CHARTDIR_DLLAPI int __cdecl CBaseChart_getWidth(BaseChartInternal *ptr);
@@ -383,6 +391,13 @@ CHARTDIR_DLLAPI int __cdecl CBaseChart_getAbsOffsetY(BaseChartInternal *ptr);
 CHARTDIR_DLLAPI DrawAreaInternal *__cdecl CBaseChart_initDynamicLayer(BaseChartInternal *ptr) ;
 CHARTDIR_DLLAPI void __cdecl CBaseChart_removeDynamicLayer(BaseChartInternal *ptr);
 CHARTDIR_DLLAPI const char * __cdecl CBaseChart_getJsChartModel(BaseChartInternal *ptr, const char *options);
+
+class MultiPagePDFInternal;
+CHARTDIR_DLLAPI MultiPagePDFInternal* __cdecl CMultiPagePDF_create();
+CHARTDIR_DLLAPI void __cdecl CMultiPagePDF_destroy(MultiPagePDFInternal* ptr);
+CHARTDIR_DLLAPI void __cdecl CMultiPagePDF_addPage(MultiPagePDFInternal* ptr, DrawAreaInternal *d);
+CHARTDIR_DLLAPI bool __cdecl CMultiPagePDF_outPDF(MultiPagePDFInternal* ptr, const char *pathname);
+CHARTDIR_DLLAPI void __cdecl CMultiPagePDF_outPDF2(MultiPagePDFInternal* ptr, const char **data, int *len);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -492,6 +507,7 @@ CHARTDIR_DLLAPI void __cdecl CAxis_setDateScale2(AxisInternal *ptr, double lower
 CHARTDIR_DLLAPI void __cdecl CAxis_setDateScale(AxisInternal *ptr, double lowerLimit, double upperLimit, double majorTickInc, double minorTickInc);
 
 CHARTDIR_DLLAPI void __cdecl CAxis_syncAxis(AxisInternal *ptr, const AxisInternal *axis, double slope, double intercept);
+CHARTDIR_DLLAPI void __cdecl CAxis_syncScale(AxisInternal* ptr, const AxisInternal* axis, double slope, double intercept);
 CHARTDIR_DLLAPI void __cdecl CAxis_copyAxis(AxisInternal *ptr, const AxisInternal *axis);
 
 CHARTDIR_DLLAPI void __cdecl CAxis_addLabel(AxisInternal *ptr, double pos, const char *label);
@@ -539,6 +555,8 @@ CHARTDIR_DLLAPI AxisInternal * __cdecl ColorAxis2Axis(ColorAxisInternal *ptr);
 
 CHARTDIR_DLLAPI void __cdecl CColorAxis_setColorGradient(ColorAxisInternal *ptr, bool isContinuous, const int *colorsData, int colorsLen, int underflowColor, int overflowColor);
 CHARTDIR_DLLAPI void __cdecl CColorAxis_setColorScale(ColorAxisInternal *ptr, const double *colorsData, int colorsLen, int underflowColor, int overflowColor);
+CHARTDIR_DLLAPI void __cdecl CColorAxis_getColorScale(ColorAxisInternal* ptr, const double** d, int* len);
+
 CHARTDIR_DLLAPI void __cdecl CColorAxis_setAxisPos(ColorAxisInternal *ptr, int x, int y, int alignment);
 CHARTDIR_DLLAPI void __cdecl CColorAxis_setLevels(ColorAxisInternal *ptr, int maxLevels);
 CHARTDIR_DLLAPI void __cdecl CColorAxis_setCompactAxis(ColorAxisInternal *ptr, bool b);
@@ -764,6 +782,26 @@ CHARTDIR_DLLAPI ColorAxisInternal * __cdecl CContourLayer_colorAxis(ContourLayer
 CHARTDIR_DLLAPI void __cdecl CContourLayer_setZBounds(ContourLayerInternal *ptr, double minZ, double maxZ);
 CHARTDIR_DLLAPI void __cdecl CContourLayer_setExactContour(ContourLayerInternal *ptr, bool contour, bool markContour);
 
+CHARTDIR_DLLAPI void __cdecl CContourLayer_setContourLabelFormat(ContourLayerInternal* ptr, const char* formatString);
+CHARTDIR_DLLAPI TextBoxInternal * __cdecl CContourLayer_setContourLabelStyle(ContourLayerInternal* ptr, const char* font, double fontSize, int fontColor);
+CHARTDIR_DLLAPI MarkInternal* __cdecl CContourLayer_addCustomContour(ContourLayerInternal* ptr, double z, int contourColor, int contourWidth, const char *contourLabel, const char* font, double fontSize, int fontColor);
+CHARTDIR_DLLAPI void __cdecl CContourLayer_setContourLabelSpacing(ContourLayerInternal* ptr, int labelSpacing, int minContourLen);
+CHARTDIR_DLLAPI double __cdecl CContourLayer_getZAtValue(ContourLayerInternal *ptr, double x, double y);
+CHARTDIR_DLLAPI double __cdecl CContourLayer_getZAtPixel (ContourLayerInternal* ptr, int px, int py);
+CHARTDIR_DLLAPI void __cdecl CContourLayer_getCrossSection(ContourLayerInternal* ptr, int x0, int y0, int x1, int y1, const double **data, int *len);
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//	discreteheatmaplayer.h
+////////////////////////////////////////////////////////////////////////////////////////
+class DiscreteHeatMapLayerInternal;
+CHARTDIR_DLLAPI LayerInternal* __cdecl DiscreteHeatMapLayer2Layer(DiscreteHeatMapLayerInternal* ptr);
+
+CHARTDIR_DLLAPI void __cdecl CDiscreteHeatMapLayer_setDirectColoring(DiscreteHeatMapLayerInternal* ptr, bool b);
+CHARTDIR_DLLAPI void __cdecl CDiscreteHeatMapLayer_setCellGap(DiscreteHeatMapLayerInternal* ptr, int gap);
+CHARTDIR_DLLAPI ColorAxisInternal* __cdecl CDiscreteHeatMapLayer_setColorAxis(DiscreteHeatMapLayerInternal* ptr, int x, int y, int alignment, int length, int orientation);
+CHARTDIR_DLLAPI ColorAxisInternal* __cdecl CDiscreteHeatMapLayer_colorAxis(DiscreteHeatMapLayerInternal* ptr);
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //	xychart.h
@@ -805,6 +843,8 @@ CHARTDIR_DLLAPI int __cdecl CXYChart_getXCoor(XYChartInternal *ptr, double v);
 CHARTDIR_DLLAPI int __cdecl CXYChart_getYCoor(XYChartInternal *ptr, double v, const AxisInternal *yAxis);
 CHARTDIR_DLLAPI int __cdecl CXYChart_xZoneColor(XYChartInternal *ptr, double threshold, int belowColor, int aboveColor);
 CHARTDIR_DLLAPI int __cdecl CXYChart_yZoneColor(XYChartInternal *ptr, double threshold, int belowColor, int aboveColor, const AxisInternal *axis);
+CHARTDIR_DLLAPI int __cdecl CXYChart_xScaleColor(XYChartInternal* ptr, const double *colorData, int colorLen);
+CHARTDIR_DLLAPI int __cdecl CXYChart_yScaleColor(XYChartInternal* ptr, const double* colorData, int colorLen, const AxisInternal* axis);
 
 CHARTDIR_DLLAPI PlotAreaInternal * __cdecl CXYChart_setPlotArea(XYChartInternal *ptr, int x, int y, int width, int height, int bgColor, int altBgColor, int edgeColor, int hGridColor, int vGridColor);
 CHARTDIR_DLLAPI PlotAreaInternal * __cdecl CXYChart_getPlotArea(XYChartInternal *ptr);
@@ -817,6 +857,7 @@ CHARTDIR_DLLAPI BarLayerInternal * __cdecl CXYChart_addBarLayer2(XYChartInternal
 
 CHARTDIR_DLLAPI LineLayerInternal * __cdecl CXYChart_addLineLayer(XYChartInternal *ptr, const double *dataData, int dataLen, int color, const char *name, int depth);
 CHARTDIR_DLLAPI LineLayerInternal * __cdecl CXYChart_addLineLayer2(XYChartInternal *ptr, int dataCombineMethod, int depth);
+CHARTDIR_DLLAPI LineLayerInternal * __cdecl CXYChart_addLineLayer3(XYChartInternal* ptr, const DataAcceleratorInternal *fastDB, const char *id, int color, const char *name); 
 
 CHARTDIR_DLLAPI AreaLayerInternal * __cdecl CXYChart_addAreaLayer(XYChartInternal *ptr, const double *dataData, int dataLen, int color, const char *name, int depth);
 CHARTDIR_DLLAPI AreaLayerInternal * __cdecl CXYChart_addAreaLayer2(XYChartInternal *ptr, int dataCombineMethod, int depth);
@@ -847,7 +888,7 @@ CHARTDIR_DLLAPI BoxWhiskerLayerInternal * __cdecl CXYChart_addBoxLayer(XYChartIn
 CHARTDIR_DLLAPI ScatterLayerInternal * __cdecl CXYChart_addScatterLayer(XYChartInternal *ptr, const double *xDataData, int xDataLen, const double *yDataData, int yDataLen, const char *name,
 	int symbol, int symbolSize, int fillColor, int edgeColor);
 
-CHARTDIR_DLLAPI TrendLayerInternal * __cdecl CXYChart_addTrendLayer(XYChartInternal *ptr, const double *dataData, int dataLen, int color, const char *name, int depth);
+CHARTDIR_DLLAPI TrendLayerInternal* __cdecl CXYChart_addTrendLayer(XYChartInternal* ptr, const double* dataData, int dataLen, int color, const char* name, int depth);
 CHARTDIR_DLLAPI TrendLayerInternal * __cdecl CXYChart_addTrendLayer2(XYChartInternal *ptr, const double *xDataData, int xDataLen, const double *yDataData, int yDataLen, int color, const char *name, int depth);
 
 CHARTDIR_DLLAPI SplineLayerInternal * __cdecl CXYChart_addSplineLayer(XYChartInternal *ptr, const double *dataData, int dataLen, int color, const char *name);
@@ -860,6 +901,10 @@ CHARTDIR_DLLAPI VectorLayerInternal * __cdecl CXYChart_addVectorLayer(XYChartInt
 
 CHARTDIR_DLLAPI ContourLayerInternal * __cdecl CXYChart_addContourLayer(XYChartInternal *ptr, const double *xDataData, int xDataLen, 
 	const double *yDataData, int yDataLen, const double *zDataData, int zDataLen);
+
+CHARTDIR_DLLAPI DiscreteHeatMapLayerInternal* __cdecl CXYChart_addDiscreteHeatMapLayer(XYChartInternal* ptr, const double* xGridData, int xGridLen,
+	const double* yGridData, int yGridLen, const double* zDataData, int zDataLen);
+CHARTDIR_DLLAPI DiscreteHeatMapLayerInternal* __cdecl CXYChart_addDiscreteHeatMapLayer2(XYChartInternal* ptr, const double* zDataData, int zDataLen, int xWidth);
 
 CHARTDIR_DLLAPI void __cdecl CXYChart_layoutAxes(XYChartInternal *ptr);
 CHARTDIR_DLLAPI void __cdecl CXYChart_packPlotArea(XYChartInternal *ptr, int leftX, int topY, int rightX, int bottomY, int minWidth, int minHeight);
@@ -879,7 +924,12 @@ class ThreeDChartInternal;
 CHARTDIR_DLLAPI BaseChartInternal * __cdecl ThreeDChart2BaseChart(ThreeDChartInternal *ptr);
 
 CHARTDIR_DLLAPI void __cdecl CThreeDChart_setPlotRegion(ThreeDChartInternal *ptr, int cx, int cy, int xWidth, int yDepth, int zHeight);
+CHARTDIR_DLLAPI int __cdecl CThreeDChart_getPlotRegionWidth(ThreeDChartInternal* ptr);
+CHARTDIR_DLLAPI int __cdecl CThreeDChart_getPlotRegionDepth(ThreeDChartInternal* ptr);
+CHARTDIR_DLLAPI int __cdecl CThreeDChart_getPlotRegionHeight(ThreeDChartInternal* ptr);
 CHARTDIR_DLLAPI void __cdecl CThreeDChart_setViewAngle(ThreeDChartInternal *ptr, double elevation, double rotation, double twist);
+CHARTDIR_DLLAPI double __cdecl CThreeDChart_getElevationAngle(ThreeDChartInternal* ptr);
+CHARTDIR_DLLAPI double __cdecl CThreeDChart_getRotationAngle(ThreeDChartInternal* ptr);
 CHARTDIR_DLLAPI void __cdecl CThreeDChart_setPerspective(ThreeDChartInternal *ptr, double perspective);
 
 CHARTDIR_DLLAPI AxisInternal * __cdecl CThreeDChart_xAxis(ThreeDChartInternal *ptr);
@@ -903,9 +953,12 @@ class SurfaceChartInternal;
 CHARTDIR_DLLAPI ThreeDChartInternal * __cdecl SurfaceChart2ThreeDChart(SurfaceChartInternal *ptr);
 CHARTDIR_DLLAPI SurfaceChartInternal * __cdecl CSurfaceChart_create(int width, int height, int bgColor, int edgeColor, int raisedEffect);
 	
-CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setData(SurfaceChartInternal *ptr, const double *xDataData, int xDataLen, 
-	const double *yDataData, int yDataLen, const double *zDataData, int zDataLen);
-CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setInterpolation(SurfaceChartInternal *ptr, int xSamples, int ySamples, bool isSmooth);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setData(SurfaceChartInternal* ptr, const double* xDataData, int xDataLen,
+	const double* yDataData, int yDataLen, const double* zDataData, int zDataLen);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setData2(SurfaceChartInternal* ptr, const double* xDataData, int xDataLen,
+	const double* yDataData, int yDataLen, const double* zDataData, int zDataLen, const double* wDataData, int wDataLen);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setInterpolation(SurfaceChartInternal* ptr, int xSamples, int ySamples, bool isSmooth);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setInterpolation2(SurfaceChartInternal *ptr, int xSamples, int ySamples, bool isSmooth, bool isColorSmooth);
 	
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setLighting(SurfaceChartInternal *ptr, double ambientIntensity, double diffuseIntensity, double specularIntensity, double shininess);
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setShadingMode(SurfaceChartInternal *ptr, int shadingMode, int wireWidth);
@@ -913,10 +966,17 @@ CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setShadingMode(SurfaceChartInternal *
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setSurfaceAxisGrid(SurfaceChartInternal *ptr, int majorXGridColor, int majorYGridColor, int minorXGridColor, int minorYGridColor);
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setSurfaceDataGrid(SurfaceChartInternal *ptr, int xGridColor, int yGridColor);
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setContourColor(SurfaceChartInternal *ptr, int contourColor, int minorContourColor);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setWContourColor(SurfaceChartInternal* ptr, int wContourColor, int wMinorContourColor);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setSurfaceTexture(SurfaceChartInternal* ptr, int patternColor);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_addXYProjection(SurfaceChartInternal* ptr, int offset);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_addSurfaceLine(SurfaceChartInternal* ptr, const double* x, int xLen, const double* y, int yLen, int color, int lineWidth, int side);
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_addSurfaceZone(SurfaceChartInternal* ptr, double x1, double y1, double x2, double y2, int fillColor, int edgeColor, int edgeWidth);
 
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setBackSideBrightness(SurfaceChartInternal *ptr, double brightness);
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setBackSideColor(SurfaceChartInternal *ptr, int color);
 CHARTDIR_DLLAPI void __cdecl CSurfaceChart_setBackSideLighting(SurfaceChartInternal *ptr, double ambientLight, double diffuseLight, double specularLight, double shininess);
+
+CHARTDIR_DLLAPI void __cdecl CSurfaceChart_getValuesAtPixel(SurfaceChartInternal *ptr, const double **d, int *len, int x, int y);
 
 class ThreeDScatterGroupInternal;
 CHARTDIR_DLLAPI void __cdecl CThreeDScatterGroup_setDataSymbol(ThreeDScatterGroupInternal *ptr, int symbol, int size, int fillColor, int edgeColor, int lineWidth);
@@ -1174,6 +1234,18 @@ CHARTDIR_DLLAPI TextBoxInternal * __cdecl CLinearMeter_addBar(LinearMeterInterna
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
+//	dataaccelerator.h
+////////////////////////////////////////////////////////////////////////////////////////
+class DataAcceleratorInternal;
+CHARTDIR_DLLAPI DataAcceleratorInternal* __cdecl CDataAccelerator_create(const double* aData, int aLen);
+CHARTDIR_DLLAPI void __cdecl CDataAccelerator_destroy(class DataAcceleratorInternal* ptr);
+
+CHARTDIR_DLLAPI void __cdecl CDataAccelerator_addDataSeries(DataAcceleratorInternal* ptr, const char* id, const double* yData, int yDataLen);
+CHARTDIR_DLLAPI void __cdecl CDataAccelerator_extendLength(DataAcceleratorInternal* ptr, int len);
+CHARTDIR_DLLAPI void __cdecl CDataAccelerator_setSubsetRange(DataAcceleratorInternal* ptr, double xStart, double xEnd, int resolution);
+
+
+////////////////////////////////////////////////////////////////////////////////////////
 //	datafilter.h
 ////////////////////////////////////////////////////////////////////////////////////////
 class ArrayMathInternal;
@@ -1261,6 +1333,10 @@ CHARTDIR_DLLAPI void __cdecl CRanTable_getCol(RanTableInternal *ptr, int i, cons
 class RanSeriesInternal;
 CHARTDIR_DLLAPI RanSeriesInternal *__cdecl CRanSeries_create(int seed);
 CHARTDIR_DLLAPI void __cdecl CRanSeries_destroy(RanSeriesInternal *ptr);
+CHARTDIR_DLLAPI void __cdecl CRanSeries_fillSeries(RanSeriesInternal* ptr, double *ret, int len, double minValue, double maxValue);
+CHARTDIR_DLLAPI void __cdecl CRanSeries_fillSeries2(RanSeriesInternal* ptr, double *ret, int len, double startValue, double minDelta, double maxDelta, double lowerLimit, double upperLimit);
+CHARTDIR_DLLAPI void __cdecl CRanSeries_fillDateSeries(RanSeriesInternal* ptr, double *ret, int len, double startTime, double tickInc, bool weekDayOnly);
+
 CHARTDIR_DLLAPI void __cdecl CRanSeries_getSeries(RanSeriesInternal *ptr, int len, double minValue, double maxValue, const double **ret, int *retLen);
 CHARTDIR_DLLAPI void __cdecl CRanSeries_getSeries2(RanSeriesInternal *ptr, int len, double startValue, double minDelta, double maxDelta, double lowerLimit, double upperLimit, const double **ret, int *retLen);
 CHARTDIR_DLLAPI void __cdecl CRanSeries_getGaussianSeries(RanSeriesInternal *ptr, int len, double mean, double stdDev, const double **ret, int *retLen);
@@ -1285,7 +1361,8 @@ CHARTDIR_DLLAPI void __cdecl CFinanceSimulator_getVolData(FinanceSimulatorIntern
 class ImageMapHandlerInternal;
 CHARTDIR_DLLAPI ImageMapHandlerInternal * __cdecl CImageMapHandler_create(const char *imageMap);
 CHARTDIR_DLLAPI void __cdecl CImageMapHandler_destroy(ImageMapHandlerInternal *ptr);
-CHARTDIR_DLLAPI int __cdecl CImageMapHandler_getHotSpot(ImageMapHandlerInternal *ptr, int x, int y);
+CHARTDIR_DLLAPI int __cdecl CImageMapHandler_getHotSpot(ImageMapHandlerInternal* ptr, int x, int y);
+CHARTDIR_DLLAPI int __cdecl CImageMapHandler_getHotSpot2(ImageMapHandlerInternal *ptr, double x, double y, BaseChartInternal *c);
 CHARTDIR_DLLAPI const char * __cdecl CImageMapHandler_getValue(ImageMapHandlerInternal *ptr, const char *key);
 CHARTDIR_DLLAPI const char * __cdecl CImageMapHandler_getKey(ImageMapHandlerInternal *ptr, int i);
 CHARTDIR_DLLAPI const char * __cdecl CImageMapHandler_getValue2(ImageMapHandlerInternal *ptr, int i);
@@ -1318,16 +1395,23 @@ CHARTDIR_DLLAPI double __cdecl CViewPortManager_getZoomInHeightLimit(ViewPortMan
 CHARTDIR_DLLAPI double __cdecl CViewPortManager_getZoomOutHeightLimit(ViewPortManagerInternal *ptr);
 CHARTDIR_DLLAPI void __cdecl CViewPortManager_setZoomInHeightLimit(ViewPortManagerInternal *ptr, double viewPortHeight);
 CHARTDIR_DLLAPI void __cdecl CViewPortManager_setZoomOutHeightLimit(ViewPortManagerInternal *ptr, double viewPortHeight);
+CHARTDIR_DLLAPI double __cdecl CViewPortManager_getZoomXYRatio(ViewPortManagerInternal* ptr);
 
 CHARTDIR_DLLAPI void __cdecl CViewPortManager_validateViewPort(ViewPortManagerInternal *ptr);
-CHARTDIR_DLLAPI bool __cdecl CViewPortManager_inPlotArea(ViewPortManagerInternal *ptr, int x, int y);
+CHARTDIR_DLLAPI void __cdecl CViewPortManager_setKeepAspectRatio(ViewPortManagerInternal* ptr, bool b);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_inPlotArea(ViewPortManagerInternal* ptr, int x, int y);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_inPlotArea2(ViewPortManagerInternal *ptr, double x, double y);
 CHARTDIR_DLLAPI bool __cdecl CViewPortManager_canZoomIn(ViewPortManagerInternal *ptr, int zoomDirection);
 CHARTDIR_DLLAPI bool __cdecl CViewPortManager_canZoomOut(ViewPortManagerInternal *ptr, int zoomDirection);
 CHARTDIR_DLLAPI void __cdecl CViewPortManager_startDrag(ViewPortManagerInternal *ptr);
-CHARTDIR_DLLAPI bool __cdecl CViewPortManager_dragTo(ViewPortManagerInternal *ptr, int scrollDirection, int deltaX, int deltaY);
-CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomAt(ViewPortManagerInternal *ptr, int zoomDirection, int x, int y, double zoomRatio);
-CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomTo(ViewPortManagerInternal *ptr, int zoomDirection, int x1, int y1, int x2, int y2);
-CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomAround(ViewPortManagerInternal *ptr, int x, int y, double xZoomRatio, double yZoomRatio);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_dragTo(ViewPortManagerInternal* ptr, int scrollDirection, int deltaX, int deltaY);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_dragTo2(ViewPortManagerInternal *ptr, int scrollDirection, double deltaX, double deltaY);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomAt(ViewPortManagerInternal* ptr, int zoomDirection, int x, int y, double zoomRatio);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomAt2(ViewPortManagerInternal *ptr, int zoomDirection, double x, double y, double zoomRatio);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomTo(ViewPortManagerInternal* ptr, int zoomDirection, int x1, int y1, int x2, int y2);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomTo2(ViewPortManagerInternal *ptr, int zoomDirection, double x1, double y1, double x2, double y2);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomAround2(ViewPortManagerInternal *ptr, double x, double y, double xZoomRatio, double yZoomRatio);
+CHARTDIR_DLLAPI bool __cdecl CViewPortManager_zoomAround(ViewPortManagerInternal* ptr, int x, int y, double xZoomRatio, double yZoomRatio);
 
 CHARTDIR_DLLAPI void __cdecl CViewPortManager_setFullRange(ViewPortManagerInternal *ptr, const char *id, double minValue, double maxValue);
 CHARTDIR_DLLAPI bool __cdecl CViewPortManager_updateFullRangeHV(ViewPortManagerInternal *ptr, const char *id, double minValue, double maxValue, int updateType, bool isHorizontal);

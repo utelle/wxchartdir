@@ -4,22 +4,28 @@ int main(int argc, char *argv[])
 {
     // XY points for the scatter chart
     double dataX0[] = {10, 15, 6, -12, 14, -8, 13, -13, 16, 12, 10.5};
+    const int dataX0_size = (int)(sizeof(dataX0)/sizeof(*dataX0));
     double dataY0[] = {130, 150, 80, 110, -110, -105, -130, 115, -170, 125, 125};
+    const int dataY0_size = (int)(sizeof(dataY0)/sizeof(*dataY0));
 
     double dataX1[] = {6, 7, -4, 3.5, 7, 8, -9, -10, -12, 11, 8};
+    const int dataX1_size = (int)(sizeof(dataX1)/sizeof(*dataX1));
     double dataY1[] = {65, -40, -40, 45, -70, -80, 80, 10, -100, 105, 60};
+    const int dataY1_size = (int)(sizeof(dataY1)/sizeof(*dataY1));
 
     double dataX2[] = {-10, -12, 11, 8, 6, 12, -4, 3.5, 7, 8, -9};
+    const int dataX2_size = (int)(sizeof(dataX2)/sizeof(*dataX2));
     double dataY2[] = {65, -80, -40, 45, -70, -80, 80, 90, -100, 105, 60};
+    const int dataY2_size = (int)(sizeof(dataY2)/sizeof(*dataY2));
 
     // Create a XYChart object of size 600 x 300 pixels, with a light blue (ccccff) background, a
     // black border, and 1 pixel 3D border effect
-    XYChart *c = new XYChart(600, 480, 0xccccff, 0x000000, 1);
+    XYChart* c = new XYChart(600, 480, 0xccccff, 0x000000, 1);
 
     // Add a title box to the chart using 16pt Arial Bold Italic font, with white text on deep blue
     // background
-    c->addTitle("Four Quadrant Chart Demonstration", "arialbi.ttf", 16, 0xffffff)->setBackground(
-        0x000080);
+    c->addTitle("Four Quadrant Chart Demonstration", "Arial Bold Italic", 16, 0xffffff
+        )->setBackground(0x000080);
 
     // Set the plotarea at (20, 60) and of size 560 x 360 pixels, with grey (808080) border, and
     // light grey (c0c0c0) horizontal and vertical grid lines. Set 4 quadrant coloring, where the
@@ -32,7 +38,7 @@ int main(int argc, char *argv[])
 
     // Add a legend box at (300, 460) (bottom center of the chart) with horizontal layout. Use 8pt
     // Arial Bold font.
-    LegendBox *legendBox = c->addLegend(300, 460, false, "arialbd.ttf", 8);
+    LegendBox* legendBox = c->addLegend(300, 460, false, "Arial Bold", 8);
     legendBox->setAlignment(Chart::BottomCenter);
 
     // Set legend box background to light grey (dddddd) with a black border
@@ -50,25 +56,23 @@ int main(int argc, char *argv[])
     c->yAxis()->setWidth(2);
 
     // Add scatter layer, using 15 pixels red (ff33333) X shape symbols
-    c->addScatterLayer(DoubleArray(dataX0, (int)(sizeof(dataX0) / sizeof(dataX0[0]))), DoubleArray(
-        dataY0, (int)(sizeof(dataY0) / sizeof(dataY0[0]))), "Group A", Chart::Cross2Shape(), 15,
-        0xff3333);
+    c->addScatterLayer(DoubleArray(dataX0, dataX0_size), DoubleArray(dataY0, dataY0_size),
+        "Group A", Chart::Cross2Shape(), 15, 0xff3333);
 
     // Add scatter layer, using 15 pixels green (33ff33) 6-sided polygon symbols
-    c->addScatterLayer(DoubleArray(dataX1, (int)(sizeof(dataX1) / sizeof(dataX1[0]))), DoubleArray(
-        dataY1, (int)(sizeof(dataY1) / sizeof(dataY1[0]))), "Group B", Chart::PolygonShape(6), 15,
-        0x33ff33);
+    c->addScatterLayer(DoubleArray(dataX1, dataX1_size), DoubleArray(dataY1, dataY1_size),
+        "Group B", Chart::PolygonShape(6), 15, 0x33ff33);
 
     // Add scatter layer, using 15 pixels blue (3333ff) triangle symbols
-    c->addScatterLayer(DoubleArray(dataX2, (int)(sizeof(dataX2) / sizeof(dataX2[0]))), DoubleArray(
-        dataY2, (int)(sizeof(dataY2) / sizeof(dataY2[0]))), "Group C", Chart::TriangleSymbol, 15,
-        0x3333ff);
+    c->addScatterLayer(DoubleArray(dataX2, dataX2_size), DoubleArray(dataY2, dataY2_size),
+        "Group C", Chart::TriangleSymbol, 15, 0x3333ff);
 
     // Output the chart
     c->makeChart("fourq.png");
 
     //free up resources
     delete c;
+
     return 0;
 }
 

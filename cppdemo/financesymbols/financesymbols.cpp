@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     // In this exammple, we use a random number generator utility to simulate the data. We set up
     // the random table to create 6 cols x (noOfDays + extraDays) rows, using 9 as the seed.
-    RanTable *rantable = new RanTable(9, 6, noOfDays + extraDays);
+    RanTable* rantable = new RanTable(9, 6, noOfDays + extraDays);
 
     // Set the 1st col to be the timeStamp, starting from Sep 4, 2014, with each row representing
     // one day, and counting week days only (jump over Sat and Sun)
@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
     DoubleArray volData = rantable->getCol(5);
 
     // Custom data series should be of the same length as the OHLC data series
-    double *buySignal = new double[closeData.len];
-    double *sellSignal = new double[closeData.len];
+    double* buySignal = new double[closeData.len];
+    double* sellSignal = new double[closeData.len];
 
     //
     // The following is just an arbitrary algorithm to create some meaningless buySignal and
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     }
 
     // Create a FinanceChart object of width 640 pixels
-    FinanceChart *c = new FinanceChart(640);
+    FinanceChart* c = new FinanceChart(640);
 
     // Add a title to the chart
     c->addTitle("Finance Chart with Custom Symbols");
@@ -68,18 +68,18 @@ int main(int argc, char *argv[])
     c->setData(timeStamps, highData, lowData, openData, closeData, volData, extraDays);
 
     // Add the main chart with 240 pixels in height
-    XYChart *mainChart = c->addMainChart(240);
+    XYChart* mainChart = c->addMainChart(240);
 
     // Add buy signal symbols to the main chart, using cyan (0x00ffff) upward pointing arrows as
     // symbols
-    ScatterLayer *buyLayer = mainChart->addScatterLayer(DoubleArray(), DoubleArray(buySignal,
+    ScatterLayer* buyLayer = mainChart->addScatterLayer(DoubleArray(), DoubleArray(buySignal,
         closeData.len), "Buy", Chart::ArrowShape(0, 1, 0.4, 0.4), 11, 0x00ffff);
     // Shift the symbol lower by 20 pixels
     buyLayer->getDataSet(0)->setSymbolOffset(0, 20);
 
     // Add sell signal symbols to the main chart, using purple (0x9900cc) downward pointing arrows
     // as symbols
-    ScatterLayer *sellLayer = mainChart->addScatterLayer(DoubleArray(), DoubleArray(sellSignal,
+    ScatterLayer* sellLayer = mainChart->addScatterLayer(DoubleArray(), DoubleArray(sellSignal,
         closeData.len), "Sell", Chart::ArrowShape(180, 1, 0.4, 0.4), 11, 0x9900cc);
     // Shift the symbol higher by 20 pixels
     sellLayer->getDataSet(0)->setSymbolOffset(0, -20);
@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
     delete[] buySignal;
     delete[] sellSignal;
     delete c;
+
     return 0;
 }
 

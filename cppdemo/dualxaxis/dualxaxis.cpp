@@ -5,19 +5,23 @@ int main(int argc, char *argv[])
     // The data for the chart
     double data0[] = {42, 49, 33, 38, 51, 46, 29, 41, 44, 57, 59, 52, 37, 34, 51, 56, 56, 60, 70,
         76, 63, 67, 75, 64, 51};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double data1[] = {50, 55, 47, 34, 42, 49, 63, 62, 73, 59, 56, 50, 64, 60, 67, 67, 58, 59, 73,
         77, 84, 82, 80, 84, 98};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
 
     // The labels for the bottom x axis. Note the "-" means a minor tick.
-    const char *labels0[] = {"0\nJun 4", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+    const char* labels0[] = {"0\nJun 4", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
         "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "0\nJun 5"};
+    const int labels0_size = (int)(sizeof(labels0)/sizeof(*labels0));
 
     // The labels for the top x axis. Note that "-" means a minor tick.
-    const char *labels1[] = {"Jun 3\n12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
+    const char* labels1[] = {"Jun 3\n12", "13", "14", "15", "16", "17", "18", "19", "20", "21",
         "22", "23", "Jun 4\n0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+    const int labels1_size = (int)(sizeof(labels1)/sizeof(*labels1));
 
     // Create a XYChart object of size 310 x 310 pixels
-    XYChart *c = new XYChart(310, 310);
+    XYChart* c = new XYChart(310, 310);
 
     // Set the plotarea at (50, 50) and of size 200 x 200 pixels
     c->setPlotArea(50, 50, 200, 200);
@@ -41,7 +45,7 @@ int main(int argc, char *argv[])
     c->xAxis()->setTitle("Hong Kong Time");
 
     // Set the labels on the x axis.
-    c->xAxis()->setLabels(StringArray(labels0, (int)(sizeof(labels0) / sizeof(labels0[0]))));
+    c->xAxis()->setLabels(StringArray(labels0, labels0_size));
 
     // Display 1 out of 3 labels on the x-axis. Show minor ticks for remaining labels.
     c->xAxis()->setLabelStep(3, 1);
@@ -57,7 +61,7 @@ int main(int argc, char *argv[])
     c->xAxis2()->setTitle("New York Time");
 
     // Set the labels on the x axis.
-    c->xAxis2()->setLabels(StringArray(labels1, (int)(sizeof(labels1) / sizeof(labels1[0]))));
+    c->xAxis2()->setLabels(StringArray(labels1, labels1_size));
 
     // Display 1 out of 3 labels on the x-axis. Show minor ticks for remaining labels.
     c->xAxis2()->setLabelStep(3, 1);
@@ -70,18 +74,17 @@ int main(int argc, char *argv[])
     c->xAxis2()->setLabelGap(6);
 
     // Add a line layer to the chart with a line width of 2 pixels
-    c->addLineLayer(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0]))), -1,
-        "Red Transactions")->setLineWidth(2);
+    c->addLineLayer(DoubleArray(data0, data0_size), -1, "Red Transactions")->setLineWidth(2);
 
     // Add an area layer to the chart with no area boundary line
-    c->addAreaLayer(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0]))), -1,
-        "Green Transactions")->setLineWidth(0);
+    c->addAreaLayer(DoubleArray(data1, data1_size), -1, "Green Transactions")->setLineWidth(0);
 
     // Output the chart
     c->makeChart("dualxaxis.png");
 
     //free up resources
     delete c;
+
     return 0;
 }
 

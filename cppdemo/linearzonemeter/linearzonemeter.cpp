@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 
     // Create an LinearMeter object of size 210 x 45 pixels, using silver background with a 2 pixel
     // black 3D depressed border.
-    LinearMeter *m = new LinearMeter(210, 45, Chart::silverColor(), 0, -2);
+    LinearMeter* m = new LinearMeter(210, 45, Chart::silverColor(), 0, -2);
 
     // Set the scale region top-left corner at (5, 5), with size of 200 x 20 pixels. The scale
     // labels are located on the bottom (implies horizontal meter)
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     m->setScale(0, 100);
 
     // Add a title at the bottom of the meter with a 1 pixel raised 3D border
-    m->addTitle(Chart::Bottom, "Battery Level", "arialbd.ttf", 8)->setBackground(Chart::Transparent,
+    m->addTitle(Chart::Bottom, "Battery Level", "Arial Bold", 8)->setBackground(Chart::Transparent,
         -1, 1);
 
     // Set 3 zones of different colors to represent Good/Weak/Bad data ranges
@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete m;
+
     return 0;
 }
 

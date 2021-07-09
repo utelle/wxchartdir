@@ -3,7 +3,7 @@
 ** Purpose:     wxChartViewer defines
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -17,6 +17,244 @@
 #include <wx/log.h>
 #include <wx/graphics.h>
 #include <wx/image.h>
+#include <wx/popupwin.h>
+#include <wx/sizer.h>
+#include <wx/dcgraph.h>
+#include <wx/colour.h>
+
+#include <wx/filefn.h>
+#include <wx/stdpaths.h>
+#include <wx/file.h>
+
+#include <map>
+#include <algorithm>
+
+namespace {
+  static class wxResourceLoader
+  {
+  public:
+    wxResourceLoader()
+    { 
+      Chart::setResourceLoader(loader);
+    }
+
+    static bool loader(const char* id, char* (allocator)(int), char** data, int* len)
+    {
+      wxPathList resourcePathList;
+      resourcePathList.AddEnvList("WXCHARTDIR_RESOURCE_PATH");
+      resourcePathList.Add(wxStandardPaths::Get().GetResourcesDir());
+      resourcePathList.Add(wxStandardPaths::Get().GetExecutablePath());
+      resourcePathList.Add(::wxGetCwd());
+      wxString filePath = resourcePathList.FindValidPath(wxString::FromUTF8(id));
+      bool found = !filePath.IsEmpty();
+      if (found)
+      {
+        wxFile resourceFile(filePath);
+        found = resourceFile.IsOpened() &&
+          (0 < (*len = (int)resourceFile.Length())) &&
+          (0 != (*data = allocator(*len))) &&
+          (wxInvalidOffset != resourceFile.Read(*data, *len));
+      }
+      if (wxString::FromUTF8(id).IsSameAs("texture"))
+      {
+        wxLogError("Loader asked for resource 'texture'");
+      }
+      if (!found)
+      {
+        wxLogError(wxString("Loader: id not found: ") + wxString::FromUTF8(id));
+      }
+      return found;
+    }
+  } wxResourceLoaderRegistration;
+}
+
+class wxEnhancedTooltip
+{
+public:
+  wxEnhancedTooltip(wxChartViewer* parent)
+  {
+    m_parent = parent;
+    m_isEnabled = false;
+    m_bounds = wxRect(0,0,0,0);
+  }
+
+  virtual ~wxEnhancedTooltip()
+  {
+  }
+
+  void DisplayChart(BaseChart* c, int dpi)
+  {
+    wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1", dpi) : wxString("alpha=1");
+    c->setOutputOptions(options.ToUTF8());
+    MemBlock m = c->makeChart(Chart::BMP);
+    wxMemoryInputStream in(m.data, m.len);
+    wxBitmap bmp(wxImage(in, wxBITMAP_TYPE_BMP));
+    m_toolTipBitmap = bmp;
+    m_bounds.SetWidth(bmp.GetWidth());
+    m_bounds.SetHeight(bmp.GetHeight());
+  }
+
+  void Enable(bool enable)
+  {
+    m_isEnabled = enable;
+    if (!enable)
+    {
+      m_bounds.SetWidth(0);
+      m_bounds.SetHeight(0);
+    }
+  }
+  
+  bool IsEnabled() const
+  {
+    return m_isEnabled;
+  }
+
+  wxSize GetSize() const { return m_toolTipBitmap.GetSize(); }
+
+  wxRect GetBounds() const { return m_bounds; }
+
+  void SetOrigin(int x, int y)
+  {
+    m_bounds.SetLeft(x);
+    m_bounds.SetTop(y);
+  }
+
+  void DrawToolTip(wxDC& dc)
+  {
+    if (m_isEnabled)
+    {
+      if (m_toolTipBitmap.IsOk())
+      {
+        dc.DrawBitmap(m_toolTipBitmap, m_bounds.GetLeft(), m_bounds.GetTop());
+      }
+    }
+  }
+
+private:
+  bool m_isEnabled;
+  wxChartViewer* m_parent;
+  wxBitmap m_toolTipBitmap;
+  wxRect m_bounds;
+};
+
+// High DPI support functions
+
+void
+wxChartViewer::setDPI(int dpi)
+{
+  m_dpi = dpi;
+}
+
+int
+wxChartViewer::getDPI()
+{
+  int dpi = m_dpi;
+  if (dpi < 0)
+  {
+    return dpi;
+  }
+  if (dpi == 0)
+  {
+    dpi = (int)(96 * GetDPIScaleFactor() + 0.5);
+  }
+  return (dpi < 24) ? 24 : ((dpi > 384) ? 384 : dpi);
+}
+
+double
+wxChartViewer::ToImageX(int x)
+{
+  return x * m_toImageScaleX;
+}
+
+double
+wxChartViewer::ToImageY(int y)
+{
+  return y * m_toImageScaleY;
+}
+
+int
+wxChartViewer::ToDisplayX(double x)
+{
+  double ret = x / m_toImageScaleX;
+  return (int)((ret >= 0) ? ret + 0.5 : (ret - 0.5));
+}
+
+int
+wxChartViewer::ToDisplayY(double y)
+{
+  double ret = y / m_toImageScaleY;
+  return (int)((ret >= 0) ? ret + 0.5 : (ret - 0.5));
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Mouse cursors for zooming and scrolling support
+//
+/////////////////////////////////////////////////////////////////////////////
+
+static class wxAseCursorManager
+{
+private:
+  std::map<int, wxCursor*> cacheZoomInCursor;
+  std::map<int, wxCursor*> cacheZoomOutCursor;
+  std::map<int, wxCursor*> cacheNoZoomCursor;
+
+  wxCursor& getZoomCursor(std::map<int, wxCursor*>& cache, double scale, int flags)
+  {
+    int dpi = (int)(96 * scale + 0.5);
+    std::map<int, wxCursor*>::const_iterator csr = cache.find(dpi);
+    wxCursor* cursor = (csr != cache.end()) ? csr->second : 0;
+    if (!cursor)
+    {
+      DrawArea d;
+      d.setSize(32, 32, Chart::Transparent);
+      d.circle(15, 15, 7, 7, 0x000000, 0xffffff);
+      if (flags & 0x1)
+        d.hline(12, 18, 15, 0x000000);
+      if (flags & 0x2)
+        d.vline(12, 18, 15, 0x000000);
+      int x[] = { 21, 28, 26, 19 };
+      int y[] = { 19, 26, 28, 21 };
+      d.polygon(IntArray(x, 4), IntArray(y, 4), 0x000000, 0x000000);
+      char buffer[1024];
+      sprintf(buffer, "dpi=%d", dpi);
+      d.setOutputOptions(buffer);
+      MemBlock m = d.outPNG();
+      wxMemoryInputStream in(m.data, m.len);
+      wxImage img(in, wxBITMAP_TYPE_PNG);
+      img.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, (int)(15 * scale + 0.5));
+      img.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, (int)(15 * scale + 0.5));
+      cursor = new wxCursor(img);
+      cache[dpi] = cursor;
+    }
+    return *cursor;
+  }
+
+public:
+  wxAseCursorManager()
+  {
+  }
+  ~wxAseCursorManager()
+  {
+    std::for_each(cacheZoomInCursor.begin(), cacheZoomInCursor.end(), [](std::pair<const int, wxCursor*>& entry) { delete entry.second; });
+    std::for_each(cacheZoomOutCursor.begin(), cacheZoomOutCursor.end(), [](std::pair<const int, wxCursor*>& entry) { delete entry.second; });
+    std::for_each(cacheNoZoomCursor.begin(), cacheNoZoomCursor.end(), [](std::pair<const int, wxCursor*>& entry) { delete entry.second; });
+  }
+  wxCursor& getZoomInCursor(double scale)
+  {
+    return getZoomCursor(cacheZoomInCursor, scale, 3);
+  }
+  wxCursor& getZoomOutCursor(double scale)
+  {
+    return getZoomCursor(cacheZoomOutCursor, scale, 1);
+  }
+  wxCursor& getNoZoomCursor(double scale)
+  {
+    return getZoomCursor(cacheNoZoomCursor, scale, 0);
+  }
+} cursorManager;
+
 
 // Utility functions
 
@@ -48,9 +286,6 @@ wxChartViewer::ConvertChartTimeToDateTime(double ct)
 ** wxChartViewer
 */
 
-
-
-#if wxCHECK_VERSION(3,0,0)
 /// Declaration of chart viewer event wxEVT_CHARTVIEWER_CLICKED
 wxDEFINE_EVENT(wxEVT_CHARTVIEWER_CLICKED, wxCommandEvent);
 /// Declaration of chart viewer event wxEVT_CHARTVIEWER_VIEWPORT_CHANGED
@@ -65,35 +300,9 @@ wxDEFINE_EVENT(wxEVT_CHARTVIEWER_MOUSEMOVE_PLOTAREA, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA, wxCommandEvent);
 /// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEWHEEL
 wxDEFINE_EVENT(wxEVT_CHARTVIEWER_MOUSEWHEEL, wxCommandEvent);
-#else
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_CLICKED
-DEFINE_EVENT_TYPE(wxEVT_CHARTVIEWER_CLICKED);
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_VIEWPORT_CHANGED
-DEFINE_EVENT_TYPE(wxEVT_CHARTVIEWER_VIEWPORT_CHANGED);
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEMOVE_CHART
-DEFINE_EVENT_TYPE(wxEVT_CHARTVIEWER_MOUSEMOVE_CHART);
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSELEAVE_CHART
-DEFINE_EVENT_TYPE(wxEVT_CHARTVIEWER_MOUSELEAVE_CHART);
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEMOVE_PLOTAREA
-DEFINE_EVENT_TYPE(wxEVT_CHARTVIEWER_MOUSEMOVE_PLOTAREA);
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA
-DEFINE_EVENT_TYPE(wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA);
-/// Declaration of chart viewer event wxEVT_CHARTVIEWER_MOUSEWHEEL
-DEFINE_EVENT_TYPE(wxEVT_CHARTVIEWER_MOUSEWHEEL);
-#endif
-
-// Build in mouse cursors for zooming and scrolling support
-
-static wxCursor& GetZoomInCursor();
-static wxCursor& GetZoomOutCursor();
-static wxCursor& GetNoZoomCursor();
-static wxCursor& GetNoMove2DCursor();
-static wxCursor& GetNoMoveHorizCursor();
-static wxCursor& GetNoMoveVertCursor();
 
 // Constants used in m_delayChartUpdate
 enum { NO_DELAY, NEED_DELAY, NEED_UPDATE };
-enum { ID_TIMER_HOLD = 10001, ID_TIMER_DELAY = 10002 };
 
 BEGIN_EVENT_TABLE(wxChartViewer, wxPanel)
 
@@ -105,9 +314,6 @@ BEGIN_EVENT_TABLE(wxChartViewer, wxPanel)
   EVT_MOUSEWHEEL(wxChartViewer::OnWheelEvent)
   EVT_MOUSE_CAPTURE_LOST(wxChartViewer::OnMouseCaptureLost)
 
-  EVT_TIMER(ID_TIMER_HOLD, wxChartViewer::OnHoldTimerEvent)
-  EVT_TIMER(ID_TIMER_DELAY, wxChartViewer::OnDelayTimerEvent)
-
 END_EVENT_TABLE()
 
 wxChartViewer::wxChartViewer(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
@@ -116,15 +322,12 @@ wxChartViewer::wxChartViewer(wxWindow* parent, wxWindowID id, const wxPoint& pos
   // current chart and hot spot tester
   m_currentChart = 0;
   m_hotSpotTester = 0;
+  m_imageMapChart = 0;
 
   // initialize chart configuration
   m_selectBoxLineColor = wxColour(0, 0, 0);
   m_selectBoxLineWidth = 2;
-#if wxCHECK_VERSION(3,0,0)
   m_selectBoxLineStyle = wxPENSTYLE_SOLID;
-#else
-  m_selectBoxLineStyle = wxSOLID;
-#endif
   m_mouseUsage = Chart::MouseUsageDefault;
   m_zoomDirection = Chart::DirectionHorizontal;
   m_zoomInRatio = 2;
@@ -132,7 +335,7 @@ wxChartViewer::wxChartViewer(wxWindow* parent, wxWindowID id, const wxPoint& pos
   m_mouseWheelZoomRatio = 1;
   m_scrollDirection = Chart::DirectionHorizontal;
   m_minDragAmount = 5;
-  m_updateInterval = 20;
+  m_updateInterval = 20; /* Original: 20 */
 
   // current state of the mouse
   m_isOnPlotArea = false;
@@ -147,13 +350,13 @@ wxChartViewer::wxChartViewer(wxWindow* parent, wxWindowID id, const wxPoint& pos
   m_needUpdateChart = false;
   m_needUpdateImageMap = false;
   m_holdTimerActive = false;
-  m_holdTimer.SetOwner(this, ID_TIMER_HOLD);
+  m_holdTimer.Bind(wxEVT_TIMER, &wxChartViewer::OnHoldTimerEvent, this);
   m_isInViewPortChanged = false;
   m_delayUpdateChart = NO_DELAY;
   m_delayedChart = 0;
   m_lastMouseMove = 0;
   m_delayedMouseEvent = 0;
-  m_delayedMouseEventTimer.SetOwner(this, ID_TIMER_DELAY);
+  m_delayedMouseEventTimer.Bind(wxEVT_TIMER, &wxChartViewer::OnDelayTimerEvent, this);
   m_delayImageMapUpdate = false;
 
   // track cursor support
@@ -164,19 +367,28 @@ wxChartViewer::wxChartViewer(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
   // selection rectangle
   m_rectVisible = false;
-  m_currentRect = wxRect(0, 0, 0, 0);
+  m_previousRect = m_currentRect = wxRect(0, 0, 0, 0);
 
   m_vpControl = NULL;
   m_reentrantGuard = false;
+
+  // High dpi support
+  m_dpi = 0;
+  m_toImageScaleX = 1;
+  m_toImageScaleY = 1;
+
+  // tooltip
+  m_enhancedToolTip = NULL;
+  m_cdmlToolTipPrefix = "<*block,bgColor=F0F0F0,edgeColor=808080,margin=5,roundedCorners=3*><*font,color=222222*>";
 }
 
 wxChartViewer::~wxChartViewer()
 {
   delete m_hotSpotTester;
-  if (m_delayedMouseEvent != NULL)
-  {
-    delete m_delayedMouseEvent;
-  }
+  delete m_imageMapChart;
+  delete m_delayedMouseEvent;
+  delete m_delayedChart;
+  delete m_enhancedToolTip;
 }
 
 void
@@ -186,7 +398,8 @@ wxChartViewer::OnPaint(wxPaintEvent& evt)
   if (m_chartBitmap.IsOk())
   {
     dc.DrawBitmap(m_chartBitmap, 0, 0);
-    SetRectVisible(m_rectVisible);
+    if (m_enhancedToolTip) m_enhancedToolTip->DrawToolTip(dc);
+    if (m_rectVisible) DrawSelectionRect(dc);
   }
 }
 
@@ -194,20 +407,26 @@ void
 wxChartViewer::PaintNow(BaseChart* c)
 {
   wxClientDC dc(this);
-//  wxGCDC gdc(dc);
   Render(dc, c);
 }
 
 void
 wxChartViewer::Render(wxDC& dc, BaseChart* c)
 {
-  c->setOutputOptions("alpha=3");
+  int dpi = getDPI();
+  wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1", dpi) : wxString("alpha=1");
+  c->setOutputOptions(options.ToUTF8());
   MemBlock m = c->makeChart(Chart::BMP);
   wxMemoryInputStream in(m.data, m.len);
   wxBitmap bmp(wxImage(in, wxBITMAP_TYPE_BMP));
   m_chartBitmap = bmp;
   dc.DrawBitmap(bmp, 0, 0);
-  SetRectVisible(m_rectVisible);
+  if (m_enhancedToolTip) m_enhancedToolTip->DrawToolTip(dc);
+  if (m_rectVisible) DrawSelectionRect(dc);
+
+  // High dpi support
+  m_toImageScaleX = c->getDrawArea()->getWidth() / (double) bmp.GetWidth();
+  m_toImageScaleY = c->getDrawArea()->getHeight() / (double) bmp.GetHeight();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -223,17 +442,15 @@ void wxChartViewer::OnMouseMove(wxMouseEvent& event)
   // Enable mouse tracking to detect mouse leave events
   m_isMouseTracking = true;
 
-  // TODO
-  //emit mouseMove(event);
-
   // On Windows, mouse events can by-pass the event queue. If there are too many mouse events,
   // the event queue may not get processed, preventing other controls from updating. If two mouse
   // events are less than 10ms apart, there is a risk of too many mouse events. So we repost the
   // mouse event as a timer event that is queued up normally, allowing the queue to get processed.
+  // EDIT: event distance reduced from 10ms to 5ms for wxWidgets
   unsigned int timeBetweenMouseMove = (((unsigned int)clock()) - m_lastMouseMove) * 1000 / CLOCKS_PER_SEC ;
-  if ((m_delayedMouseEvent != NULL && (timeBetweenMouseMove < 250)) || (timeBetweenMouseMove < 10))
+  if ((m_delayedMouseEvent && (timeBetweenMouseMove < 250)) || (timeBetweenMouseMove < 5))
   {
-    if (m_delayedMouseEvent == NULL)
+    if (!m_delayedMouseEvent)
     {
       m_delayedMouseEventTimer.Start(1);
     }
@@ -247,9 +464,9 @@ void wxChartViewer::OnMouseMove(wxMouseEvent& event)
   else
   {
     CommitMouseMove(event);
+    event.Skip();
   }
   OnSetCursor();
-  event.Skip();
 }
 
 // The method that actually performs MouseMove event processing
@@ -267,7 +484,7 @@ wxChartViewer::CommitMouseMove(wxMouseEvent& event)
   m_isInMouseMove = true;
 
   // Check if mouse is dragging on the plot area
-  m_isOnPlotArea = m_isPlotAreaMouseDown || inPlotArea(event.GetX(), event.GetY());
+  m_isOnPlotArea = m_isPlotAreaMouseDown || inPlotArea(ToImageX(event.GetX()), ToImageY(event.GetY()));
   if (m_isPlotAreaMouseDown)
   {
     OnPlotAreaMouseDrag(event);
@@ -277,24 +494,16 @@ wxChartViewer::CommitMouseMove(wxMouseEvent& event)
   wxCommandEvent mmcEvent(wxEVT_CHARTVIEWER_MOUSEMOVE_CHART);
   mmcEvent.SetId(GetId());
   mmcEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
   HandleWindowEvent(mmcEvent);
-#else
-  GetEventHandler()->ProcessEvent(mmcEvent);
-#endif
 
-  if (inExtendedPlotArea(event.GetX(), event.GetY()))
+  if (inExtendedPlotArea(ToImageX(event.GetX()), ToImageY(event.GetY())))
   {
     // Mouse is in extended plot area, emit mouseMovePlotArea
     m_isInMouseMovePlotArea = true;
     wxCommandEvent mmpEvent(wxEVT_CHARTVIEWER_MOUSEMOVE_PLOTAREA);
     mmpEvent.SetId(GetId());
     mmpEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
     HandleWindowEvent(mmpEvent);
-#else
-    GetEventHandler()->ProcessEvent(mmpEvent);
-#endif
   }
   else if (m_isInMouseMovePlotArea)
   {
@@ -303,11 +512,7 @@ wxChartViewer::CommitMouseMove(wxMouseEvent& event)
     wxCommandEvent mlpEvent(wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA);
     mlpEvent.SetId(GetId());
     mlpEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
     HandleWindowEvent(mlpEvent);
-#else
-    GetEventHandler()->ProcessEvent(mlpEvent);
-#endif
     ApplyAutoHide(wxS("mouseleaveplotarea"));
   }
 
@@ -321,47 +526,58 @@ wxChartViewer::CommitMouseMove(wxMouseEvent& event)
     }
   }
 
+  wxPoint cursorPosition(wxPoint(event.GetX(), event.GetY()));
+
   if (event.ButtonIsDown(wxMOUSE_BTN_ANY))
   {
     // Hide tool tips if mouse button is pressed.
     UnsetToolTip();
   }
-  else
+
+  // Use the ChartDirector ImageMapHandler to determine if the mouse is over a hot spot
+  int hotSpotNo = 0;
+  if (0 != m_hotSpotTester)
   {
-    // Use the ChartDirector ImageMapHandler to determine if the mouse is over a hot spot
-    int hotSpotNo = 0;
-    if (0 != m_hotSpotTester)
+    hotSpotNo = m_hotSpotTester->getHotSpot(ToImageX(event.GetX()), ToImageY(event.GetY()), m_imageMapChart);
+  }
+
+  const char* isDynamic = 0;
+  if (hotSpotNo != 0)
+  {
+    isDynamic = m_hotSpotTester->getValue("dynamic");
+  }
+
+  // If the mouse is in the same hot spot since the last mouse move event, there is no need
+  // to update the tool tip.
+  if ((hotSpotNo != m_currentHotSpot) || ((0 != isDynamic) && (0 != *isDynamic)))
+  {
+    // Hot spot has changed - update tool tip text
+    m_currentHotSpot = hotSpotNo;
+
+    if (hotSpotNo == 0)
     {
-      hotSpotNo = m_hotSpotTester->getHotSpot(event.GetX(), event.GetY());
+      // Mouse is not actually on handler hot spot - use default tool tip text and reset
+      // the clickable flag.
+      m_isClickable = false;
+      ShowToolTip(m_defaultToolTip, cursorPosition);
     }
-
-    // If the mouse is in the same hot spot since the last mouse move event, there is no need
-    // to update the tool tip.
-    if (hotSpotNo != m_currentHotSpot)
+    else
     {
-      // Hot spot has changed - update tool tip text
-      m_currentHotSpot = hotSpotNo;
-
-      if (hotSpotNo == 0)
-      {
-        // Mouse is not actually on handler hot spot - use default tool tip text and reset
-        // the clickable flag.
-        SetToolTip(m_defaultToolTip);
-        m_isClickable = false;
-      }
-      else
-      {
-        // Mouse is on a hot spot. In this implementation, we consider the hot spot as
-        // clickable if its href ("path") parameter is not empty.
-        const char *path = m_hotSpotTester->getValue("path");
-        m_isClickable = ((0 != path) && (0 != *path));
-        SetToolTip(wxString::FromUTF8(m_hotSpotTester->getValue("title")));
-      }
+      // Mouse is on a hot spot. In this implementation, we consider the hot spot as
+      // clickable if its href ("path") parameter is not empty.
+      const char *path = m_hotSpotTester->getValue("path");
+      m_isClickable = ((0 != path) && (0 != *path));
+      ShowToolTip(wxString::FromUTF8(m_hotSpotTester->getValue("title")), cursorPosition);
     }
   }
 
+  if (m_enhancedToolTip && m_enhancedToolTip->IsEnabled())
+  {
+    MoveEnhancedToolTip(cursorPosition, m_enhancedToolTip->GetBounds());
+  }
+
   // Cancel the delayed mouse event if any
-  if (m_delayedMouseEvent != NULL)
+  if (m_delayedMouseEvent)
   {
     m_delayedMouseEventTimer.Stop();
     delete m_delayedMouseEvent;
@@ -375,11 +591,88 @@ wxChartViewer::CommitMouseMove(wxMouseEvent& event)
   m_lastMouseMove = (unsigned int) clock();
 }
 
+void
+wxChartViewer::ShowToolTip(const wxString& text, const wxPoint& cursorPosition)
+{
+  if ((text.length() <= 0) || ((text[0] == '<') && (text[1] == '*')))
+  {
+    ShowEnhancedToolTip(text, cursorPosition);
+    UnsetToolTip();
+  }
+  else
+  {
+    ShowEnhancedToolTip("", cursorPosition);
+    SetToolTip(text);
+  }
+}
+
+void
+wxChartViewer::ShowEnhancedToolTip(const wxString& text, const wxPoint& cursorPosition)
+{
+  if (!m_enhancedToolTip)
+  {
+    m_enhancedToolTip = new wxEnhancedTooltip(this);
+  }
+
+  if (text.IsEmpty())
+  {
+    if (m_enhancedToolTip->IsEnabled())
+    {
+      wxRect current = m_enhancedToolTip->GetBounds();
+      m_enhancedToolTip->Enable(false);
+      Refresh(false, &current);
+    }
+    return;
+  }
+
+  wxString buffer = text;
+  buffer.Replace(wxString("<*cdml*>"), m_cdmlToolTipPrefix);
+
+  wxRect rFrom = m_enhancedToolTip->GetBounds();
+  PieChart c(1, 1, Chart::Transparent);
+  c.makeChart()->renderCDML(buffer.ToUTF8());
+  m_enhancedToolTip->DisplayChart(&c, getDPI());
+  m_enhancedToolTip->Enable(true);
+
+  MoveEnhancedToolTip(cursorPosition, rFrom);
+}
+
+void
+wxChartViewer::MoveEnhancedToolTip(const wxPoint& p, const wxRect& rFrom)
+{
+  int x = p.x;
+  // Magic number 24 - what is it?
+  int y = p.y + 24;
+
+  wxSize viewerSize = GetSize();
+  wxSize toolTipSize = m_enhancedToolTip->GetSize();
+
+  if (x + toolTipSize.GetWidth() > viewerSize.GetWidth())
+  {
+    x = viewerSize.GetWidth() - toolTipSize.GetWidth();
+    if (x < 0) x = 0;
+  }
+  if (y + toolTipSize.GetHeight() > viewerSize.GetHeight())
+  {
+    y = p.y - toolTipSize.GetHeight() - 2;
+    if (y < 0) y = 0;
+  }
+
+  // Move tooltip to new position and refresh
+  m_enhancedToolTip->SetOrigin(x, y);
+  wxRect rCurrent = m_enhancedToolTip->GetBounds();
+  if (rFrom.GetWidth() > 0)
+  {
+    rCurrent.Union(rFrom);
+  }
+  Refresh(false, &rCurrent);
+}
+
 // Delayed MouseMove event handler
 void
 wxChartViewer::OnDelayedMouseMove()
 {
-  if (m_delayedMouseEvent != NULL)
+  if (m_delayedMouseEvent)
   {
     CommitMouseMove(*m_delayedMouseEvent);
   }
@@ -401,11 +694,7 @@ wxChartViewer::OnLeaveEvent(wxMouseEvent& event)
     wxCommandEvent mlpEvent(wxEVT_CHARTVIEWER_MOUSELEAVE_PLOTAREA);
     mlpEvent.SetId(GetId());
     mlpEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
     HandleWindowEvent(mlpEvent);
-#else
-    GetEventHandler()->ProcessEvent(mlpEvent);
-#endif
     ApplyAutoHide(wxS("mouseleaveplotarea"));
   }
 
@@ -413,12 +702,12 @@ wxChartViewer::OnLeaveEvent(wxMouseEvent& event)
   wxCommandEvent mlcEvent(wxEVT_CHARTVIEWER_MOUSELEAVE_CHART);
   mlcEvent.SetId(GetId());
   mlcEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
   HandleWindowEvent(mlcEvent);
-#else
-  GetEventHandler()->ProcessEvent(mlcEvent);
-#endif
   ApplyAutoHide(wxS("mouseleavechart"));
+
+  // hide tooltip
+  ShowEnhancedToolTip("");
+
   event.Skip();
 }
 
@@ -434,11 +723,7 @@ wxChartViewer::OnWheelEvent(wxMouseEvent& event)
   mwEvent.SetId(GetId());
   mwEvent.SetEventObject(this);
   mwEvent.SetInt(event.GetWheelRotation());
-#if wxCHECK_VERSION(3,0,0)
   HandleWindowEvent(mwEvent);
-#else
-  GetEventHandler()->ProcessEvent(mwEvent);
-#endif
 
   // Process the mouse wheel only if the mouse is over the plot area
   bool hasMouseWheelZoom = isMouseOnPlotArea() &&
@@ -485,16 +770,15 @@ wxChartViewer::OnSetCursor()
     switch (m_scrollDirection)
     {
       case Chart::DirectionHorizontal:
-        SetCursor(GetNoMoveHorizCursor());
+        SetCursor(wxCursor(wxCURSOR_SIZEWE));
         break;
       case Chart::DirectionVertical:
-        SetCursor(GetNoMoveVertCursor());
+        SetCursor(wxCursor(wxCURSOR_SIZENS));
         break;
       default :
-        SetCursor(GetNoMove2DCursor());
+        SetCursor(wxCursor(wxCURSOR_SIZING));
         break;
     }
-
     return;
   }
 
@@ -505,24 +789,24 @@ wxChartViewer::OnSetCursor()
       case Chart::MouseUsageZoomIn:
         if (canZoomIn(m_zoomDirection))
         {
-          SetCursor(GetZoomInCursor());
+          SetCursor(cursorManager.getZoomInCursor(GetContentScaleFactor()));
         }
         else
         {
-          SetCursor(GetNoZoomCursor());
+          SetCursor(cursorManager.getNoZoomCursor(GetContentScaleFactor()));
         }
         return;
       case Chart::MouseUsageZoomOut:
         if (canZoomOut(m_zoomDirection))
         {
-          SetCursor(GetZoomOutCursor());
+          SetCursor(cursorManager.getZoomOutCursor(GetContentScaleFactor()));
         }
         else
         {
-          SetCursor(GetNoZoomCursor());
+          SetCursor(cursorManager.getNoZoomCursor(GetContentScaleFactor()));
         }
         return;
-      }
+    }
   }
 
   if (m_isClickable)
@@ -549,7 +833,7 @@ wxChartViewer::OnMousePressEvent(wxMouseEvent& event)
 {
   OnDelayedMouseMove();
 
-  if (inPlotArea(event.GetX(), event.GetY()) && (m_mouseUsage != Chart::MouseUsageDefault))
+  if (inPlotArea(ToImageX(event.GetX()), ToImageY(event.GetY())) && (m_mouseUsage != Chart::MouseUsageDefault))
   {
     // Mouse usage is for drag to zoom/scroll. Capture the mouse to prepare for dragging and
     // save the mouse down position to draw the selection rectangle.
@@ -588,13 +872,16 @@ wxChartViewer::OnMouseReleaseEvent(wxMouseEvent& event)
         {
           if (IsDrag(m_zoomDirection, event))
           {
+            int minX, minY, spanX, spanY;
+            GetDragZoomRect(event.GetX(), event.GetY(), minX, minY, spanX, spanY);
+
             // Zoom to the drag selection rectangle.
-            hasUpdate = zoomTo(m_zoomDirection, m_plotAreaMouseDownXPos, m_plotAreaMouseDownYPos, event.GetX(), event.GetY());
+            hasUpdate = zoomTo(m_zoomDirection, ToImageX(minX), ToImageY(minY), ToImageX(minX + spanX), ToImageY(minY + spanY));
           }
           else
           {
             // User just click on a point. Zoom-in around the mouse cursor position.
-            hasUpdate = zoomAt(m_zoomDirection, event.GetX(), event.GetY(), m_zoomInRatio);
+            hasUpdate = zoomAt(m_zoomDirection, ToImageX(event.GetX()), ToImageY(event.GetY()), m_zoomInRatio);
           }
         }
         break;
@@ -602,7 +889,7 @@ wxChartViewer::OnMouseReleaseEvent(wxMouseEvent& event)
         // Zoom out around the mouse cursor position.
         if (canZoomOut(m_zoomDirection))
         {
-          hasUpdate = zoomAt(m_zoomDirection, event.GetX(), event.GetY(), m_zoomOutRatio);
+          hasUpdate = zoomAt(m_zoomDirection, ToImageX(event.GetX()), ToImageY(event.GetY()), m_zoomOutRatio);
         }
         break;
       default :
@@ -617,11 +904,7 @@ wxChartViewer::OnMouseReleaseEvent(wxMouseEvent& event)
           wxCommandEvent clickEvent(wxEVT_CHARTVIEWER_CLICKED);
           clickEvent.SetId(GetId());
           clickEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
           HandleWindowEvent(clickEvent);
-#else
-          GetEventHandler()->ProcessEvent(clickEvent);
-#endif
         }
         break;
     }
@@ -642,11 +925,7 @@ wxChartViewer::OnMouseReleaseEvent(wxMouseEvent& event)
     wxCommandEvent clickEvent(wxEVT_CHARTVIEWER_CLICKED);
     clickEvent.SetId(GetId());
     clickEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
     HandleWindowEvent(clickEvent);
-#else
-    GetEventHandler()->ProcessEvent(clickEvent);
-#endif
   }
 
   OnSetCursor();
@@ -688,8 +967,14 @@ wxChartViewer::OnDelayTimerEvent(wxTimerEvent& event)
 void
 wxChartViewer::setChart(BaseChart* c)
 {
+  if (m_currentChart != c)
+  {
+    setImageMap(0);
+  }
+
   m_currentChart = c;
-  setImageMap(0);
+  delete m_imageMapChart;
+  m_imageMapChart = c ? new BaseChart(c) : 0;
 
   if (0 != c)
   {
@@ -708,6 +993,50 @@ BaseChart*
 wxChartViewer::getChart()
 {
   return m_currentChart;
+}
+
+// Set image map used by the chart
+void
+wxChartViewer::setImageMap(const char* imageMap)
+{
+  // Delete the existing ImageMapHandler
+  if (0 != m_hotSpotTester)
+  {
+    delete m_hotSpotTester;
+  }
+  m_currentHotSpot = -1;
+  m_isClickable = false;
+
+  // Create a new ImageMapHandler to represent the image map
+  if ((0 == imageMap) || (0 == *imageMap))
+  {
+    m_hotSpotTester = 0;
+  }
+  else
+  {
+    m_hotSpotTester = new ImageMapHandler(imageMap, this);
+  }
+}
+
+// Get the image map handler for the chart
+ImageMapHandler*
+wxChartViewer::getImageMapHandler()
+{
+  return m_hotSpotTester;
+}
+
+// Set the default tool tip to use
+void
+wxChartViewer::setDefaultToolTip(const wxString& text)
+{
+  m_defaultToolTip = text;
+}
+
+// Set the CDML tool tip prefix
+void
+wxChartViewer::setCDMLToolTipPrefix(const wxString& prefix)
+{
+  m_cdmlToolTipPrefix = prefix;
 }
 
 // Set the wxViewPortControl to be associated with this control
@@ -733,49 +1062,11 @@ wxChartViewer::setViewPortControl(wxViewPortControl* vpc)
   m_reentrantGuard = false;
 }
 
-
 // Get the wxViewPortControl that is associated with this control
 wxViewPortControl*
 wxChartViewer::getViewPortControl()
 {
   return m_vpControl;
-}
-
-// Set image map used by the chart
-void
-wxChartViewer::setImageMap(const char* imageMap)
-{
-  // Delete the existing ImageMapHandler
-  if (0 != m_hotSpotTester)
-  {
-    delete m_hotSpotTester;
-  }
-  m_currentHotSpot = -1;
-  m_isClickable = false;
-
-  // Create a new ImageMapHandler to represent the image map
-  if ((0 == imageMap) || (0 == *imageMap))
-  {
-    m_hotSpotTester = 0;
-  }
-  else
-  {
-    m_hotSpotTester = new ImageMapHandler(imageMap);
-  }
-}
-
-// Get the image map handler for the chart
-ImageMapHandler*
-wxChartViewer::getImageMapHandler()
-{
-  return m_hotSpotTester;
-}
-
-// Set the default tool tip to use
-void
-wxChartViewer::setDefaultToolTip(const wxString& text)
-{
-  m_defaultToolTip = text;
 }
 
 // Set the border width of the selection box
@@ -806,7 +1097,6 @@ wxChartViewer::getSelectionBorderColor()
   return m_selectBoxLineColor;
 }
 
-#if wxCHECK_VERSION(3,0,0)
 // Set the border style of the selection box
 void
 wxChartViewer::setSelectionBorderStyle(wxPenStyle style)
@@ -820,21 +1110,6 @@ wxChartViewer::getSelectionBorderStyle()
 {
   return m_selectBoxLineStyle;
 }
-#else
-// Set the border style of the selection box
-void
-wxChartViewer::setSelectionBorderStyle(int style)
-{
-  m_selectBoxLineStyle = style;
-}
-
-// Get the border style of the selection box
-int
-wxChartViewer::getSelectionBorderStyle()
-{
-  return m_selectBoxLineStyle;
-}
-#endif
 
 // Set the mouse usage mode
 void
@@ -910,14 +1185,14 @@ wxChartViewer::getZoomOutRatio()
 void
 wxChartViewer::setMouseWheelZoomRatio(double ratio)
 {
-	m_mouseWheelZoomRatio = ratio;
+  m_mouseWheelZoomRatio = ratio;
 }
 
 // Get the mouse wheel zoom ratio 
 double
 wxChartViewer::getMouseWheelZoomRatio()
 {
-	return m_mouseWheelZoomRatio;	
+  return m_mouseWheelZoomRatio;
 }
 
 // Set the minimum mouse drag before the dragging is considered as real. This is to avoid small
@@ -970,24 +1245,16 @@ wxChartViewer::needUpdateImageMap()
 int
 wxChartViewer::getChartMouseX()
 {
-  int ret = m_currentMouseX;
-  if (ret < 0)
-  {
-    ret = getPlotAreaLeft() + getPlotAreaWidth();
-  }
-  return ret;
+  return (m_currentMouseX < -0x10000000) ? (getPlotAreaLeft() + getPlotAreaWidth())
+                                         : (int)(ToImageX(m_currentMouseX) + 0.5);
 }
 
 // Get the current mouse y coordinate when used in a mouse move event handler
 int
 wxChartViewer::getChartMouseY()
 {
-  int ret = m_currentMouseY;
-  if (ret < 0)
-  {
-    ret = getPlotAreaTop() + getPlotAreaHeight();
-  }
-  return ret;
+  return (m_currentMouseY < -0x10000000) ? (getPlotAreaTop() + getPlotAreaHeight())
+                                         : (int)(ToImageY(m_currentMouseY) + 0.5);
 }
 
 // Get the current mouse x coordinate bounded to the plot area when used in a mouse event handler
@@ -1084,10 +1351,10 @@ wxChartViewer::CommitUpdateChart()
   BaseChart* c = (m_delayUpdateChart == NEED_UPDATE) ? m_delayedChart : m_currentChart;
   const char* chartMetrics = 0;
 
-  if (NULL != c)
+  if (c)
   {
     PaintNow(c);
-    SetMinSize(wxSize(c->getDrawArea()->getWidth(), c->getDrawArea()->getHeight()));
+    SetMinSize(wxSize(ToDisplayX(c->getDrawArea()->getWidth()), ToDisplayY(c->getDrawArea()->getHeight())));
 
     // Get chart metrics
     chartMetrics = c->getChartMetrics();
@@ -1142,22 +1409,42 @@ wxChartViewer::SetSelectionRect(int x, int y, int width, int height)
   {
     y -= (height = -height);
   }
+  m_previousRect = m_currentRect;
   m_currentRect = wxRect(x, y, width-1, height-1);
 }
 
 // Show/hide selection rectangle
 void
-wxChartViewer::SetRectVisible(bool b)
+wxChartViewer::SetRectVisible(bool visible)
 {
-  m_rectVisible = b;
+  m_rectVisible = visible;
 
   if (m_currentRect.GetWidth() > 0 && m_currentRect.GetHeight() > 0)
   {
-    wxClientDC dc(this);
-    PrepareDC(dc);
-    wxDCOverlay overlaydc(m_overlay, &dc);
-    overlaydc.Clear();
-    if (b)
+    wxRect r = m_currentRect;
+    if (m_previousRect.GetWidth() > 0)
+    {
+      r.Union(m_previousRect);
+    }
+    if ((r.x -= 5) < 0) r.x = 0;
+    if ((r.y -= 5) < 0) r.y = 0;
+    r.width += 10;
+    r.height += 10;
+    Refresh(false, &r);
+  }
+
+  if (!m_rectVisible)
+  {
+    m_currentRect = wxRect(0, 0, 0, 0);
+  }
+}
+
+void
+wxChartViewer::DrawSelectionRect(wxDC& dc)
+{
+  if (m_currentRect.GetWidth() > 0 && m_currentRect.GetHeight() > 0)
+  {
+    if (m_rectVisible)
     {
       wxRect rect(m_currentRect.x, m_currentRect.y, m_currentRect.width, m_currentRect.height);
       wxPen pen(m_selectBoxLineColor, m_selectBoxLineWidth, m_selectBoxLineStyle);
@@ -1168,24 +1455,51 @@ wxChartViewer::SetRectVisible(bool b)
       dc.DrawRectangle(rect);
     }
   }
-
-  if (!b)
-  {
-    m_overlay.Reset();
-    m_currentRect = wxRect(0, 0, 0, 0);
-  }
 }
 
 // Determines if the mouse is dragging.
 bool
 wxChartViewer::IsDrag(int direction, wxMouseEvent& event)
 {
-  // We only consider the mouse is dragging it is has dragged more than m_minDragAmount. This is
-  // to avoid small mouse vibrations triggering a mouse drag.
+  // We only consider the mouse is dragging if it has dragged more than m_minDragAmount.
+  // This is to avoid small mouse vibrations triggering a mouse drag.
   int spanX = abs(event.GetX() - m_plotAreaMouseDownXPos);
   int spanY = abs(event.GetY() - m_plotAreaMouseDownYPos);
   return ((direction != Chart::DirectionVertical) && (spanX >= m_minDragAmount)) ||
          ((direction != Chart::DirectionHorizontal) && (spanY >= m_minDragAmount));
+}
+
+void
+wxChartViewer::GetDragZoomRect(int px, int py, int& x, int& y, int& w, int& h)
+{
+  x = (px < m_plotAreaMouseDownXPos) ? px : m_plotAreaMouseDownXPos;
+  y = (py < m_plotAreaMouseDownYPos) ? py : m_plotAreaMouseDownYPos;
+  w = abs(px - m_plotAreaMouseDownXPos);
+  h = abs(py - m_plotAreaMouseDownYPos);
+
+  if (getZoomXYRatio() > 0)
+  {
+    double imageXYRatio = getPlotAreaWidth() / (double) getPlotAreaHeight();
+
+    double whDelta = ToImageX(w) - ToImageY(h) * imageXYRatio;
+    if (whDelta < 0)
+    {
+      w = ToDisplayX(ToImageY(h) * imageXYRatio);
+    }
+    else if (whDelta > 0)
+    {
+      h = ToDisplayY(ToImageX(w) / imageXYRatio);
+    }
+
+    if (x == px)
+    {
+      x = m_plotAreaMouseDownXPos - w;
+    }
+    if (y == py)
+    {
+      y = m_plotAreaMouseDownYPos - h;
+    }
+  }
 }
 
 // Process mouse dragging over the plot area
@@ -1200,18 +1514,18 @@ wxChartViewer::OnPlotAreaMouseDrag(wxMouseEvent& event)
       bool isDragZoom = event.LeftIsDown() && canZoomIn(m_zoomDirection) && IsDrag(m_zoomDirection, event);
       if (isDragZoom)
       {
-        int spanX = m_plotAreaMouseDownXPos - event.GetX();
-        int spanY = m_plotAreaMouseDownYPos - event.GetY();
+        int minX, minY, spanX, spanY;
+        GetDragZoomRect(event.GetX(), event.GetY(), minX, minY, spanX, spanY);
         switch (m_zoomDirection)
         {
           case Chart::DirectionHorizontal:
-            SetSelectionRect(event.GetX(), getPlotAreaTop(), spanX, getPlotAreaHeight());
+            SetSelectionRect(minX, ToDisplayY(getPlotAreaTop()), spanX, ToDisplayY(getPlotAreaHeight()));
             break;
           case Chart::DirectionVertical:
-            SetSelectionRect(getPlotAreaLeft(), event.GetY(), getPlotAreaWidth(), spanY);
+            SetSelectionRect(ToDisplayX(getPlotAreaLeft()), minY, ToDisplayX(getPlotAreaWidth()), spanY);
             break;
           default:
-            SetSelectionRect(event.GetX(), event.GetY(), spanX, spanY);
+            SetSelectionRect(minX, minY, spanX, spanY);
             break;
         }
       }
@@ -1224,7 +1538,7 @@ wxChartViewer::OnPlotAreaMouseDrag(wxMouseEvent& event)
       if (m_isDragScrolling || IsDrag(m_scrollDirection, event))
       {
         m_isDragScrolling = true;
-        if (dragTo(m_scrollDirection, event.GetX() - m_plotAreaMouseDownXPos, event.GetY() - m_plotAreaMouseDownYPos))
+        if (dragTo(m_scrollDirection, ToImageX(event.GetX() - m_plotAreaMouseDownXPos), ToImageY(event.GetY() - m_plotAreaMouseDownYPos)))
         {
           updateViewPort(true, false);
         }
@@ -1268,11 +1582,7 @@ wxChartViewer::updateViewPort(bool needUpdateChart, bool needUpdateImageMap)
   wxCommandEvent vpcEvent(wxEVT_CHARTVIEWER_VIEWPORT_CHANGED);
   vpcEvent.SetId(GetId());
   vpcEvent.SetEventObject(this);
-#if wxCHECK_VERSION(3,0,0)
   HandleWindowEvent(vpcEvent);
-#else
-  GetEventHandler()->ProcessEvent(vpcEvent);
-#endif
 
   m_isInViewPortChanged = false;
 
@@ -1298,572 +1608,6 @@ wxChartViewer::updateViewPort(bool needUpdateChart, bool needUpdateImageMap)
     m_holdTimer.Start(m_updateInterval);
   }
 }
-
-////////////////////////////////////////////////////////////////////////
-// Build in mouse cursors for zooming and scrolling support
-
-static const unsigned int zoomInCursorA[] =
-{
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xff3ff8ff,
-0xff0fe0ff,
-0xff07c0ff,
-0xff07c0ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff07c0ff,
-0xff07c0ff,
-0xff01e0ff,
-0xff30f8ff,
-0x7ff0ffff,
-0x3ff8ffff,
-0x1ffcffff,
-0x0ffeffff,
-0x0fffffff,
-0x9fffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff
-};
-
-static const unsigned int zoomInCursorB[] =
-{
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00c00700,
-0x00f01f00,
-0x00f01e00,
-0x00f83e00,
-0x00f83e00,
-0x00183000,
-0x00f83e00,
-0x00f83e00,
-0x00f01e00,
-0x00f01f00,
-0x00c00700,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000
-};
-
-static const unsigned int zoomOutCursorA[] =
-{
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xff3ff8ff,
-0xff0fe0ff,
-0xff07c0ff,
-0xff07c0ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff07c0ff,
-0xff07c0ff,
-0xff01e0ff,
-0xff30f8ff,
-0x7ff0ffff,
-0x3ff8ffff,
-0x1ffcffff,
-0x0ffeffff,
-0x0fffffff,
-0x9fffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff
-};
-
-static const unsigned int zoomOutCursorB[] =
-{
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00c00700,
-0x00f01f00,
-0x00f01f00,
-0x00f83f00,
-0x00f83f00,
-0x00183000,
-0x00f83f00,
-0x00f83f00,
-0x00f01f00,
-0x00f01f00,
-0x00c00700,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000
-};
-
-static const unsigned int noZoomCursorA[] =
-{
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xff3ff8ff,
-0xff0fe0ff,
-0xff07c0ff,
-0xff07c0ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff0380ff,
-0xff07c0ff,
-0xff07c0ff,
-0xff01e0ff,
-0xff30f8ff,
-0x7ff0ffff,
-0x3ff8ffff,
-0x1ffcffff,
-0x0ffeffff,
-0x0fffffff,
-0x9fffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff
-};
-
-static const unsigned int noZoomCursorB[] =
-{
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00c00700,
-0x00f01f00,
-0x00f01f00,
-0x00f83f00,
-0x00f83f00,
-0x00f83f00,
-0x00f83f00,
-0x00f83f00,
-0x00f01f00,
-0x00f01f00,
-0x00c00700,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000
-};
-
-static const unsigned int noMove2DCursorA[] =
-{
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xff7ffeff,
-0xff3ffcff,
-0xff1ff8ff,
-0xff0ff0ff,
-0xff07e0ff,
-0xff03c0ff,
-0xff03c0ff,
-0xfffc3fff,
-0x7ffc3ffe,
-0x3ffc3ffc,
-0x1f7c3ef8,
-0x0f3c3cf0,
-0x071c38e0,
-0x071c38e0,
-0x0f3c3cf0,
-0x1f7c3ef8,
-0x3ffc3ffc,
-0x7ffc3ffe,
-0xfffc3fff,
-0xff03c0ff,
-0xff03c0ff,
-0xff07e0ff,
-0xff0ff0ff,
-0xff1ff8ff,
-0xff3ffcff,
-0xff7ffeff,
-0xffffffff,
-0xffffffff,
-0xffffffff
-};
-
-static const unsigned int noMove2DCursorB[] =
-{
-0x00000000,
-0x00000000,
-0x00000000,
-0x00800100,
-0x00400200,
-0x00200400,
-0x00100800,
-0x00081000,
-0x00042000,
-0x00fc3f00,
-0x0003c000,
-0x80024001,
-0x40024002,
-0x20824104,
-0x10424208,
-0x08224410,
-0x08224410,
-0x10424208,
-0x20824104,
-0x40024002,
-0x80024001,
-0x0003c000,
-0x00fc3f00,
-0x00042000,
-0x00081000,
-0x00100800,
-0x00200400,
-0x00400200,
-0x00800100,
-0x00000000,
-0x00000000,
-0x00000000
-};
-
-static const unsigned int noMoveHorizCursorA[] =
-{
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xfffc3fff,
-0x7ffc3ffe,
-0x3ffc3ffc,
-0x1f7c3ef8,
-0x0f3c3cf0,
-0x071c38e0,
-0x071c38e0,
-0x0f3c3cf0,
-0x1f7c3ef8,
-0x3ffc3ffc,
-0x7ffc3ffe,
-0xfffc3fff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xffffffff
-};
-
-static const unsigned int noMoveHorizCursorB[] =
-{
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x0003c000,
-0x80024001,
-0x40024002,
-0x20824104,
-0x10424208,
-0x08224410,
-0x08224410,
-0x10424208,
-0x20824104,
-0x40024002,
-0x80024001,
-0x0003c000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00000000
-};
-
-static const unsigned int noMoveVertCursorA[] =
-{
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xff7ffeff,
-0xff3ffcff,
-0xff1ff8ff,
-0xff0ff0ff,
-0xff07e0ff,
-0xff03c0ff,
-0xff03c0ff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xff7ffeff,
-0xff3ffcff,
-0xff1ff8ff,
-0xff1ff8ff,
-0xff3ffcff,
-0xff7ffeff,
-0xffffffff,
-0xffffffff,
-0xffffffff,
-0xff03c0ff,
-0xff03c0ff,
-0xff07e0ff,
-0xff0ff0ff,
-0xff1ff8ff,
-0xff3ffcff,
-0xff7ffeff,
-0xffffffff,
-0xffffffff,
-0xffffffff
-};
-
-static const unsigned int noMoveVertCursorB[] =
-{
-0x00000000,
-0x00000000,
-0x00000000,
-0x00800100,
-0x00400200,
-0x00200400,
-0x00100800,
-0x00081000,
-0x00042000,
-0x00fc3f00,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00800100,
-0x00400200,
-0x00200400,
-0x00200400,
-0x00400200,
-0x00800100,
-0x00000000,
-0x00000000,
-0x00000000,
-0x00fc3f00,
-0x00042000,
-0x00081000,
-0x00100800,
-0x00200400,
-0x00400200,
-0x00800100,
-0x00000000,
-0x00000000,
-0x00000000
-};
-
-static wxCursor* hZoomInCursor = 0;
-static wxCursor* hZoomOutCursor = 0;
-static wxCursor* hNoZoomCursor = 0;
-static wxCursor* hNoMove2DCursor = 0;
-static wxCursor* hNoMoveHorizCursor = 0;
-static wxCursor* hNoMoveVertCursor = 0;
-
-/// Internal class to destruct static cursors
-class FreeCursors
-{
-public:
-  ~FreeCursors()
-  {
-    delete hZoomInCursor;
-    delete hZoomOutCursor;
-    delete hNoZoomCursor;
-    delete hNoMove2DCursor;
-    delete hNoMoveHorizCursor;
-    delete hNoMoveVertCursor;
-  }
-} dummyFreeCursorObj; ///< Dummy object for destructing static cursors
-
-// For monomchrome bitmaps wxWidgets expects bit patterns in XBM format.
-// Therefore the bit order has to be reversed.
-static void
-reverseBitOrder(unsigned int& value)
-{
-  unsigned char* buffer= (unsigned char*) &value;
-  for (int j = 0; j < 4; ++j)
-  {
-    unsigned char val = buffer[j];
-    unsigned char reversed = 0;
-
-    for (int bit = 0; bit < 8; bit++)
-    {
-      reversed <<= 1;
-      reversed |= (unsigned char)(val & 0x01);
-      val >>= 1;
-    }
-    buffer[j] = reversed;
-  }
-}
-
-static wxCursor*
-createCursor(const unsigned int* andPlane, const unsigned int* orPlane, int hotX, int hotY)
-{
-  // The cursor bitmaps are in and/xor plane formats used in the Win32 CreateCursor
-  // function. We need to change it to the bitmap/mask format used by wxWidgets.
-  unsigned int buffer[32];
-  for (int i = 0; i < 32; ++i)
-  {
-    buffer[i] = (~orPlane[i] & ~andPlane[i]);
-    reverseBitOrder(buffer[i]);
-  }
-  wxBitmap csrBits((char*) buffer, 32, 32);
-  for (int i = 0; i < 32; ++i)
-  {
-    buffer[i] = ~(orPlane[i] | ~andPlane[i]);
-    reverseBitOrder(buffer[i]);
-  }
-  wxBitmap csrMask((char*) buffer, 32, 32);
-
-  csrBits.SetMask(new wxMask(csrMask));
-  wxImage csrImage = csrBits.ConvertToImage();
-  csrImage.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, hotX);
-  csrImage.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, hotY);
-
-  return new wxCursor(csrImage);
-}
-
-static wxCursor&
-GetZoomInCursor()
-{
-  if (0 == hZoomInCursor)
-  {
-    hZoomInCursor = createCursor(zoomInCursorA, zoomInCursorB, 15, 15);
-  }
-  return *hZoomInCursor;
-}
-
-static wxCursor&
-GetZoomOutCursor()
-{
-  if (0 == hZoomOutCursor)
-  {
-    hZoomOutCursor = createCursor(zoomOutCursorA, zoomOutCursorB, 15, 15);
-  }
-  return *hZoomOutCursor;
-}
-
-static wxCursor&
-GetNoZoomCursor()
-{
-  if (0 == hNoZoomCursor)
-  {
-    hNoZoomCursor = createCursor(noZoomCursorA, noZoomCursorB, 15, 15);
-  }
-  return *hNoZoomCursor;
-}
-
-static wxCursor&
-GetNoMove2DCursor()
-{
-  if (0 == hNoMove2DCursor)
-  {
-    hNoMove2DCursor = createCursor(noMove2DCursorA, noMove2DCursorB, 15, 15);
-  }
-  return *hNoMove2DCursor;
-}
-
-static wxCursor&
-GetNoMoveHorizCursor()
-{
-  if (0 == hNoMoveHorizCursor)
-  {
-    hNoMoveHorizCursor = createCursor(noMoveHorizCursorA, noMoveHorizCursorB, 15, 15);
-  }
-  return *hNoMoveHorizCursor;
-}
-
-static wxCursor&
-GetNoMoveVertCursor()
-{
-  if (0 == hNoMoveVertCursor)
-  {
-    hNoMoveVertCursor = createCursor(noMoveVertCursorA, noMoveVertCursorB, 15, 15);
-  }
-  return *hNoMoveVertCursor;
-}
-
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -1910,13 +1654,13 @@ wxViewPortControl::setViewer(wxChartViewer* viewer)
   }
 
   m_reentrantGuard = true;
-  if (0 != m_chartViewer)
+  if (m_chartViewer)
   {
     m_chartViewer->setViewPortControl(0);
   }
   m_chartViewer = viewer;
   setViewPortManager(viewer);
-  if (0 != m_chartViewer)
+  if (m_chartViewer)
   {
     m_chartViewer->setViewPortControl(this);
   }
@@ -1971,7 +1715,7 @@ wxViewPortControl::OnPaint(wxPaintEvent& evt)
 {
   wxPaintDC dc(this);
   BaseChart* c = m_chart;
-  if (c != NULL)
+  if (c)
   {
     Render(dc, c);
   }
@@ -1980,10 +1724,9 @@ wxViewPortControl::OnPaint(wxPaintEvent& evt)
 void
 wxViewPortControl::PaintNow(BaseChart* c)
 {
-  if (c != NULL)
+  if (c)
   {
     wxClientDC dc(this);
-    //  wxGCDC gdc(dc);
     Render(dc, c);
   }
 }
@@ -1991,6 +1734,11 @@ wxViewPortControl::PaintNow(BaseChart* c)
 void
 wxViewPortControl::Render(wxDC& dc, BaseChart* c)
 {
+#if 0
+  int dpi = (m_chartViewer) ? m_chartViewer->getDPI() : 0;
+  wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1", dpi) : wxString("alpha=1");
+  c->setOutputOptions(options.ToUTF8());
+#endif
   MemBlock m = c->makeChart(Chart::BMP);
   wxMemoryInputStream in(m.data, m.len);
   wxBitmap bmp(wxImage(in, wxBITMAP_TYPE_BMP));
@@ -2028,7 +1776,7 @@ void
 wxViewPortControl::OnMousePressEvent(wxMouseEvent& event)
 {
   event.Skip();
-  if (!event.ButtonIsDown(wxMOUSE_BTN_LEFT))
+  if (!event.ButtonIsDown(wxMOUSE_BTN_ANY))
   {
     return;
   }
@@ -2052,7 +1800,7 @@ wxViewPortControl::OnMousePressEvent(wxMouseEvent& event)
 
   // Update the chart viewer if the viewport has changed
   UpdateChartViewerIfNecessary();
-//  event.Skip();
+  // event.Skip();
 }
 
 // MouseMove event handler
@@ -2114,9 +1862,9 @@ wxViewPortControl::OnMouseWheelEvent(wxMouseEvent& event)
 {
   event.Skip();
   // Process the mouse wheel only if the mouse is over the plot area
-  if ((NULL == m_chartViewer) || (!isOnPlotArea(event.GetX(), event.GetY())))
+  if (!m_chartViewer || (!isOnPlotArea(event.GetX(), event.GetY())))
   {
-//    event.Skip();
+    // event.Skip();
   }
   else
   {
@@ -2125,7 +1873,7 @@ wxViewPortControl::OnMouseWheelEvent(wxMouseEvent& event)
     int y = m_chartViewer->getPlotAreaTop() + m_chartViewer->getPlotAreaHeight() / 2;
     if (!m_chartViewer->onMouseWheelZoom(x, y, event.GetWheelRotation()))
     {
-//      event.Skip();
+      // event.Skip();
     }
   }
 }
@@ -2170,7 +1918,7 @@ void
 wxViewPortControl::UpdateChartViewerIfNecessary()
 {
   wxChartViewer* viewer = getViewer();
-  if (NULL == viewer)
+  if (!viewer)
   {
     return;
   }

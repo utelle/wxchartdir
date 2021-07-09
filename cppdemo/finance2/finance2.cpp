@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     // In this exammple, we use a random number generator utility to simulate the data. We set up
     // the random table to create 6 cols x (noOfDays + extraDays) rows, using 9 as the seed.
-    RanTable *rantable = new RanTable(9, 6, noOfDays + extraDays);
+    RanTable* rantable = new RanTable(9, 6, noOfDays + extraDays);
 
     // Set the 1st col to be the timeStamp, starting from Sep 4, 2002, with each row representing
     // one day, and counting week days only (jump over Sat and Sun)
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     DoubleArray volData = rantable->getCol(5);
 
     // Create a FinanceChart object of width 640 pixels
-    FinanceChart *c = new FinanceChart(640);
+    FinanceChart* c = new FinanceChart(640);
 
     // Add a title to the chart
     c->addTitle("Finance Chart Demonstration");
@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
     //free up resources
     delete rantable;
     delete c;
+
     return 0;
 }
 

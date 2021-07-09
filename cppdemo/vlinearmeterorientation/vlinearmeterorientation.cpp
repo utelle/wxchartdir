@@ -7,7 +7,7 @@ void createChart(int chartIndex, const char *filename)
 
     // Create a LinearMeter object of size 70 x 240 pixels with very light grey (0xeeeeee)
     // backgruond and a light grey (0xccccccc) 3-pixel thick rounded frame
-    LinearMeter *m = new LinearMeter(70, 240, 0xeeeeee, 0xcccccc);
+    LinearMeter* m = new LinearMeter(70, 240, 0xeeeeee, 0xcccccc);
     m->setRoundedFrame(Chart::Transparent);
     m->setThickFrame(3);
 
@@ -25,8 +25,8 @@ void createChart(int chartIndex, const char *filename)
     // Add a smooth color scale to the meter
     double smoothColorScale[] = {0, 0x6666ff, 25, 0x00bbbb, 50, 0x00ff00, 75, 0xffff00, 100,
         0xff0000};
-    m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-        smoothColorScale[0]))));
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
+    m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size));
 
     // Add a blue (0x0000cc) pointer at the specified value
     m->addPointer(value, 0x0000cc);
@@ -36,6 +36,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

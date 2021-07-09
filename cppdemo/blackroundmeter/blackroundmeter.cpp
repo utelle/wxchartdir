@@ -6,7 +6,7 @@ void createChart(int chartIndex, const char *filename)
     double value = 72.3;
 
     // Create an AngularMeter object of size 250 x 250 pixels with transparent background
-    AngularMeter *m = new AngularMeter(250, 250, Chart::Transparent);
+    AngularMeter* m = new AngularMeter(250, 250, Chart::Transparent);
 
     // Set the default text and line colors to white (0xffffff)
     m->setColor(Chart::TextColor, 0xffffff);
@@ -26,16 +26,17 @@ void createChart(int chartIndex, const char *filename)
 
     // Gradient color for the border to make it silver-like
     double ringGradient[] = {1, 0x7f7f7f, 0.5, 0xd6d6d6, 0, 0xffffff, -0.5, 0xd6d6d6, -1, 0x7f7f7f};
+    const int ringGradient_size = (int)(sizeof(ringGradient)/sizeof(*ringGradient));
     // Add a ring between radii 116 and 122 pixels using the silver gradient as border
-    m->addRing(116, 122, m->relativeLinearGradient(DoubleArray(ringGradient, (int)(sizeof(
-        ringGradient) / sizeof(ringGradient[0]))), 45, 122));
+    m->addRing(116, 122, m->relativeLinearGradient(DoubleArray(ringGradient, ringGradient_size), 45,
+        122));
 
     // Meter scale is 0 - 100, with major/minor/micro ticks every 10/5/1 units
     m->setScale(0, 100, 10, 5, 1);
 
     // Set the scale label style to 15pt Arial Italic. Set the major/minor/micro tick lengths to
     // 12/9/6 pixels pointing inwards, and their widths to 2/1/1 pixels.
-    m->setLabelStyle("ariali.ttf", 15);
+    m->setLabelStyle("Arial Italic", 15);
     m->setTickLength(-12, -9, -6);
     m->setLineWidth(0, 2, 1, 1);
 
@@ -43,58 +44,55 @@ void createChart(int chartIndex, const char *filename)
     // positions.
     double smoothColorScale[] = {0, 0x0000ff, 25, 0x0088ff, 50, 0x00ff00, 75, 0xdddd00, 100,
         0xff0000};
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
     double stepColorScale[] = {0, 0x00aa00, 60, 0xddaa00, 80, 0xcc0000, 100};
+    const int stepColorScale_size = (int)(sizeof(stepColorScale)/sizeof(*stepColorScale));
     double highLowColorScale[] = {0, 0x00ff00, 70, Chart::Transparent, 100, 0xff0000};
+    const int highLowColorScale_size = (int)(sizeof(highLowColorScale)/sizeof(*highLowColorScale));
 
     if (chartIndex == 0) {
         // Add the smooth color scale at the default position
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))));
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size));
         // Add glare up to radius 116 (= region inside border)
         m->addGlare(116);
     } else if (chartIndex == 1) {
         // Add the smooth color scale starting at radius 62 with zero width and ending at radius 40
         // with 22 pixels outer width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 62, 0, 40, 22);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 62, 0, 40, 22);
         // Add glare up to radius 116 (= region inside border), concave and spanning 190 degrees
         m->addGlare(116, -190);
     } else if (chartIndex == 2) {
         // Add the smooth color scale starting at radius 111 with zero width and ending at radius
         // 111 with 12 pixels inner width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 111, 0, 111, -12);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 111, 0, 111, -12);
         // Add glare up to radius 116 (= region inside border), concave and spanning 190 degrees and
         // rotated by 45 degrees
         m->addGlare(116, -190, 45);
     } else if (chartIndex == 3) {
         // Add the high/low color scale at the default position
-        m->addColorScale(DoubleArray(highLowColorScale, (int)(sizeof(highLowColorScale) / sizeof(
-            highLowColorScale[0]))));
+        m->addColorScale(DoubleArray(highLowColorScale, highLowColorScale_size));
     } else if (chartIndex == 4) {
         // Add the smooth color scale at radius 44 with 16 pixels outer width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 44, 16);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 44, 16);
         // Add glare up to radius 116 (= region inside border), concave and spanning 190 degrees and
         // rotated by -45 degrees
         m->addGlare(116, -190, -45);
     } else {
         // Add the step color scale at the default position
-        m->addColorScale(DoubleArray(stepColorScale, (int)(sizeof(stepColorScale) / sizeof(
-            stepColorScale[0]))));
+        m->addColorScale(DoubleArray(stepColorScale, stepColorScale_size));
     }
 
     // Add a text label centered at (125, 175) with 15pt Arial Italic font
-    m->addText(125, 175, "CPU", "ariali.ttf", 15, Chart::TextColor, Chart::Center);
+    m->addText(125, 175, "CPU", "Arial Italic", 15, Chart::TextColor, Chart::Center);
 
     // Add a readout to some of the charts as demonstration
-    if (chartIndex == 0 || chartIndex == 2) {
+    if ((chartIndex == 0) || (chartIndex == 2)) {
         // Put the value label center aligned at (125, 232), using black (0x000000) 14pt Arial font
         // on a light blue (0x99ccff) background. Set box width to 50 pixels with 5 pixels rounded
         // corners.
-        TextBox *t = m->addText(125, 232, m->formatValue(value,
-            "<*block,width=50,halign=center*>{value|1}"), "arial.ttf", 14, 0x000000,
-            Chart::BottomCenter);
+        TextBox* t = m->addText(125, 232, m->formatValue(value,
+            "<*block,width=50,halign=center*>{value|1}"), "Arial", 14, 0x000000, Chart::BottomCenter
+            );
         t->setBackground(0x99ccff);
         t->setRoundedCorners(5);
     }
@@ -107,6 +105,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

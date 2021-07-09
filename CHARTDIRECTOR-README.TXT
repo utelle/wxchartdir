@@ -1,15 +1,12 @@
-ChartDirector Version 6
-Copyright (C) 2016 Advanced Software Engineering Limited
+ChartDirector Version 7
+Copyright (C) 2021 Advanced Software Engineering Limited
 All Rights Reserved
 
 ************************* What is this file **************************
 
-This is the common README.TXT file for all editions of ChartDirector 
-(ASP/COM/VB, .NET, Java, PHP, Perl, Python, Ruby, ColdFusion, C++) and 
-for all operating systems that ChartDirector supports. It describes 
-how to get started with ChartDirector. More specific information can 
-be found in the documentation that comes with your ChartDirector 
-edition.
+This is the common README.TXT file for all programming and operating
+system editions of ChartDirector. It describes how to get started with
+ChartDirector. 
 
 ************************* Other Information **************************
 
@@ -41,8 +38,8 @@ format, you may download from:
 
            *** IMPORTANT NOTES FOR VIEWING CHM FILES ***
 
-- On Windows, downloaded CHM files, or CHM files extracted from 
-downloaded zip files, must be unblocked before they can be viewed. To 
+- On Windows, downloaded CHM files (including CHM files extracted from 
+downloaded zip files), must be unblocked before they can be viewed. To 
 do this, from the File Explorer, right click on the CHM file, select 
 Properties, click the "Unblock" button, and press "OK". 
 

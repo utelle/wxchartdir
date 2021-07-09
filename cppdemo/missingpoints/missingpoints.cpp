@@ -4,19 +4,23 @@ int main(int argc, char *argv[])
 {
     // The data for the chart
     double data0[] = {42, 49, Chart::NoValue, 38, 64, 56, 29, 41, 44, 57};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double data1[] = {65, 75, 47, 34, 42, 49, 73, Chart::NoValue, 90, 69, 66, 78};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
     double data2[] = {Chart::NoValue, Chart::NoValue, 25, 28, 38, 20, 22, Chart::NoValue, 25, 33,
         30, 24};
-    const char *labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
+    const int data2_size = (int)(sizeof(data2)/sizeof(*data2));
+    const char* labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",
         "Nov", "Dec"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 600 x 360 pixels. Set background color to brushed silver,
     // with a 2 pixel 3D border. Use rounded corners.
-    XYChart *c = new XYChart(600, 360, Chart::brushedSilverColor(), Chart::Transparent, 2);
+    XYChart* c = new XYChart(600, 360, Chart::brushedSilverColor(), Chart::Transparent, 2);
     c->setRoundedFrame();
 
     // Add a title using 18pt Times New Roman Bold Italic font. #Set top/bottom margins to 6 pixels.
-    TextBox *title = c->addTitle("Product Line Global Revenue", "timesbi.ttf", 18);
+    TextBox* title = c->addTitle("Product Line Global Revenue", "Times New Roman Bold Italic", 18);
     title->setMargin(0, 0, 6, 6);
 
     // Add a separator line just under the title
@@ -25,7 +29,7 @@ int main(int argc, char *argv[])
     // Add a legend box where the top-center is anchored to the horizontal center of the chart, just
     // under the title. Use horizontal layout and 10 points Arial Bold font, and transparent
     // background and border.
-    LegendBox *legendBox = c->addLegend(c->getWidth() / 2, title->getHeight(), false, "arialbd.ttf",
+    LegendBox* legendBox = c->addLegend(c->getWidth() / 2, title->getHeight(), false, "Arial Bold",
         10);
     legendBox->setAlignment(Chart::TopCenter);
     legendBox->setBackground(Chart::Transparent, Chart::Transparent);
@@ -35,7 +39,7 @@ int main(int argc, char *argv[])
     c->setPlotArea(70, 75, 460, 240, -1, -1, Chart::Transparent, 0x000000, -1);
 
     // Set the x axis labels
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Show the same scale on the left and right y-axes
     c->syncYAxis();
@@ -54,34 +58,34 @@ int main(int argc, char *argv[])
     c->xAxis()->setMargin(15, 15);
 
     // Set axis label style to 8pt Arial Bold
-    c->xAxis()->setLabelStyle("arialbd.ttf", 8);
-    c->yAxis()->setLabelStyle("arialbd.ttf", 8);
-    c->yAxis2()->setLabelStyle("arialbd.ttf", 8);
+    c->xAxis()->setLabelStyle("Arial Bold", 8);
+    c->yAxis()->setLabelStyle("Arial Bold", 8);
+    c->yAxis2()->setLabelStyle("Arial Bold", 8);
 
     // Add axis title using 10pt Arial Bold Italic font
-    c->yAxis()->setTitle("Revenue in USD millions", "arialbi.ttf", 10);
-    c->yAxis2()->setTitle("Revenue in USD millions", "arialbi.ttf", 10);
+    c->yAxis()->setTitle("Revenue in USD millions", "Arial Bold Italic", 10);
+    c->yAxis2()->setTitle("Revenue in USD millions", "Arial Bold Italic", 10);
 
     // Add the first line. The missing data will be represented as gaps in the line (the default
     // behaviour)
-    LineLayer *layer0 = c->addLineLayer();
-    layer0->addDataSet(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0]))), 0xff0000,
-        "Quantum Computer")->setDataSymbol(Chart::GlassSphere2Shape, 11);
+    LineLayer* layer0 = c->addLineLayer();
+    layer0->addDataSet(DoubleArray(data0, data0_size), 0xff0000, "Quantum Computer")->setDataSymbol(
+        Chart::GlassSphere2Shape, 11);
     layer0->setLineWidth(3);
 
     // Add the second line. The missing data will be represented by using dash lines to bridge the
     // gap
-    LineLayer *layer1 = c->addLineLayer();
-    layer1->addDataSet(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0]))), 0x00ff00,
-        "Atom Synthesizer")->setDataSymbol(Chart::GlassSphere2Shape, 11);
+    LineLayer* layer1 = c->addLineLayer();
+    layer1->addDataSet(DoubleArray(data1, data1_size), 0x00ff00, "Atom Synthesizer")->setDataSymbol(
+        Chart::GlassSphere2Shape, 11);
     layer1->setLineWidth(3);
     layer1->setGapColor(c->dashLineColor(0x00ff00));
 
     // Add the third line. The missing data will be ignored - just join the gap with the original
     // line style.
-    LineLayer *layer2 = c->addLineLayer();
-    layer2->addDataSet(DoubleArray(data2, (int)(sizeof(data2) / sizeof(data2[0]))), 0xff6600,
-        "Proton Cannon")->setDataSymbol(Chart::GlassSphere2Shape, 11);
+    LineLayer* layer2 = c->addLineLayer();
+    layer2->addDataSet(DoubleArray(data2, data2_size), 0xff6600, "Proton Cannon")->setDataSymbol(
+        Chart::GlassSphere2Shape, 11);
     layer2->setLineWidth(3);
     layer2->setGapColor(Chart::SameAsMainColor);
 
@@ -99,6 +103,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

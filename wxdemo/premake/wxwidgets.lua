@@ -1,6 +1,6 @@
 -- wxWidgets configuration file for premake5
 --
--- Copyright (C) 2017 Ulrich Telle <ulrich@telle-online.de>
+-- Copyright (C) 2017-2021 Ulrich Telle <ulrich@telle-online.de>
 --
 -- Based on the script for premake4 created by
 -- laurent.humbertclaude@gmail.com and v.krishnakumar@gmail.com 
@@ -47,7 +47,7 @@ if not _OPTIONS["wx_env"] then
    _OPTIONS["wx_env"] = "WXWIN"
 end
 
-wxMonolithic = (_ACTION == "gmake" and _OPTIONS["monolithic"])
+wxMonolithic = ((_ACTION == "gmake" or _ACTION == "gmake2") and _OPTIONS["monolithic"])
 
 -- Determine version of Visual Studio action
 msvc_useProps = false
@@ -68,6 +68,8 @@ elseif _ACTION == "vs2015" then
   vc_version = 14
 elseif _ACTION == "vs2017" then
   vc_version = 15
+elseif _ACTION == "vs2019" then
+  vc_version = 16
 end
 
 is_msvc = false
@@ -80,11 +82,60 @@ if ( vc_version ~= "" ) then
   vc_with_ver = "vc"..vc_version
 end
 
--- Activate loading of separate props file
-if (msvc_useProps) then
-  premake.wxProject = true
+require('vstudio')
+require('gmake2')
+
+premake.api.register {
+  name = "wxUseProps",
+  scope = "project",
+  kind = "boolean",
+  default = false
+}
+
+local function wxPropertySheets(prj)
+--  if premake.wxProject ~= nil and premake.wxProject then 
+  if prj.wxUseProps then 
+    premake.push('<ImportGroup Label="PropertySheets">')
+    if premake.wxSetupProps ~= nil and premake.wxSetupProps ~= '' then
+      premake.w('<Import Project="' .. premake.wxSetupProps .. '" />')
+    else
+      premake.w('<Import Project="wx_setup.props" />')
+    end
+    premake.w('<Import Project="wx_local.props" Condition="Exists(\'wx_local.props\')" />')
+    premake.pop('</ImportGroup>')
+  end
 end
 
+premake.override(premake.vstudio.vc2010.elements, "project", function(base, prj)
+	local calls = base(prj)
+	table.insertafter(calls, premake.vstudio.vc2010.importExtensionSettings, wxPropertySheets)
+	return calls
+end)
+
+premake.override(premake.modules.gmake2, "target", function(base, cfg, toolset)
+  local targetpath = string.gsub(premake.project.getrelative(cfg.project, cfg.buildtarget.directory), ' ', '_')
+  premake.outln('TARGETDIR = ' .. targetpath)
+  premake.outln('TARGET = $(TARGETDIR)/' .. cfg.buildtarget.name)
+end)
+  
+premake.override(premake.modules.gmake2, "objdir", function(base, cfg, toolset)
+  local objpath = string.gsub(premake.project.getrelative(cfg.project, cfg.objdir), ' ', '_')
+  premake.outln('OBJDIR = ' .. objpath)
+end)
+
+-- Activate loading of separate props file
+if (msvc_useProps) then
+--  premake.wxProject = true
+end
+
+local function wxSetTargetDirectory(arch, build)
+  -- Target directory
+  if (is_msvc) then
+    targetdir (BUILDDIR .. "/bin/" .. vc_with_ver .. "/" .. arch .. "/" .. build)
+  else
+    targetdir (BUILDDIR .. "/bin/gcc" .. "/" .. arch .. "/" .. build)
+  end
+end
 
 -- The wx_config the parameters are.
 --   Root      : path to wx root folder. Can be left empty if WXWIN is defined
@@ -100,7 +151,7 @@ end
 --   Libs      : a list of wx libraries that you want to link with.
 --               eg: "aui,media,html"
 --               Default to "richtext,aui,xrc,qa,html,adv,core,xml,net"; base is implicit
---   Arch      : architecture ("x32" or "x64", default "x32")
+--   Arch      : architecture ("Win32" or "Win64", default "Win32")
 --   WindowsCompiler : compiler used to compile windows libraries ( "vc" or "gcc" )
  
 function wx_config(options)
@@ -123,7 +174,7 @@ function wx_config(options)
                      options.Unicode or "yes",
                      options.Universal or "",
                      options.Libs or "richtext,aui,xrc,qa,html,adv,core,xml,net", -- base is implicit, std not valid
-                     options.Arch or "x32",
+                     options.Arch or "Win32",
                      options.WindowsCompiler or "vc"
                    )
 end
@@ -145,7 +196,7 @@ function wx_config_Private(wxRoot, wxDebug, wxHost, wxVersion, wxStatic, wxUnico
     if wxUnicode == "yes" then defines { "_UNICODE" } end
  
     if wxDebug == "yes" then defines { "__WXDEBUG__" }
-    elseif wxDebug == "no" then flags { "Optimize" } end
+    elseif wxDebug == "no" then optimize "On" end
  
     if wxStatic == "yes" then
         -- flags { "StaticRuntime" }
@@ -165,7 +216,7 @@ function wx_config_Private(wxRoot, wxDebug, wxHost, wxVersion, wxStatic, wxUnico
             wxDebugSuffix = "d"
         end
  
-        if wxArch == "x64" then
+        if wxArch == "Win64" then
           wxArchSuffix = "_x64"
           cdLibPathSuffix = "lib\\win64"
         else
@@ -229,11 +280,18 @@ function wx_config_Private(wxRoot, wxDebug, wxHost, wxVersion, wxStatic, wxUnico
           libVersion = string.gsub(wxVersion, '%.', '') -- remove dot from version
           if wxMonolithic then
             links ( "$(wxMonolithicLibName)" )
+            if (wxStatic == "yes") then
+              -- link with support libraries
+              for i, lib in ipairs({"wxjpeg", "wxpng", "wxzlib", "wxtiff",  "wxexpat"}) do
+                links { lib.."$(wxSuffixDebug)" }
+              end
+              links { "wxregex" .. "$(wxSuffix)" }
+            end
           else
             for i, lib in ipairs(string.explode(wxLibs, ",")) do
               local libPrefix = '$(wxToolkitLibNamePrefix)'
               if lib == "xml" or lib == "net" or lib == "odbc" then
-                  libPrefix = '$(wxBaseLibNamePrefix)_'
+                libPrefix = '$(wxBaseLibNamePrefix)_'
               end
               links { libPrefix..lib}
             end
@@ -244,9 +302,10 @@ function wx_config_Private(wxRoot, wxDebug, wxHost, wxVersion, wxStatic, wxUnico
             end
             links { "wxregex" .. "$(wxSuffix)" }
           end
-          links { "comctl32", "rpcrt4", "shell32", "gdi32", "kernel32", "user32", "comdlg32", "ole32", "oleaut32", "advapi32", "oleacc", "winspool", "winmm", "shlwapi", "uuid", "version", "wsock32", "wininet" }
+          links { "kernel32", "user32", "gdi32", "comdlg32", "winspool", "winmm", "shell32", "shlwapi", "comctl32", "ole32", "oleaut32", "uuid", "rpcrt4", "advapi32", "version", "wsock32", "wininet", "oleacc", "uxtheme" }
         elseif (not is_msvc) then
           libVersion = string.gsub(wxVersion, '%.', '') -- remove dot from version
+          links { "wxbase"..libVersion..wxBuildType } -- base lib
           for i, lib in ipairs(string.explode(wxLibs, ",")) do
               local libPrefix = 'wxmsw'
               if lib == "xml" or lib == "net" or lib == "odbc" then
@@ -254,13 +313,12 @@ function wx_config_Private(wxRoot, wxDebug, wxHost, wxVersion, wxStatic, wxUnico
               end
               links { libPrefix..libVersion..wxBuildType..'_'..lib}
           end
-          links { "wxbase"..libVersion..wxBuildType } -- base lib
           -- link with support libraries
           for i, lib in ipairs({"wxjpeg", "wxpng", "wxzlib", "wxtiff", "wxexpat"}) do
               links { lib..wxDebugSuffix }
           end
           links { "wxregex" .. wxBuildType }
-          links { "comctl32", "rpcrt4", "shell32", "gdi32", "kernel32", "user32", "comdlg32", "ole32", "oleaut32", "advapi32", "oleacc", "winspool", "winmm", "shlwapi", "uuid", "version", "wsock32", "wininet" }
+          links { "kernel32", "user32", "gdi32", "comdlg32", "winspool", "winmm", "shell32", "shlwapi", "comctl32", "ole32", "oleaut32", "uuid", "rpcrt4", "advapi32", "version", "wsock32", "wininet", "oleacc", "uxtheme" }
         end
     end
  
@@ -297,7 +355,7 @@ function wx_config_Private(wxRoot, wxDebug, wxHost, wxVersion, wxStatic, wxUnico
 --~         wx_config_for_windows("vc")
 --~     configuration {"windows", "codeblocks or gmake or codelitle"}
 --~         wx_config_for_windows("gcc")
-    if os.get() ~= "windows" then
+    if os.target() ~= "windows" then
         wx_config_for_posix()
     else
         local allowedCompiler = {"vc", "gcc"}
@@ -325,7 +383,7 @@ function init_filters()
     system "Windows"
     architecture "x64"
 
-  filter { "configurations:*Debug*" }
+  filter { "configurations:Debug*" }
     defines {
       "DEBUG", 
       "_DEBUG"
@@ -334,21 +392,19 @@ function init_filters()
     targetsuffix "d"
 
 
-  filter { "configurations:*Release*" }
+  filter { "configurations:Release*" }
     defines {
       "NDEBUG"
     }
-    flags { "Optimize" }  
+    optimize "On"
 
   filter {}
 end
 
 function make_filters(libname,libtarget,wxlibs)
-  if (wx_compiler == "gcc") then
-    toolset("gcc")
-  end
   if (is_msvc) then
     if (msvc_useProps) then
+      wxUseProps(true)
       targetname(libtarget .. "$(wxFlavour)")
     else
       targetname(libtarget)
@@ -356,6 +412,7 @@ function make_filters(libname,libtarget,wxlibs)
   else
     targetname(libtarget .. "$(wxFlavour)")
   end
+
   if (is_msvc) then
     defines {
       libname .. "_DLLNAME=$(TargetName)"
@@ -367,7 +424,15 @@ function make_filters(libname,libtarget,wxlibs)
   end
 
   makesettings { "include config.gcc" }
-  filter { "configurations:not DLL*" }
+
+  -- Intermediate directory
+  if (is_msvc) then
+    objdir (BUILDDIR .. "/obj/" .. vc_with_ver)
+  else
+    objdir (BUILDDIR .. "/obj/gcc")
+  end
+
+  filter { "configurations:Release or Debug or Release wxDLL or Debug wxDLL" }
     kind "StaticLib"
     defines {
       "_LIB",
@@ -376,9 +441,10 @@ function make_filters(libname,libtarget,wxlibs)
     if (wx_compiler == "gcc") then
       targetprefix "lib"
       targetextension ".a"
+      implibprefix "lib"
+      implibextension ".a"
     end
-
-  filter { "configurations:not DLL*", "platforms:Win32" }
+  filter { "configurations:Release or Debug", "platforms:Win32" }
     if (is_msvc) then
       if (msvc_useProps) then
         targetdir("$(wxOutDir)")
@@ -388,7 +454,17 @@ function make_filters(libname,libtarget,wxlibs)
     else
       targetdir("lib/gcc_lib")
     end
-  filter { "configurations:not DLL*", "platforms:Win64" }
+  filter { "configurations:Release wxDLL or Debug wxDLL", "platforms:Win32" }
+    if (is_msvc) then
+      if (msvc_useProps) then
+        targetdir("$(wxOutDir)")
+      else
+        targetdir("lib/vc_lib_wxdll")
+      end
+    else
+      targetdir("lib/gcc_lib_wxdll")
+    end
+  filter { "configurations:Release or Debug", "platforms:Win64" }
     if (is_msvc) then
       if (msvc_useProps) then
         targetdir("$(wxOutDir)")
@@ -398,19 +474,30 @@ function make_filters(libname,libtarget,wxlibs)
     else
       targetdir("lib/gcc_x64_lib")
     end
+  filter { "configurations:Release wxDLL or Debug wxDLL", "platforms:Win64" }
+    if (is_msvc) then
+      if (msvc_useProps) then
+        targetdir("$(wxOutDir)")
+      else
+        targetdir("lib/vc_x64_lib_wxdll")
+      end
+    else
+      targetdir("lib/gcc_x64_lib_wxdll")
+    end
 
-  filter { "configurations:DLL*" }
+  filter { "configurations:Release DLL or Debug DLL" }
     kind "SharedLib"
     defines {
       "_USRDLL",
       "WXMAKINGDLL_" .. libname
     }
     if (wx_compiler == "gcc") then
+      targetprefix "lib"
       implibprefix "lib"
       implibextension ".a"
     end
 
-  filter { "configurations:DLL*", "platforms:Win32" }
+  filter { "configurations:Release DLL or Debug DLL", "platforms:Win32" }
     if (is_msvc) then
       if (msvc_useProps) then
         targetdir("$(wxOutDir)")
@@ -420,7 +507,7 @@ function make_filters(libname,libtarget,wxlibs)
     else
       targetdir("lib/gcc_dll")
     end
-  filter { "configurations:DLL*", "platforms:Win64" }
+  filter { "configurations:Release DLL or Debug DLL", "platforms:Win64" }
     if (is_msvc) then
       if (msvc_useProps) then
         targetdir("$(wxOutDir)")
@@ -431,98 +518,123 @@ function make_filters(libname,libtarget,wxlibs)
       targetdir("lib/gcc_x64_dll")
     end
     
-  filter { "configurations:*Debug*" }
+  filter { "configurations:Debug*" }
     targetsuffix "d"
 
-  filter { "configurations:*Release*" }
+  filter { "configurations:Release*" }
     targetsuffix ""
 
   filter { "configurations:Debug", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="yes", WindowsCompiler=wx_compiler, Libs=wxlibs }
   filter { "configurations:Debug", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="yes", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="yes", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
 
   filter { "configurations:Debug wxDLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", WindowsCompiler=wx_compiler, Libs=wxlibs }
   filter { "configurations:Debug wxDLL", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
 
-  filter { "configurations:DLL Debug", "platforms:Win32" }
+  filter { "configurations:Debug DLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", WindowsCompiler=wx_compiler, Libs=wxlibs }
-  filter { "configurations:DLL Debug", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+  filter { "configurations:Debug DLL", "platforms:Win64" }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
 
   filter { "configurations:Release", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="no", WindowsCompiler=wx_compiler, Libs=wxlibs }
   filter { "configurations:Release", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="no", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="no", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
 
   filter { "configurations:Release wxDLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", WindowsCompiler=wx_compiler, Libs=wxlibs }
   filter { "configurations:Release wxDLL", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
 
-  filter { "configurations:DLL Release", "platforms:Win32" }
+  filter { "configurations:Release DLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", WindowsCompiler=wx_compiler, Libs=wxlibs }
-  filter { "configurations:DLL Release", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+  filter { "configurations:Release DLL", "platforms:Win64" }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
 
   filter {}
 end
 
 function use_filters(libname, debugcwd, wxlibs)
-  if (wx_compiler == "gcc") then
-    toolset("gcc")
+  if (msvc_useProps) then
+    wxUseProps(true)
   end
+
   makesettings { "include config.gcc" }
 
-  filter { "configurations:not DLL*" }
+  if (wx_compiler == "gcc") then
+    implibprefix "lib"
+    implibextension ".a"
+  end
+
+  -- Intermediate directory
+  if (is_msvc) then
+    objdir (BUILDDIR .. "/obj/" .. vc_with_ver)
+  else
+    objdir (BUILDDIR .. "/obj/gcc")
+  end
+
+  filter { "configurations:Release or Debug or Release wxDLL or Debug wxDLL" }
     defines {
       "WXUSINGLIB_" .. libname
     }
 
-  filter { "configurations:DLL*" }
+  filter { "configurations:Release DLL or Debug DLL" }
     defines {
       "WXUSINGDLL_" .. libname
     }
-    
-  filter { "configurations:*Debug*" }
+
+  filter { "configurations:Debug*" }
     targetsuffix "d"
     debugdir(debugcwd)
 
-  filter { "configurations:*Release*" }
+  filter { "configurations:Release*" }
     targetsuffix ""
     debugdir(debugcwd)
 
   filter { "configurations:Debug", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="yes", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win32", "Debug")
   filter { "configurations:Debug", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="yes", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="yes", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win64", "Debug")
 
   filter { "configurations:Debug wxDLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win32", "Debug wxDLL")
   filter { "configurations:Debug wxDLL", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win64", "Debug wxDLL")
 
-  filter { "configurations:DLL Debug", "platforms:Win32" }
+  filter { "configurations:Debug DLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", WindowsCompiler=wx_compiler, Libs=wxlibs }
-  filter { "configurations:DLL Debug", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win32", "Debug DLL")
+  filter { "configurations:Debug DLL", "platforms:Win64" }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="yes", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win64", "Debug DLL")
 
   filter { "configurations:Release", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="no", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win32", "Release")
   filter { "configurations:Release", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="no", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="yes", Debug="no", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win64", "Release")
 
   filter { "configurations:Release wxDLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win32", "Release wxDLL")
   filter { "configurations:Release wxDLL", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win64", "Release wxDLL")
 
-  filter { "configurations:DLL Release", "platforms:Win32" }
+  filter { "configurations:Release DLL", "platforms:Win32" }
     wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", WindowsCompiler=wx_compiler, Libs=wxlibs}
-  filter { "configurations:DLL Release", "platforms:Win64" }
-    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="x64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win32", "Release DLL")
+  filter { "configurations:Release DLL", "platforms:Win64" }
+    wx_config {Unicode="yes", Version=_OPTIONS["wx_ver"], Static="no", Debug="no", Arch="Win64", WindowsCompiler=wx_compiler, Libs=wxlibs }
+    wxSetTargetDirectory("Win64", "Release DLL")
 
   filter {}
 end

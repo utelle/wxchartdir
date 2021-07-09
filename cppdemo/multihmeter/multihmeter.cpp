@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     // Create an LinearMeter object of size 250 x 75 pixels, using silver background with a 2 pixel
     // black 3D depressed border.
-    LinearMeter *m = new LinearMeter(250, 75, Chart::silverColor(), 0, -2);
+    LinearMeter* m = new LinearMeter(250, 75, Chart::silverColor(), 0, -2);
 
     // Set the scale region top-left corner at (15, 25), with size of 220 x 20 pixels. The scale
     // labels are located on the top (implies horizontal meter)
@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
     m->addPointer(value2, 0x800000);
 
     // Add a label at bottom-left (10, 68) using Arial Bold/8pt/red (c00000)
-    m->addText(10, 68, "Temp C", "arialbd.ttf", 8, 0xc00000, Chart::BottomLeft);
+    m->addText(10, 68, "Temp C", "Arial Bold", 8, 0xc00000, Chart::BottomLeft);
 
     // Add three text boxes to show the values in this meter
-    m->addText(148, 70, m->formatValue(value0, "2"), "arial.ttf", 8, 0x6666ff, Chart::BottomRight
+    m->addText(148, 70, m->formatValue(value0, "2"), "Arial", 8, 0x6666ff, Chart::BottomRight
         )->setBackground(0, 0, -1);
-    m->addText(193, 70, m->formatValue(value1, "2"), "arial.ttf", 8, 0x33ff33, Chart::BottomRight
+    m->addText(193, 70, m->formatValue(value1, "2"), "Arial", 8, 0x33ff33, Chart::BottomRight
         )->setBackground(0, 0, -1);
-    m->addText(238, 70, m->formatValue(value2, "2"), "arial.ttf", 8, 0xff3333, Chart::BottomRight
+    m->addText(238, 70, m->formatValue(value2, "2"), "Arial", 8, 0xff3333, Chart::BottomRight
         )->setBackground(0, 0, -1);
 
     // Output the chart
@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete m;
+
     return 0;
 }
 

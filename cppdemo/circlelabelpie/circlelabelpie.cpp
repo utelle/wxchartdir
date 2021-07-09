@@ -4,17 +4,20 @@ void createChart(int chartIndex, const char *filename)
 {
     // The data for the pie chart
     double data[] = {42, 18, 8};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The labels for the pie chart
-    const char *labels[] = {"Agree", "Disagree", "Not Sure"};
+    const char* labels[] = {"Agree", "Disagree", "Not Sure"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // The colors to use for the sectors
     int colors[] = {0x66ff66, 0xff6666, 0xffff00};
+    const int colors_size = (int)(sizeof(colors)/sizeof(*colors));
 
     // Create a PieChart object of size 300 x 300 pixels. Set the background to a gradient color
     // from blue (aaccff) to sky blue (ffffff), with a grey (888888) border. Use rounded corners and
     // soft drop shadow.
-    PieChart *c = new PieChart(300, 300);
+    PieChart* c = new PieChart(300, 300);
     c->setBackground(c->linearGradientColor(0, 0, 0, c->getHeight() / 2, 0xaaccff, 0xffffff),
         0x888888);
     c->setRoundedFrame();
@@ -47,11 +50,10 @@ void createChart(int chartIndex, const char *filename)
     }
 
     // Set the pie data and the pie labels
-    c->setData(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))), StringArray(labels, (int)(
-        sizeof(labels) / sizeof(labels[0]))));
+    c->setData(DoubleArray(data, data_size), StringArray(labels, labels_size));
 
     // Set the sector colors
-    c->setColors(Chart::DataColor, IntArray(colors, (int)(sizeof(colors) / sizeof(colors[0]))));
+    c->setColors(Chart::DataColor, IntArray(colors, colors_size));
 
     // Use local gradient shading, with a 1 pixel semi-transparent black (bb000000) border
     c->setSectorStyle(Chart::LocalGradientShading, 0xbb000000, 1);
@@ -61,6 +63,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete c;
+
 }
 
 int main(int argc, char *argv[])

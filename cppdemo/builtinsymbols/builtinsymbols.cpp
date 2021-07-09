@@ -19,16 +19,17 @@ int main(int argc, char *argv[])
         Chart::ArrowShape(315, 0.5, 0.5, 0), Chart::ArrowShape(30, 0.5, 0.1, 0.6),
         Chart::ArrowShape(210, 0.5, 0.1, 0.6), Chart::ArrowShape(330, 0.7, 0.1), Chart::ArrowShape(
         150, 0.7, 0.1)};
+    const int symbols_size = (int)(sizeof(symbols)/sizeof(*symbols));
 
     // Create a XYChart object of size 500 x 450 pixels
-    XYChart *c = new XYChart(500, 450);
+    XYChart* c = new XYChart(500, 450);
 
     // Set the plotarea at (55, 40) and of size 400 x 350 pixels, with a light grey border
     // (0xc0c0c0). Turn on both horizontal and vertical grid lines with light grey color (0xc0c0c0)
     c->setPlotArea(55, 40, 400, 350, -1, -1, 0xc0c0c0, 0xc0c0c0, -1);
 
     // Add a title to the chart using 18pt Times Bold Itatic font.
-    c->addTitle("Built-in Symbols", "timesbi.ttf", 18);
+    c->addTitle("Built-in Symbols", "Times New Roman Bold Italic", 18);
 
     // Set the axes line width to 3 pixels
     c->xAxis()->setWidth(3);
@@ -39,11 +40,10 @@ int main(int argc, char *argv[])
     c->yAxis()->setMinTickInc(1);
 
     // Add each symbol as a separate scatter layer.
-    for(int i = 0; i < (int)(sizeof(symbols) / sizeof(symbols[0])); ++i) {
-        double coor1[] = {i % 7 + 1.0};
-        double coor2[] = {i / 7 + 1.0};
-        c->addScatterLayer(DoubleArray(coor1, (int)(sizeof(coor1) / sizeof(coor1[0]))), DoubleArray(
-            coor2, (int)(sizeof(coor2) / sizeof(coor2[0]))), "", symbols[i], 17);
+    for(int i = 0; i < symbols_size; ++i) {
+        double xCoor[] = {i % 7 + 1.0};
+        double yCoor[] = {i / 7 + 1.0};
+        c->addScatterLayer(DoubleArray(xCoor, 1), DoubleArray(yCoor, 1), "", symbols[i], 17);
     }
 
     // Output the chart
@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

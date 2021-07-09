@@ -3,28 +3,28 @@
 int main(int argc, char *argv[])
 {
     // The random XYZ data for the first 3D scatter group
-    RanSeries *r0 = new RanSeries(7);
+    RanSeries* r0 = new RanSeries(7);
     DoubleArray xData0 = r0->getSeries(100, 100, -10, 10);
     DoubleArray yData0 = r0->getSeries(100, 0, 0, 20);
     DoubleArray zData0 = r0->getSeries(100, 100, -10, 10);
 
     // The random XYZ data for the second 3D scatter group
-    RanSeries *r1 = new RanSeries(4);
+    RanSeries* r1 = new RanSeries(4);
     DoubleArray xData1 = r1->getSeries(100, 100, -10, 10);
     DoubleArray yData1 = r1->getSeries(100, 0, 0, 20);
     DoubleArray zData1 = r1->getSeries(100, 100, -10, 10);
 
     // The random XYZ data for the third 3D scatter group
-    RanSeries *r2 = new RanSeries(8);
+    RanSeries* r2 = new RanSeries(8);
     DoubleArray xData2 = r2->getSeries(100, 100, -10, 10);
     DoubleArray yData2 = r2->getSeries(100, 0, 0, 20);
     DoubleArray zData2 = r2->getSeries(100, 100, -10, 10);
 
     // Create a ThreeDScatterChart object of size 800 x 520 pixels
-    ThreeDScatterChart *c = new ThreeDScatterChart(800, 520);
+    ThreeDScatterChart* c = new ThreeDScatterChart(800, 520);
 
     // Add a title to the chart using 20 points Times New Roman Italic font
-    c->addTitle("3D Scatter Groups                    ", "timesi.ttf", 20);
+    c->addTitle("3D Scatter Groups                    ", "Times New Roman Italic", 20);
 
     // Set the center of the plot region at (350, 240), and set width x depth x height to 360 x 360
     // x 270 pixels
@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     delete r1;
     delete r2;
     delete c;
+
     return 0;
 }
 

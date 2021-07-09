@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     //
 
     // Create the random table object with 4 cols * 12 rows, using 3 as seed
-    RanTable *rantable = new RanTable(3, 4, 12);
+    RanTable* rantable = new RanTable(3, 4, 12);
 
     // Set the 1st column to be the 12 months of year 2002
     rantable->setDateCol(0, Chart::chartTime(2002, 1, 1), 86400 * 30);
@@ -28,10 +28,10 @@ int main(int argc, char *argv[])
     DoubleArray dataY2 = rantable->getCol(3);
 
     // Create a XYChart object of size 360 x 400 pixels
-    XYChart *c = new XYChart(360, 400);
+    XYChart* c = new XYChart(360, 400);
 
     // Add a title to the chart
-    c->addTitle("<*underline=2*>Rotated Line Chart Demo", "timesbi.ttf", 14);
+    c->addTitle("<*underline=2*>Rotated Line Chart Demo", "Times New Roman Bold Italic", 14);
 
     // Set the plotarea at (60, 75) and of size 190 x 320 pixels. Turn on both horizontal and
     // vertical grid lines with light grey color (0xc0c0c0)
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     c->xAxis()->setReverse();
 
     // Add a line chart layer using the given data
-    LineLayer *layer = c->addLineLayer();
+    LineLayer* layer = c->addLineLayer();
     layer->setXData(dataX);
     layer->addDataSet(dataY0, 0xff0000, "Server A");
     layer->addDataSet(dataY1, 0x338033, "Server B");
@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     //free up resources
     delete rantable;
     delete c;
+
     return 0;
 }
 

@@ -7,15 +7,18 @@ void createChart(int chartIndex, const char *filename)
 
     // Create a LinearMeter object of size 250 x 75 pixels with very light grey (0xeeeeee)
     // backgruond and a light grey (0xccccccc) 3-pixel thick rounded frame
-    LinearMeter *m = new LinearMeter(250, 75, 0xeeeeee, 0xcccccc);
+    LinearMeter* m = new LinearMeter(250, 75, 0xeeeeee, 0xcccccc);
     m->setRoundedFrame(Chart::Transparent);
     m->setThickFrame(3);
 
     // This example demonstrates putting the text labels at the top or bottom. This is by setting
     // the label alignment, scale position and label position.
     int alignment[] = {Chart::Top, Chart::Top, Chart::Bottom, Chart::Bottom};
+    const int alignment_size = (int)(sizeof(alignment)/sizeof(*alignment));
     int meterYPos[] = {23, 23, 34, 34};
+    const int meterYPos_size = (int)(sizeof(meterYPos)/sizeof(*meterYPos));
     int labelYPos[] = {61, 61, 15, 15};
+    const int labelYPos_size = (int)(sizeof(labelYPos)/sizeof(*labelYPos));
 
     // Set the scale region
     m->setMeter(14, meterYPos[chartIndex], 218, 20, alignment[chartIndex]);
@@ -26,8 +29,8 @@ void createChart(int chartIndex, const char *filename)
     // Add a smooth color scale at the default position
     double smoothColorScale[] = {0, 0x6666ff, 25, 0x00bbbb, 50, 0x00ff00, 75, 0xffff00, 100,
         0xff0000};
-    m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-        smoothColorScale[0]))));
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
+    m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size));
 
     // Add a blue (0x0000cc) pointer at the specified value
     m->addPointer(value, 0x0000cc);
@@ -39,24 +42,24 @@ void createChart(int chartIndex, const char *filename)
 
     if (chartIndex % 2 == 0) {
         // Add a label on the left side using 8pt Arial Bold font
-        m->addText(10, labelYPos[chartIndex], "Temperature C", "arialbd.ttf", 8, Chart::TextColor,
+        m->addText(10, labelYPos[chartIndex], "Temperature C", "Arial Bold", 8, Chart::TextColor,
             Chart::Left);
 
         // Add a text box on the right side. Display the value using white (0xffffff) 8pt Arial Bold
         // font on a black (0x000000) background with depressed rounded border.
-        TextBox *t = m->addText(235, labelYPos[chartIndex], m->formatValue(value, "2"),
-            "arialbd.ttf", 8, 0xffffff, Chart::Right);
+        TextBox* t = m->addText(235, labelYPos[chartIndex], m->formatValue(value, "2"),
+            "Arial Bold", 8, 0xffffff, Chart::Right);
         t->setBackground(0x000000, 0x000000, -1);
         t->setRoundedCorners(3);
     } else {
         // Add a label on the right side using 8pt Arial Bold font
-        m->addText(237, labelYPos[chartIndex], "Temperature C", "arialbd.ttf", 8, Chart::TextColor,
+        m->addText(237, labelYPos[chartIndex], "Temperature C", "Arial Bold", 8, Chart::TextColor,
             Chart::Right);
 
         // Add a text box on the left side. Display the value using white (0xffffff) 8pt Arial Bold
         // font on a black (0x000000) background with depressed rounded border.
-        TextBox *t = m->addText(11, labelYPos[chartIndex], m->formatValue(value, "2"),
-            "arialbd.ttf", 8, 0xffffff, Chart::Left);
+        TextBox* t = m->addText(11, labelYPos[chartIndex], m->formatValue(value, "2"), "Arial Bold",
+            8, 0xffffff, Chart::Left);
         t->setBackground(0x000000, 0x000000, -1);
         t->setRoundedCorners(3);
     }
@@ -66,6 +69,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

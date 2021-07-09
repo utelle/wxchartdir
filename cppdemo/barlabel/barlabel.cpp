@@ -4,12 +4,14 @@ int main(int argc, char *argv[])
 {
     // The data for the bar chart
     double data[] = {85, 156, 179, 211, 123, 189, 166};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The labels for the bar chart
-    const char *labels[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+    const char* labels[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 600 x 360 pixels
-    XYChart *c = new XYChart(600, 360);
+    XYChart* c = new XYChart(600, 360);
 
     // Set the plotarea at (70, 20) and of size 500 x 300 pixels, with transparent background and
     // border and light grey (0xcccccc) horizontal grid lines
@@ -18,12 +20,11 @@ int main(int argc, char *argv[])
     // Set the x and y axis stems to transparent and the label font to 12pt Arial
     c->xAxis()->setColors(Chart::Transparent);
     c->yAxis()->setColors(Chart::Transparent);
-    c->xAxis()->setLabelStyle("arial.ttf", 12);
-    c->yAxis()->setLabelStyle("arial.ttf", 12);
+    c->xAxis()->setLabelStyle("Arial", 12);
+    c->yAxis()->setLabelStyle("Arial", 12);
 
     // Add a blue (0x6699bb) bar chart layer using the given data
-    BarLayer *layer = c->addBarLayer(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))),
-        0x6699bb);
+    BarLayer* layer = c->addBarLayer(DoubleArray(data, data_size), 0x6699bb);
 
     // Use bar gradient lighting with the light intensity from 0.8 to 1.3
     layer->setBorderColor(Chart::Transparent, Chart::barLighting(0.8, 1.3));
@@ -35,19 +36,20 @@ int main(int argc, char *argv[])
     layer->setAggregateLabelStyle("Arial", 12);
 
     // Set the labels on the x axis.
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // For the automatic y-axis labels, set the minimum spacing to 40 pixels.
     c->yAxis()->setTickDensity(40);
 
     // Add a title to the y axis using dark grey (0x555555) 14pt Arial Bold font
-    c->yAxis()->setTitle("Y-Axis Title Placeholder", "arialbd.ttf", 14, 0x555555);
+    c->yAxis()->setTitle("Y-Axis Title Placeholder", "Arial Bold", 14, 0x555555);
 
     // Output the chart
     c->makeChart("barlabel.png");
 
     //free up resources
     delete c;
+
     return 0;
 }
 

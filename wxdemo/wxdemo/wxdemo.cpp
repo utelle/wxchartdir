@@ -3,7 +3,7 @@
 ** Purpose:     wxWidgets Demo sample application
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -18,12 +18,23 @@
 #include "wx/wx.h"
 #endif
 
+#include <wx/imaglist.h>
+
 #include "wxdemo.h"
 #include "wxchartviewer.h"
 #include "democharts.h"
 #include "hotspotdialog.h" 
 
 #include "mondrian.xpm"
+
+class DemoTreeItem : public wxTreeItemData
+{
+public:
+  DemoTreeItem(int idDemo) : m_idDemo(idDemo) {};
+  int GetDemoId() const { return m_idDemo; }
+private:
+  int      m_idDemo;
+};
 
 /*
  * WxDemo type definition
@@ -39,7 +50,10 @@ BEGIN_EVENT_TABLE( WxDemo, wxFrame )
 
   EVT_MENU(wxID_EXIT, WxDemo::OnExitClick)
   EVT_CLOSE(WxDemo::OnCloseWindow)
-  EVT_LIST_ITEM_SELECTED(ID_LISTVIEW, WxDemo::OnListViewSelected)
+  EVT_TREE_SEL_CHANGED(ID_TREECTRL, WxDemo::OnTreeCtrlSelected)
+  EVT_TREE_ITEM_ACTIVATED(ID_TREECTRL, WxDemo::OnTreeCtrlSelected)
+  EVT_BUTTON(ID_SHOWMODAL, WxDemo::OnShowModalDemo)
+
   EVT_CHARTVIEWER_CLICKED(ID_CHARTVIEWER, WxDemo::OnChartClicked)
   EVT_CHARTVIEWER_CLICKED(ID_CHARTVIEWER+1, WxDemo::OnChartClicked)
   EVT_CHARTVIEWER_CLICKED(ID_CHARTVIEWER+2, WxDemo::OnChartClicked)
@@ -66,7 +80,6 @@ WxDemo::WxDemo( wxWindow* parent, wxWindowID id, const wxString& caption, const 
   Create(parent, id, caption, pos, size, style);
 }
 
-
 /*
  * WxDemo creator
  */
@@ -83,7 +96,7 @@ WxDemo::Create( wxWindow* parent, wxWindowID id, const wxString& caption, const 
     GetSizer()->SetSizeHints(this);
   }
   // Force a reasonable initial window size
-  SetSize(SYMBOL_WXDEMO_SIZE);
+  SetInitialSize(FromDIP(SYMBOL_WXDEMO_SIZE));
 
   Centre();
   return true;
@@ -124,36 +137,51 @@ WxDemo::CreateControls()
   WxDemo* itemDialog1 = this;
 
   wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
-  itemDialog1->SetSizer(itemBoxSizer2);
 
   wxBoxSizer* itemBoxSizer1 = new wxBoxSizer(wxHORIZONTAL);
   itemBoxSizer2->Add(itemBoxSizer1, 1, wxGROW | wxALL, 0);
 
-  wxListView* demoList = new wxListView(itemDialog1, ID_LISTVIEW, wxDefaultPosition, wxSize(200,-1), wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_NO_HEADER);
-  itemBoxSizer1->Add(demoList, 0, wxGROW | wxALL, 0);
+  m_demoTree = new wxTreeCtrl(itemDialog1, ID_TREECTRL, wxDefaultPosition, FromDIP(wxSize(270, -1)), wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT);
 
-  demoList->InsertColumn(0, wxS(""));
+  wxImageList* il = new wxImageList(FromDIP(16), FromDIP(16), true);
+  for (DemoChart* d = demoCharts; 0 != d->name; ++d)
+  {
+    if (d->noOfCharts == 0)
+    {
+      wxImage groupImage;
+      groupImage.LoadFile(wxString::FromUTF8(d->icon), wxBITMAP_TYPE_PNG);
+      groupImage.Rescale(FromDIP(16), FromDIP(16));
+      il->Add(wxBitmap(groupImage));
+    }
+  }
+  m_demoTree->AssignImageList(il);
+
+  wxTreeItemId root = m_demoTree->AddRoot("ChartDirector Demo");
 
   // Loop through all the demo charts to populate the tree view
   int item = 0;
+  int demoGroup = -1;
+  wxTreeItemId group;
   for (DemoChart* d = demoCharts; 0 != d->name; ++d)
   {
-    demoList->InsertItem(item, wxString::FromUTF8(d->name));
     if (d->noOfCharts == 0)
     {
-      demoList->SetItemBackgroundColour(item, wxColour(wxS("yellow")));
+      ++demoGroup;
+      group = m_demoTree->AppendItem(root, wxString::FromUTF8(d->name), demoGroup);
     }
     else
     {
-      demoList->SetItemBackgroundColour(item, wxColour(wxS("white")));
+      DemoTreeItem* demoItem = new DemoTreeItem(item);
+      wxTreeItemId demo = m_demoTree->AppendItem(group, wxString::FromUTF8(d->name), demoGroup, -1, demoItem);
     }
     ++item;
   }
-  demoList->SetColumnWidth(0, wxLIST_AUTOSIZE);
 
-  m_scrolledWindow = new wxScrolledWindow(itemDialog1, ID_SCROLLEDWINDOW, wxDefaultPosition, wxSize(100, 100), wxNO_BORDER | wxHSCROLL | wxVSCROLL);
+  itemBoxSizer1->Add(m_demoTree, 0, wxGROW | wxALL, 0);
 
-  itemBoxSizer1->Add(m_scrolledWindow, 1, wxGROW | wxALL, 3);
+  m_scrolledWindow = new wxScrolledWindow(itemDialog1, ID_SCROLLEDWINDOW, wxDefaultPosition, FromDIP(wxSize(600, 450)), wxNO_BORDER | wxHSCROLL | wxVSCROLL);
+
+  itemBoxSizer1->Add(m_scrolledWindow, 1, wxGROW | wxALL, FromDIP(3));
   m_scrolledWindow->SetScrollbars(1, 1, 0, 0);
   wxBoxSizer* itemBoxSizer3 = new wxBoxSizer(wxVERTICAL);
   m_scrolledWindow->SetSizer(itemBoxSizer3);
@@ -164,10 +192,12 @@ WxDemo::CreateControls()
   for (int j = 0; j < noOfChartViewers; ++j)
   {
     m_chartViewer[j] = new wxChartViewer(m_scrolledWindow, ID_CHARTVIEWER + j);
-    m_gridSizer->Add(m_chartViewer[j], 0, wxGROW | wxALIGN_TOP | wxALL, 3);
+    m_gridSizer->Add(m_chartViewer[j], 0, wxGROW | wxALIGN_TOP | wxALL, FromDIP(3));
   }
 
   m_scrolledWindow->FitInside();
+
+  itemDialog1->SetSizerAndFit(itemBoxSizer2);
 }
 
 void
@@ -187,61 +217,93 @@ WxDemo::OnCloseWindow(wxCloseEvent& event)
   event.Skip();
 }
 
-/*
-* wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_LISTBOX
-*/
-
 void
-WxDemo::OnListViewSelected(wxListEvent& event)
+WxDemo::OnShowModalDemo(wxCommandEvent& event)
 {
-  Freeze();
-  // Get the item selected
-  int item = event.GetIndex();
-
-  // The hidden column should contain the index to the demo module. The index is 0 if the item
-  // is just a category heading.
-  int nCharts = 0;
-  m_gridSizer->Clear();
-  int demoIndex = item;
-
-  if (demoIndex > 0)
+  wxDialog* demo = (wxDialog*) event.GetClientData();
+  if (demo)
   {
-    // Get the demo module
-    DemoChart* d = demoCharts + demoIndex;
-
-    // Each demo module can display a number of charts. We display all of them.
-    nCharts = d->noOfCharts;
-    m_gridSizer->SetCols(nCharts < 3 ? nCharts > 0 ? nCharts : 1 : 3);
-
-    for (int i = 0; i < d->noOfCharts; ++i)
-    {
-      if (m_chartViewer[i]->getChart() != NULL)
-      {
-        delete m_chartViewer[i]->getChart();
-      }
-      const char *imageMap = 0;
-      m_chartViewer[i]->setChart(d->createChart(i, &imageMap));
-      m_chartViewer[i]->setImageMap(imageMap);
-      m_gridSizer->Add(m_chartViewer[i], 0, wxALIGN_TOP | wxALL, 3);
-    }
-
-    // We hide unused chart viewers.
     for (int i = 0; i < noOfChartViewers; ++i)
     {
-      m_chartViewer[i]->Show(i < d->noOfCharts);
+      m_chartViewer[i]->Show(false);
     }
+    demo->ShowModal();
+    demo->Destroy();
   }
-
-  // Layout the charts
-  m_gridSizer->FitInside(m_scrolledWindow);
-  m_scrolledWindow->GetSizer()->Layout();
-  SendSizeEvent();
-  Thaw();
 }
 
 /*
-* wxEVT_SIZE event handler for ID_WXDEMO
+* wxEVT_COMMAND_TREE_SEL_CHANGED event handler for ID_TREECTRL
 */
+
+void
+WxDemo::OnTreeCtrlSelected(wxTreeEvent& event)
+{
+  wxEventType eventType = event.GetEventType();
+  wxTreeItemId id = event.GetItem();
+  DemoTreeItem* demoItem = (DemoTreeItem*) m_demoTree->GetItemData(id);
+
+  if (demoItem)
+  {
+    Freeze();
+    // Get the item selected
+    int item = demoItem->GetDemoId();
+
+    // The hidden column should contain the index to the demo module. The index is 0 if the item
+    // is just a category heading.
+    int nCharts = 0;
+    m_gridSizer->Clear();
+    int demoIndex = item;
+
+    if (demoIndex > 0)
+    {
+      // Get the demo module
+      DemoChart* d = demoCharts + demoIndex;
+
+      // Hide and clear the old charts
+      for (int i = 0; i < noOfChartViewers; ++i)
+      {
+        m_chartViewer[i]->Hide();
+        delete m_chartViewer[i]->getChart();
+        m_chartViewer[i]->setChart(0);
+      }
+
+      // Each demo module can display a number of charts. We display all of them.
+      nCharts = d->noOfCharts;
+      m_gridSizer->SetCols(nCharts < 3 ? nCharts > 0 ? nCharts : 1 : 3);
+
+      for (int i = 0; i < d->noOfCharts; ++i)
+      {
+        d->createChart(this, m_chartViewer[i], i);
+        m_gridSizer->Add(m_chartViewer[i], 0, wxALIGN_TOP | wxALL, FromDIP(3));
+      }
+
+      // We hide unused chart viewers.
+      for (int i = 0; i < noOfChartViewers; ++i)
+      {
+        m_chartViewer[i]->Show(i < d->noOfCharts);
+      }
+    }
+
+    // Layout the charts
+    m_gridSizer->FitInside(m_scrolledWindow);
+    m_scrolledWindow->GetSizer()->Layout();
+    SendSizeEvent();
+    Thaw();
+    event.Skip();
+  }
+  else if (eventType == wxEVT_TREE_ITEM_ACTIVATED)
+  {
+    if (!m_demoTree->IsExpanded(id))
+    {
+      m_demoTree->Expand(id);
+    }
+    else
+    {
+      m_demoTree->Collapse(id);
+    }
+  }
+}
 
 /*
  * Should we show tooltips?
@@ -251,30 +313,6 @@ bool
 WxDemo::ShowToolTips()
 {
   return true;
-}
-
-/*
- * Get bitmap resources
- */
-
-wxBitmap
-WxDemo::GetBitmapResource( const wxString& name )
-{
-  // Bitmap retrieval
-  wxUnusedVar(name);
-  return wxNullBitmap;
-}
-
-/*
- * Get icon resources
- */
-
-wxIcon
-WxDemo::GetIconResource( const wxString& name )
-{
-  // Icon retrieval
-  wxUnusedVar(name);
-  return wxNullIcon;
 }
 
 // User clicks on the wxChartViewer

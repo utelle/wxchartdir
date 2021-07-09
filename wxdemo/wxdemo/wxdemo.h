@@ -3,7 +3,7 @@
 ** Purpose:     wxWidgets Demo sample application
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -15,6 +15,7 @@
  */
 
 #include <wx/listctrl.h>
+#include <wx/treectrl.h>
 
 #include "wxchartviewer.h"
 #include "chartdir.h"
@@ -24,11 +25,12 @@
  */
 
 #define ID_WXDEMO         10000
-#define ID_LISTVIEW       10001
+#define ID_TREECTRL       10001
 #define ID_SCROLLEDWINDOW 10002
 #define ID_CHARTVIEWER    10003
-#define SYMBOL_WXDEMO_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
-#define SYMBOL_WXDEMO_TITLE _("wxWidgets Demo Application")
+#define ID_SHOWMODAL      10004
+#define SYMBOL_WXDEMO_STYLE wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU|wxCLOSE_BOX|wxMAXIMIZE_BOX|wxMINIMIZE_BOX|wxTAB_TRAVERSAL
+#define SYMBOL_WXDEMO_TITLE _("ChartDirector wxWidgets Demo")
 #define SYMBOL_WXDEMO_IDNAME ID_WXDEMO
 #define SYMBOL_WXDEMO_SIZE wxSize(800, 500)
 #define SYMBOL_WXDEMO_POSITION wxDefaultPosition
@@ -64,22 +66,19 @@ public:
   void OnChartClicked(wxCommandEvent& event);
 
   /// wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_LISTBOX
-  void OnListViewSelected(wxListEvent& event);
+  void OnTreeCtrlSelected(wxTreeEvent& event);
 
   void OnExitClick(wxCommandEvent& event);
 
   /// wxEVT_CLOSE_WINDOW event handler for ID_WXDEMO
   void OnCloseWindow(wxCloseEvent& event);
 
-  /// Retrieves bitmap resources
-  wxBitmap GetBitmapResource( const wxString& name );
-
-  /// Retrieves icon resources
-  wxIcon GetIconResource( const wxString& name );
+  void OnShowModalDemo(wxCommandEvent& event);
 
   /// Should we show tooltips?
   static bool ShowToolTips();
 
+  wxTreeCtrl* m_demoTree;
   wxScrolledWindow* m_scrolledWindow;
   wxGridSizer* m_gridSizer;
   wxChartViewer* m_chartViewer[noOfChartViewers];

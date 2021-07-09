@@ -4,13 +4,15 @@ int main(int argc, char *argv[])
 {
     // The data for the pie chart
     double data[] = {25, 18, 15, 12, 8, 30, 35};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The labels for the pie chart
-    const char *labels[] = {"Labor", "Licenses", "Taxes", "Legal", "Insurance", "Facilities",
+    const char* labels[] = {"Labor", "Licenses", "Taxes", "Legal", "Insurance", "Facilities",
         "Production"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a PieChart object of size 450 x 270 pixels
-    PieChart *c = new PieChart(450, 270);
+    PieChart* c = new PieChart(450, 270);
 
     // Set the center of the pie at (150, 100) and the radius to 80 pixels
     c->setPieSize(150, 135, 100);
@@ -22,8 +24,7 @@ int main(int argc, char *argv[])
     c->setLabelFormat("{percent}%");
 
     // Set the pie data and the pie labels
-    c->setData(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))), StringArray(labels, (int)(
-        sizeof(labels) / sizeof(labels[0]))));
+    c->setData(DoubleArray(data, data_size), StringArray(labels, labels_size));
 
     // Use rounded edge shading, with a 1 pixel white (FFFFFF) border
     c->setSectorStyle(Chart::RoundedEdgeShading, 0xffffff, 1);
@@ -33,6 +34,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

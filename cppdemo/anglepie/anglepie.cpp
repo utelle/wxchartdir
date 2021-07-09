@@ -4,13 +4,15 @@ void createChart(int chartIndex, const char *filename)
 {
     // The data for the pie chart
     double data[] = {25, 18, 15, 12, 8, 30, 35};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The labels for the pie chart
-    const char *labels[] = {"Labor", "Licenses", "Taxes", "Legal", "Insurance", "Facilities",
+    const char* labels[] = {"Labor", "Licenses", "Taxes", "Legal", "Insurance", "Facilities",
         "Production"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a PieChart object of size 280 x 240 pixels
-    PieChart *c = new PieChart(280, 240);
+    PieChart* c = new PieChart(280, 240);
 
     // Set the center of the pie at (140, 130) and the radius to 80 pixels
     c->setPieSize(140, 130, 80);
@@ -27,8 +29,7 @@ void createChart(int chartIndex, const char *filename)
     c->set3D();
 
     // Set the pie data and the pie labels
-    c->setData(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))), StringArray(labels, (int)(
-        sizeof(labels) / sizeof(labels[0]))));
+    c->setData(DoubleArray(data, data_size), StringArray(labels, labels_size));
 
     // Explode the 1st sector (index = 0)
     c->setExplode(0);
@@ -38,6 +39,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete c;
+
 }
 
 int main(int argc, char *argv[])

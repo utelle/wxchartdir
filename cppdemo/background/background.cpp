@@ -4,18 +4,20 @@ void createChart(int chartIndex, const char *filename)
 {
     // The data for the chart
     double data[] = {85, 156, 179.5, 211, 123};
-    const char *labels[] = {"Mon", "Tue", "Wed", "Thu", "Fri"};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
+    const char* labels[] = {"Mon", "Tue", "Wed", "Thu", "Fri"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 270 x 270 pixels
-    XYChart *c = new XYChart(270, 270);
+    XYChart* c = new XYChart(270, 270);
 
     // Set the plot area at (40, 32) and of size 200 x 200 pixels
-    PlotArea *plotarea = c->setPlotArea(40, 32, 200, 200);
+    PlotArea* plotarea = c->setPlotArea(40, 32, 200, 200);
 
     // Set the background style based on the input parameter
     if (chartIndex == 0) {
         // Has wallpaper image
-        c->setWallpaper("tile.gif");
+        c->setWallpaper("tile.png");
     } else if (chartIndex == 1) {
         // Use a background image as the plot area background
         plotarea->setBackground("bg.png");
@@ -28,17 +30,17 @@ void createChart(int chartIndex, const char *filename)
     }
 
     // Set the labels on the x axis
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Add a color bar layer using the given data. Use a 1 pixel 3D border for the bars.
-    c->addBarLayer(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))), IntArray(0, 0)
-        )->setBorderColor(-1, 1);
+    c->addBarLayer(DoubleArray(data, data_size), IntArray(0, 0))->setBorderColor(-1, 1);
 
     // Output the chart
     c->makeChart(filename);
 
     //free up resources
     delete c;
+
 }
 
 int main(int argc, char *argv[])

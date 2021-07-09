@@ -4,15 +4,16 @@ int main(int argc, char *argv[])
 {
     // The x and y coordinates of the grid
     double dataX[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const int dataX_size = (int)(sizeof(dataX)/sizeof(*dataX));
     double dataY[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const int dataY_size = (int)(sizeof(dataY)/sizeof(*dataY));
 
     // Use random numbers for the z values on the XY grid
-    RanSeries *r = new RanSeries(999);
-    DoubleArray dataZ = r->get2DSeries((int)(sizeof(dataX) / sizeof(dataX[0])), (int)(sizeof(dataY)
-         / sizeof(dataY[0])), -0.9, 1.15);
+    RanSeries* r = new RanSeries(999);
+    DoubleArray dataZ = r->get2DSeries(dataX_size, dataY_size, -0.9, 1.15);
 
     // Create a XYChart object of size 640 x 460 pixels
-    XYChart *c = new XYChart(640, 460);
+    XYChart* c = new XYChart(640, 460);
 
     // Set the plotarea at (30, 25) and of size 400 x 400 pixels. Use semi-transparent grey
     // (0xdd000000) horizontal and vertical grid lines
@@ -21,16 +22,16 @@ int main(int argc, char *argv[])
     // Set the x and y axis stems to transparent and the label font to 12pt Arial
     c->xAxis()->setColors(Chart::Transparent);
     c->yAxis()->setColors(Chart::Transparent);
-    c->xAxis()->setLabelStyle("arial.ttf", 12);
-    c->yAxis()->setLabelStyle("arial.ttf", 12);
+    c->xAxis()->setLabelStyle("Arial", 12);
+    c->yAxis()->setLabelStyle("Arial", 12);
 
     // Set the x-axis and y-axis scale
     c->xAxis()->setLinearScale(0, 10, 1);
     c->yAxis()->setLinearScale(0, 10, 1);
 
     // Add a contour layer using the given data
-    ContourLayer *layer = c->addContourLayer(DoubleArray(dataX, (int)(sizeof(dataX) / sizeof(dataX[0
-        ]))), DoubleArray(dataY, (int)(sizeof(dataY) / sizeof(dataY[0]))), dataZ);
+    ContourLayer* layer = c->addContourLayer(DoubleArray(dataX, dataX_size), DoubleArray(dataY,
+        dataY_size), dataZ);
 
     // Move the grid lines in front of the contour layer
     c->getPlotArea()->moveGridBefore(layer);
@@ -38,10 +39,10 @@ int main(int argc, char *argv[])
     // Define the color scale
     double colorScale[] = {-0.8, 0x0066ff, -0.5, 0x66ccff, -0.3, 0x66ffff, 0, 0x88ff88, 0.4,
         0x00ff00, 0.7, 0xffff00, 0.9, 0xff6600, 1.0, 0xcc0000, 1.1};
+    const int colorScale_size = (int)(sizeof(colorScale)/sizeof(*colorScale));
     // Apply the color scale, and specify the underflow and overflow colors for regions exceeding
     // the color scale
-    layer->colorAxis()->setColorScale(DoubleArray(colorScale, (int)(sizeof(colorScale) / sizeof(
-        colorScale[0]))), 0x0000cc, 0x000000);
+    layer->colorAxis()->setColorScale(DoubleArray(colorScale, colorScale_size), 0x0000cc, 0x000000);
 
     //
     // Instead of displaying the color axis, we use a legend box to display the colors. This is
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
 
     // Add a legend box at (460, 25) with vertical layout, with 12pt Arial font, transparent
     // background and border, icon size of 15 x 15 pixels, and line spacing of 8 pixels.
-    LegendBox *b = c->addLegend(460, 25, true, "arial.ttf", 12);
+    LegendBox* b = c->addLegend(460, 25, true, "Arial", 12);
     b->setBackground(Chart::Transparent, Chart::Transparent);
     b->setKeySize(15, 15);
     b->setKeySpacing(0, 8);
@@ -73,6 +74,7 @@ int main(int argc, char *argv[])
     //free up resources
     delete r;
     delete c;
+
     return 0;
 }
 

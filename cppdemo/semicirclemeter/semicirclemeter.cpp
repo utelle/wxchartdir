@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
     double value = 72.55;
 
     // Create an AngularMeter object of size 300 x 180 pixels with transparent background
-    AngularMeter *m = new AngularMeter(300, 180, Chart::Transparent);
+    AngularMeter* m = new AngularMeter(300, 180, Chart::Transparent);
 
     // Center at (150, 150), scale radius = 128 pixels, scale angle -90 to +90 degrees
     m->setMeter(150, 150, 128, -90, 90);
@@ -21,18 +21,18 @@ int main(int argc, char *argv[])
 
     // Set the scale label style to 15pt Arial Italic. Set the major/minor/micro tick lengths to
     // 16/16/10 pixels pointing inwards, and their widths to 2/1/1 pixels.
-    m->setLabelStyle("ariali.ttf", 16);
+    m->setLabelStyle("Arial Italic", 16);
     m->setTickLength(-16, -16, -10);
     m->setLineWidth(0, 2, 1, 1);
 
     // Add a smooth color scale to the meter
     double smoothColorScale[] = {0, 0x3333ff, 25, 0x0088ff, 50, 0x00ff00, 75, 0xdddd00, 100,
         0xff0000};
-    m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-        smoothColorScale[0]))));
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
+    m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size));
 
     // Add a text label centered at (150, 125) with 15pt Arial Italic font
-    m->addText(150, 125, "CPU", "ariali.ttf", 15, Chart::TextColor, Chart::BottomCenter);
+    m->addText(150, 125, "CPU", "Arial Italic", 15, Chart::TextColor, Chart::BottomCenter);
 
     // Add a red (0xff0000) pointer at the specified value
     m->addPointer2(value, 0xff0000);
@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete m;
+
     return 0;
 }
 

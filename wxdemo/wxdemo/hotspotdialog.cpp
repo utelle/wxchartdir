@@ -3,7 +3,7 @@
 ** Purpose:     Hot Spot Dialog
 ** Author:      Ulrich Telle
 ** Created:     2018-05-15
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -106,11 +106,11 @@ HotspotDialog::CreateControls()
   wxBoxSizer* itemBoxSizer2 = new wxBoxSizer(wxVERTICAL);
   itemDialog1->SetSizer(itemBoxSizer2);
 
-  m_propList = new wxListView(itemDialog1, ID_LISTCTRL, wxDefaultPosition, wxSize(200, -1), wxLC_REPORT | wxLC_SINGLE_SEL);
-  itemBoxSizer2->Add(m_propList, 1, wxGROW|wxALL, 3);
+  m_propList = new wxListView(itemDialog1, ID_LISTCTRL, wxDefaultPosition, FromDIP(wxSize(200, -1)), wxLC_REPORT | wxLC_SINGLE_SEL);
+  itemBoxSizer2->Add(m_propList, 1, wxGROW|wxALL, FromDIP(3));
 
   wxButton* itemButton2 = new wxButton( itemDialog1, wxID_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
-  itemBoxSizer2->Add(itemButton2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5);
+  itemBoxSizer2->Add(itemButton2, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, FromDIP(3));
 
   m_propList->InsertColumn(0, wxS("Parameter"));
   m_propList->InsertColumn(1, wxS("Value"), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE_USEHEADER);

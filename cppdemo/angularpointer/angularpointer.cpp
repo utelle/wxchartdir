@@ -3,7 +3,7 @@
 int main(int argc, char *argv[])
 {
     // Create an AngularMeter object of size 300 x 300 pixels with transparent background
-    AngularMeter *m = new AngularMeter(300, 300, Chart::Transparent);
+    AngularMeter* m = new AngularMeter(300, 300, Chart::Transparent);
 
     // Set the default text and line colors to white (0xffffff)
     m->setColor(Chart::TextColor, 0xffffff);
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
     // Set the scale label style to 16pt Arial Italic. Set the major/minor/micro tick lengths to
     // 13/10/7 pixels pointing inwards, and their widths to 2/1/1 pixels.
-    m->setLabelStyle("ariali.ttf", 16);
+    m->setLabelStyle("Arial Italic", 16);
     m->setTickLength(-13, -10, -7);
     m->setLineWidth(0, 2, 1, 1);
 
@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete m;
+
     return 0;
 }
 

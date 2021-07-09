@@ -65,36 +65,36 @@
       <Configuration>Release wxDLL Win64</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Debug|Win32">
-      <Configuration>DLL Debug</Configuration>
+    <ProjectConfiguration Include="Debug DLL|Win32">
+      <Configuration>Debug DLL</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Debug|x64">
-      <Configuration>DLL Debug</Configuration>
+    <ProjectConfiguration Include="Debug DLL|x64">
+      <Configuration>Debug DLL</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Debug Win64|Win32">
-      <Configuration>DLL Debug Win64</Configuration>
+    <ProjectConfiguration Include="Debug DLL Win64|Win32">
+      <Configuration>Debug DLL Win64</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Debug Win64|x64">
-      <Configuration>DLL Debug Win64</Configuration>
+    <ProjectConfiguration Include="Debug DLL Win64|x64">
+      <Configuration>Debug DLL Win64</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Release|Win32">
-      <Configuration>DLL Release</Configuration>
+    <ProjectConfiguration Include="Release DLL|Win32">
+      <Configuration>Release DLL</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Release|x64">
-      <Configuration>DLL Release</Configuration>
+    <ProjectConfiguration Include="Release DLL|x64">
+      <Configuration>Release DLL</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Release Win64|Win32">
-      <Configuration>DLL Release Win64</Configuration>
+    <ProjectConfiguration Include="Release DLL Win64|Win32">
+      <Configuration>Release DLL Win64</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="DLL Release Win64|x64">
-      <Configuration>DLL Release Win64</Configuration>
+    <ProjectConfiguration Include="Release DLL Win64|x64">
+      <Configuration>Release DLL Win64</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -104,6 +104,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>realtimemultithread</RootNamespace>
     <ProjectName>realtimemultithread</ProjectName>
+    <LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -154,25 +155,25 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug Win64|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release Win64|x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
@@ -209,100 +210,100 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release wxDLL Win64|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='DLL Debug Win64|x64'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='DLL Release Win64|x64'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\Win32\Debug\</OutDir>
-    <IntDir>obj\Win32\Debug\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win32\Debug\</OutDir>
+    <IntDir>obj\vc15\Win32\Debug\realtimemultithread\</IntDir>
     <TargetName>realtimemultithreadd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\Win64\Debug\</OutDir>
-    <IntDir>obj\Win64\Debug\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win64\Debug\</OutDir>
+    <IntDir>obj\vc15\Win64\Debug\realtimemultithread\</IntDir>
     <TargetName>realtimemultithreadd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Win32\Release\</OutDir>
-    <IntDir>obj\Win32\Release\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win32\Release\</OutDir>
+    <IntDir>obj\vc15\Win32\Release\realtimemultithread\</IntDir>
     <TargetName>realtimemultithread</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Win64\Release\</OutDir>
-    <IntDir>obj\Win64\Release\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win64\Release\</OutDir>
+    <IntDir>obj\vc15\Win64\Release\realtimemultithread\</IntDir>
     <TargetName>realtimemultithread</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\Win32\Debug wxDLL\</OutDir>
-    <IntDir>obj\Win32\Debug wxDLL\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win32\Debug wxDLL\</OutDir>
+    <IntDir>obj\vc15\Win32\Debug wxDLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithreadd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL Win64|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\Win64\Debug wxDLL\</OutDir>
-    <IntDir>obj\Win64\Debug wxDLL\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win64\Debug wxDLL\</OutDir>
+    <IntDir>obj\vc15\Win64\Debug wxDLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithreadd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Win32\Release wxDLL\</OutDir>
-    <IntDir>obj\Win32\Release wxDLL\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win32\Release wxDLL\</OutDir>
+    <IntDir>obj\vc15\Win32\Release wxDLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithread</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL Win64|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Win64\Release wxDLL\</OutDir>
-    <IntDir>obj\Win64\Release wxDLL\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win64\Release wxDLL\</OutDir>
+    <IntDir>obj\vc15\Win64\Release wxDLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithread</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\Win32\DLL Debug\</OutDir>
-    <IntDir>obj\Win32\DLL Debug\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win32\Debug DLL\</OutDir>
+    <IntDir>obj\vc15\Win32\Debug DLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithreadd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug Win64|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\Win64\DLL Debug\</OutDir>
-    <IntDir>obj\Win64\DLL Debug\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win64\Debug DLL\</OutDir>
+    <IntDir>obj\vc15\Win64\Debug DLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithreadd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Win32\DLL Release\</OutDir>
-    <IntDir>obj\Win32\DLL Release\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win32\Release DLL\</OutDir>
+    <IntDir>obj\vc15\Win32\Release DLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithread</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release Win64|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Win64\DLL Release\</OutDir>
-    <IntDir>obj\Win64\DLL Release\realtimemultithread\</IntDir>
+    <OutDir>bin\vc15\Win64\Release DLL\</OutDir>
+    <IntDir>obj\vc15\Win64\Release DLL\realtimemultithread\</IntDir>
     <TargetName>realtimemultithread</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -310,45 +311,55 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -357,21 +368,26 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -380,59 +396,74 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib;..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL Win64|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -441,21 +472,26 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL Win64|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -464,59 +500,74 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Debug Win64|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -525,21 +576,26 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release Win64|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -548,15 +604,20 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXUSINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\realtimemultithread;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>chartdir70.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll;..\..\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\realtimemultithread\randomwalk.h" />

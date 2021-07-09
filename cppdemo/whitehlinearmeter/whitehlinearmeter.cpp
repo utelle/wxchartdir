@@ -7,7 +7,7 @@ void createChart(int chartIndex, const char *filename)
 
     // Create a LinearMeter object of size 250 x 75 pixels with very light grey (0xeeeeee)
     // backgruond and a light grey (0xccccccc) 3-pixel thick rounded frame
-    LinearMeter *m = new LinearMeter(250, 75, 0xeeeeee, 0xcccccc);
+    LinearMeter* m = new LinearMeter(250, 75, 0xeeeeee, 0xcccccc);
     m->setRoundedFrame(Chart::Transparent);
     m->setThickFrame(3);
 
@@ -21,37 +21,36 @@ void createChart(int chartIndex, const char *filename)
     // Demostrate different types of color scales and putting them at different positions
     double smoothColorScale[] = {0, 0x6666ff, 25, 0x00bbbb, 50, 0x00ff00, 75, 0xffff00, 100,
         0xff0000};
+    const int smoothColorScale_size = (int)(sizeof(smoothColorScale)/sizeof(*smoothColorScale));
     double stepColorScale[] = {0, 0x33ff33, 50, 0xffff33, 80, 0xff3333, 100};
+    const int stepColorScale_size = (int)(sizeof(stepColorScale)/sizeof(*stepColorScale));
     double highLowColorScale[] = {0, 0x6666ff, 70, Chart::Transparent, 100, 0xff0000};
+    const int highLowColorScale_size = (int)(sizeof(highLowColorScale)/sizeof(*highLowColorScale));
 
     if (chartIndex == 0) {
         // Add the smooth color scale at the default position
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))));
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size));
     } else if (chartIndex == 1) {
         // Add the high low scale at the default position
-        m->addColorScale(DoubleArray(highLowColorScale, (int)(sizeof(highLowColorScale) / sizeof(
-            highLowColorScale[0]))));
+        m->addColorScale(DoubleArray(highLowColorScale, highLowColorScale_size));
     } else if (chartIndex == 2) {
         // Add the smooth color scale starting at y = 43 (bottom of scale) with zero width and
         // ending at y = 23 with 20 pixels width
-        m->addColorScale(DoubleArray(smoothColorScale, (int)(sizeof(smoothColorScale) / sizeof(
-            smoothColorScale[0]))), 43, 0, 23, 20);
+        m->addColorScale(DoubleArray(smoothColorScale, smoothColorScale_size), 43, 0, 23, 20);
     } else {
         // Add the step color scale at the default position
-        m->addColorScale(DoubleArray(stepColorScale, (int)(sizeof(stepColorScale) / sizeof(
-            stepColorScale[0]))));
+        m->addColorScale(DoubleArray(stepColorScale, stepColorScale_size));
     }
 
     // Add a blue (0x0000cc) pointer at the specified value
     m->addPointer(value, 0x0000cc);
 
     // Add a label left aligned to (10, 61) using 8pt Arial Bold font
-    m->addText(10, 61, "Temperature C", "arialbd.ttf", 8, Chart::TextColor, Chart::Left);
+    m->addText(10, 61, "Temperature C", "Arial Bold", 8, Chart::TextColor, Chart::Left);
 
     // Add a text box right aligned to (235, 61). Display the value using white (0xffffff) 8pt Arial
     // Bold font on a black (0x000000) background with depressed rounded border.
-    TextBox *t = m->addText(235, 61, m->formatValue(value, "2"), "arialbd.ttf", 8, 0xffffff,
+    TextBox* t = m->addText(235, 61, m->formatValue(value, "2"), "Arial Bold", 8, 0xffffff,
         Chart::Right);
     t->setBackground(0x000000, 0x000000, -1);
     t->setRoundedCorners(3);
@@ -61,6 +60,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete m;
+
 }
 
 int main(int argc, char *argv[])

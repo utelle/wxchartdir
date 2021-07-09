@@ -3,7 +3,7 @@
 ** Purpose:     Hello World sample application
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -20,12 +20,10 @@
  * Control identifiers
  */
 
-#define ID_HELLOWORLD 10000
-#define ID_PANEL      10001
 #define SYMBOL_HELLOWORLD_STYLE wxCAPTION|wxSYSTEM_MENU|wxCLOSE_BOX|wxTAB_TRAVERSAL
-#define SYMBOL_HELLOWORLD_TITLE _("HelloWorld")
-#define SYMBOL_HELLOWORLD_IDNAME ID_HELLOWORLD
-#define SYMBOL_HELLOWORLD_SIZE wxSize(400, 300)
+#define SYMBOL_HELLOWORLD_TITLE _("Hello World")
+#define SYMBOL_HELLOWORLD_IDNAME wxID_ANY
+#define SYMBOL_HELLOWORLD_SIZE wxDefaultSize
 #define SYMBOL_HELLOWORLD_POSITION wxDefaultPosition
 
 /*!
@@ -60,17 +58,6 @@ public:
 
   /// wxEVT_CLOSE_WINDOW event handler for ID_HELLOWORLD
   void OnCloseWindow(wxCloseEvent& event);
-
-  // Member function declarations
-
-  /// Retrieves bitmap resources
-  wxBitmap GetBitmapResource( const wxString& name );
-
-  /// Retrieves icon resources
-  wxIcon GetIconResource( const wxString& name );
-
-  /// Should we show tooltips?
-  static bool ShowToolTips();
 
   // Member variables
 

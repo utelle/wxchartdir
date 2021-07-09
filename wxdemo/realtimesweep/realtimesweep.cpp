@@ -3,7 +3,7 @@
 ** Purpose:     Real-Time Sweep Chart
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -130,7 +130,7 @@ RealTimeSweep::CreateControls()
   itemBoxSizer3->Add(itemBoxSizer8, 1, wxGROW|wxALL, 0);
 
   m_chartViewer = new wxChartViewer(itemPanel2, ID_CHARTVIEWER, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxNO_BORDER);
-  m_chartViewer->SetMinSize(wxSize(650, 350));
+  m_chartViewer->SetMinSize(FromDIP(wxSize(650, 350)));
 
   m_chartViewer->SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
   itemBoxSizer8->Add(m_chartViewer, 1, wxGROW | wxALL, 0);

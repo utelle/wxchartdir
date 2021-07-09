@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Advanced Software Engineering Limited.
+ * Copyright (C) 2020 Advanced Software Engineering Limited.
  *
  * This file is part of the ChartDirector software. Usage of this file is
  * subjected to the ChartDirector license agreement. See the LICENSE.TXT
@@ -12,6 +12,7 @@
 #ifndef CCHARTDIR_HDR
 #define CCHARTDIR_HDR
 
+
 #include <string.h>
 #include "bchartdir.h"
 #include "memblock.h"
@@ -23,31 +24,72 @@ namespace CD_NAMESPACE
 #endif
 
 
-class AutoDestroy
+template <class T>
+class CDVector
 {
-public :
-	virtual ~AutoDestroy() {}
+protected:
+	T** objs;
+	int count;
+	int maxCount;
+public:
+	CDVector() : objs(0), count(0), maxCount(0) {}
+	virtual ~CDVector() { delete[] objs; }
+	template <class SubT>
+	SubT* add(SubT* obj) {
+		if (!obj) return 0;
+		if (count == maxCount) {
+			T** temp = new T * [maxCount = (maxCount < 10) ? 10 : maxCount * 2];
+			for (int i = 0; i < count; ++i) temp[i] = objs[i];
+			delete[] objs; objs = temp;
+		}
+		objs[count++] = obj;
+		return obj;
+	}
+	T* get(int i) { return ((i < 0) || (i >= count)) ? 0 : objs[i]; }
+	int size() { return count; }
 };
 
-class GarbagePtr
+
+template<class T>
+class AutoDeleteContainer : public CDVector<T>
 {
-private :
-	AutoDestroy *ptr;
-public :
-	GarbagePtr(AutoDestroy *_ptr, GarbagePtr *_next) : ptr(_ptr), next(_next) {}
-	~GarbagePtr() { delete ptr; }
-	GarbagePtr *next;
+public:
+        virtual ~AutoDeleteContainer() { for (int i = 0; i < this->count; ++i) delete this->objs[i]; }
 };
+
+
+class CDObject
+{
+public:
+	virtual ~CDObject() {}
+};
+
 
 class GarbageContainer
 {
-private :
-	GarbagePtr *root;
-public :
-	GarbageContainer() : root(0) {}
-	virtual ~GarbageContainer() { while (0 != root) { GarbagePtr *temp = root; root = root->next; delete temp; } }
-	void reg(AutoDestroy *g) { root = new GarbagePtr(g, root); }
+private:
+	AutoDeleteContainer<CDObject> objs;
+public:
+	virtual ~GarbageContainer() {}
+	void reg(CDObject* obj) { objs.add(obj); }
 };
+
+
+template <class T>
+class UniqueObjContainer : public AutoDeleteContainer<T>
+{
+public:
+	template <class InnerT>
+        T* create(InnerT* ptr) { return this->add(new T(ptr)); }
+	template <class InnerT>
+	T* get(InnerT* ptr) {
+		if (!ptr) return 0;
+                for (int i = 0; i < this->count; ++i)
+                        if (T::safePtr(this->objs[i]) == ptr) return this->objs[i];
+		return create(ptr);
+	}
+};
+
 
 //
 // Utility to convert from WCHAR string to UTF8 string
@@ -205,8 +247,8 @@ namespace Chart
 	static inline int brushedGoldColor(int texture = 2, int angle = 90)  {return brushedMetalColor(0xffee44, texture, angle); }
 
 	enum AntiAliasMode { NoAntiAlias, AntiAlias, AutoAntiAlias, ClearType, CompatAntiAlias = 6 };
-	
-   	static inline int ClearTypeMono(double gamma = 0)
+
+	static inline int ClearTypeMono(double gamma = 0)
 	{ return CChart_ClearTypeMono(gamma); }
 	static inline int ClearTypeColor(double gamma = 0)
 	{ return CChart_ClearTypeColor(gamma); }
@@ -334,7 +376,8 @@ namespace Chart
 		CircleShapeNoShading = 10,
 		GlassSphereShape = 15,
 		GlassSphere2Shape = 16,
-		SolidSphereShape = 17
+		SolidSphereShape = 17,
+		NewShape = -0x4fffffff
 	};
 
 	static inline int CrossShape(double width = 0.5)
@@ -349,7 +392,9 @@ namespace Chart
 	{ return ChartDir_StarSymbol | (((side < 0) ? 0 : ((side > 100) ? 100 : side)) << 12); }
 	static inline int ArrowShape(double angle = 0, double widthRatio = 1, double stemWidthRatio = 0.5, double stemLengthRatio = 0.5)
 	{ return CChart_arrowShape(angle, widthRatio, stemWidthRatio, stemLengthRatio); }
-		
+	static inline int xySize(int width, int height)
+	{ return CChart_xySize(width, height); }
+	
 	enum DataCombineMethod { Overlay, Stack, Depth, Side, Percentage };
 
 	enum LegendMode { NormalLegend, ReverseLegend, NoLegend };
@@ -517,17 +562,18 @@ namespace Chart
 	{
 		DirectionHorizontal = 0, 
 		DirectionVertical = 1, 
-		DirectionHorizontalVertical = 2
+		DirectionHorizontalVertical = 2,
+		KeepAspectRatio = 3
 	};
 
 	enum
 	{
-        TreeMapSliceAndDice = 1,
-        TreeMapSquarify = 2,
-        TreeMapStrip = 3,
-        TreeMapBinaryBySize = 4,
-        TreeMapBinaryByMid = 5,
-        TreeMapNoLayout = 6
+		TreeMapSquarify = 1,
+		TreeMapStrip = 2,
+		TreeMapBinaryBySize = 3,
+		TreeMapBinaryByCount = 4,
+        TreeMapSliceAndDice = 5,
+		TreeMapNoLayout = 6
 	};
 
 	static inline double bSearch(DoubleArray a, double v)
@@ -546,6 +592,7 @@ namespace Chart
 ///////////////////////////////////////////////////////////////////////////////////////
 //	Class wrappers
 ///////////////////////////////////////////////////////////////////////////////////////
+
 
 class TTFText
 {
@@ -576,7 +623,7 @@ public :
 };
 
 
-class DrawArea : public AutoDestroy
+class DrawArea : public CDObject
 {
 private :
 	//disable copying
@@ -597,10 +644,10 @@ public :
 	DrawArea(DrawAreaInternal *_ptr) : ptr(_ptr), own_this(false) {}
 	~DrawArea() { if (own_this) CDrawArea_destroy(ptr); }
 	void destroy() { delete this; }
-	DrawAreaInternal *getInternalPtr() { return ptr; }
-	const DrawAreaInternal *getInternalPtr() const { return ptr; }
-
-	void enableVectorOutput() { CDrawArea_enableVectorOutput(ptr); }
+	static DrawAreaInternal* safePtr(const DrawArea *d) { return d ? d->ptr : 0; }
+	
+	void enableVectorOutput() {} //obsoleted
+	void renderCDML(const char* cdml) { CDrawArea_renderCDML(ptr, cdml); }
 
 	void setSize(int width, int height, int bgColor = 0xffffff)
 	{ CDrawArea_setSize(ptr, width, height, bgColor); }
@@ -641,6 +688,8 @@ public :
 	{ CDrawArea_polygon2(ptr, x.data, x.len, y.data, y.len, edgeColor, fillColor); }
 	void polygon(DoubleArray x, DoubleArray y, int edgeColor, int fillColor)
 	{ CDrawArea_polygon(ptr, x.data, x.len, y.data, y.len, edgeColor, fillColor); }
+	void polyShape(IntArray xy, int edgeColor, int fillColor)
+	{ CDrawArea_polyShape(ptr, xy.data, xy.len, edgeColor, fillColor); }
 	void surface(double x1, double y1, double x2, double y2, int depthX, int depthY,
 		int edgeColor, int fillColor)
 	{ CDrawArea_surface(ptr, x1, y1, x2, y2, depthX, depthY, edgeColor, fillColor); }
@@ -794,6 +843,8 @@ public :
 	{ return CDrawArea_radialGradientColor(ptr, cx, cy, rx, ry, startColor, endColor, periodic); }
 	int radialGradientColor(int cx, int cy, int rx, int ry, IntArray c, bool periodic = false)
 	{ return CDrawArea_radialGradientColor2(ptr, cx, cy, rx, ry, c.data, c.len, periodic); }
+	int angleGradientColor(double cx, double cy, double a1, double a2, double r1, double r2, IntArray c)
+	{ return CDrawArea_angleGradientColor(ptr, cx, cy, a1, a2, r1, r2, c.data, c.len); }
 
 	int reduceColors(int colorCount, bool blackAndWhite = false)
 	{ return CDrawArea_reduceColors(ptr, colorCount, blackAndWhite); }
@@ -812,18 +863,19 @@ public :
     void setResource(const char *id, MemBlock m)
     { CDrawArea_setResource(ptr, id, m.data, m.len); }
     void setResource(const char *id, DrawArea *d) 
-    { CDrawArea_setResource2(ptr, id, d->getInternalPtr()); }
+    { CDrawArea_setResource2(ptr, id, DrawArea::safePtr(d)); }
 };
 
 namespace Chart
 {
+	static inline void* getResourceLoader() { return CChart_getResourceLoader(); }
     static inline void setResourceLoader(bool (*loader)(const char *id, char *(*allocator)(int), char **data, int *len))
     { CChart_setResourceLoader(loader); }
     static inline void setResource(const char *id, MemBlock m) { CChart_setResource(id, m.data, m.len); }
-    static inline void setResource(const char *id, DrawArea *d) { CChart_setResource2(id, d->getInternalPtr()); }
+    static inline void setResource(const char *id, DrawArea *d) { CChart_setResource2(id, DrawArea::safePtr(d)); }
 }
 
-class DrawObj : public AutoDestroy
+class DrawObj : public CDObject
 {
 private :
 	//disable copying
@@ -834,11 +886,9 @@ private :
 
 public :
 	DrawObj(DrawObjInternal *_ptr) : ptr(_ptr) {}
-	void destroy() { delete this; }
-	DrawObjInternal *getInternalPtr() { return ptr; }
-
+		
 	void setZOrder(int z) { CDrawObj_setZOrder(ptr, z); }
-	void paint(DrawArea *d) { CDrawObj_paint(ptr, d->getInternalPtr()); }
+	void paint(DrawArea *d) { CDrawObj_paint(ptr, DrawArea::safePtr(d)); }
 };
 
 
@@ -877,7 +927,7 @@ private :
 	TextBox(const TextBox &rhs);
 	TextBox &operator=(const TextBox &rhs);
 
-	TextBoxInternal *ptr;
+	TextBoxInternal* ptr;
 
 public :
 	TextBox(TextBoxInternal *_ptr) : Box(TextBox2Box(_ptr)), ptr(_ptr) {}
@@ -928,14 +978,14 @@ public :
 
 class CDMLTable : public DrawObj, protected GarbageContainer
 {
-private :
+private:
 	//disable copying
-	CDMLTable(const CDMLTable &rhs);
-	CDMLTable &operator=(const CDMLTable &rhs);
+	CDMLTable(const CDMLTable& rhs);
+	CDMLTable& operator=(const CDMLTable& rhs);
 
-	CDMLTableInternal *ptr;
+	CDMLTableInternal* ptr;
 
-	TextBox *makeTextBox(TextBoxInternal *p) 
+	TextBox* makeTextBox(TextBoxInternal* p)
 	{ if (!p) return 0; TextBox *ret = new TextBox(p); reg(ret); return ret; }
 
 public :
@@ -990,10 +1040,12 @@ public :
 	void setReverse(bool b = true) { CLegendBox_setReverse(ptr, b); }
 	void setLineStyleKey(bool b = true) { CLegendBox_setLineStyleKey(ptr, b); }
 
-	void addKey(const char *text, int color, int lineWidth = 0, const DrawArea *drawarea = 0)
-	{ CLegendBox_addKey(ptr, text, color, lineWidth, drawarea ? drawarea->getInternalPtr() : 0); }
-	void addKey(int pos, const char *text, int color, int lineWidth = 0, const DrawArea *drawarea = 0)
-	{ CLegendBox_addKey2(ptr, pos, text, color, lineWidth, drawarea ? drawarea->getInternalPtr() : 0); }
+	void addKey(const char *text, int color, int lineWidth = 0, const DrawArea *d = 0)
+	{ CLegendBox_addKey(ptr, text, color, lineWidth, DrawArea::safePtr(d)); }
+	void addKey(int pos, const char *text, int color, int lineWidth = 0, const DrawArea *d = 0)
+	{ CLegendBox_addKey2(ptr, pos, text, color, lineWidth, DrawArea::safePtr(d)); }
+	void addText(const char* text) { addKey(text, Chart::Transparent, -999, 0); }
+	void addText(int pos, const char* text) { addKey(pos, text, Chart::Transparent, -999, 0); }
 	void setKeySize(int width, int height = -1, int gap = -1)
 	{ CLegendBox_setKeySize(ptr, width, height, gap); }
 	void setKeySpacing(int keySpacing, int lineSpacing = -1)
@@ -1009,6 +1061,32 @@ public :
 };
 
 
+class DataAccelerator
+{
+private:
+	//disable copying
+	DataAccelerator(const DataAccelerator& rhs);
+	DataAccelerator& operator=(const DataAccelerator& rhs);
+
+	DataAcceleratorInternal* ptr;
+	void init(const double* xData, int xDataLen) { ptr = CDataAccelerator_create(xData, xDataLen); }
+
+public:
+	DataAccelerator(DoubleArray xData) { init(xData.data, xData.len);  }
+	DataAccelerator(const double* xData, int xDataLen) { init(xData, xDataLen); }
+	~DataAccelerator() { CDataAccelerator_destroy(ptr); }
+	static const DataAcceleratorInternal* safePtr(const DataAccelerator *self) { return self ? self->ptr : 0; }
+
+	void addDataSeries(const char* id, DoubleArray yData) { addDataSeries(id, yData.data, yData.len); }
+	void addDataSeries(const char* id, const double* yData, int yDataLen)
+	{ CDataAccelerator_addDataSeries(ptr, id, yData, yDataLen);	}
+	void extendLength(int len) 
+	{ CDataAccelerator_extendLength(ptr, len); }
+	void setSubsetRange(double xStart, double xEnd, int resolution = 0)
+	{ CDataAccelerator_setSubsetRange(ptr, xStart, xEnd, resolution); }
+};
+
+
 class BaseChart : protected GarbageContainer
 {
 private :
@@ -1019,28 +1097,20 @@ private :
 	BaseChartInternal *ptr;
 	int *refCount;
 	
-	DrawArea *drawAreaCache;
-	DrawArea *regDrawArea(DrawAreaInternal *_ptr) {
-		if (!_ptr) return 0;
-		if ((0 == drawAreaCache) || (_ptr != drawAreaCache->getInternalPtr())) { 
-			drawAreaCache = new DrawArea(_ptr); reg(drawAreaCache); 
-		}
-		return drawAreaCache;
-	}
-
+	UniqueObjContainer<DrawArea> drawAreaCache;
+	
 public :
 	//obsoleted constants - for compatibility only
 	enum ImgFormat {PNG, GIF, JPG, WMP};
 
-	BaseChart() : ptr(0), refCount(new int), drawAreaCache(0) { *refCount = 1; }
-	BaseChart(BaseChart *rhs) : ptr(rhs->ptr), refCount(rhs->refCount), drawAreaCache(0) { ++(*refCount); }
+	BaseChart() : ptr(0), refCount(new int) { *refCount = 1; }
+	BaseChart(BaseChart *rhs) : ptr(rhs->ptr), refCount(rhs->refCount) { ++(*refCount); }
 	void init(BaseChartInternal *_ptr) { this->ptr = _ptr; }
 	~BaseChart() { if (--(*refCount) == 0) { CBaseChart_destroy(ptr); delete refCount; } }
 	void destroy() { delete this; }
-	BaseChartInternal *getInternalPtr() { return ptr; }
-	const BaseChartInternal *getInternalPtr() const { return ptr; }
+	static BaseChartInternal* safePtr(const BaseChart* self) { return self ? self->ptr : 0; }
 
-	void enableVectorOutput() { CBaseChart_enableVectorOutput(ptr); }
+	void enableVectorOutput() {} //obsoleted 
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	//	set overall chart
@@ -1085,9 +1155,9 @@ public :
 	//////////////////////////////////////////////////////////////////////////////////////
 	//	drawing primitives
 	//////////////////////////////////////////////////////////////////////////////////////
-	DrawArea *getDrawArea() { return regDrawArea(CBaseChart_getDrawArea(ptr)); }
-    void setResource(const char *id, MemBlock m) { return CBaseChart_setResource(ptr, id, m.data, m.len); }
-    void setResource(const char *id, DrawArea *d) { return CBaseChart_setResource2(ptr, id, d->getInternalPtr()); }
+	DrawArea *getDrawArea() { return drawAreaCache.get(CBaseChart_getDrawArea(ptr)); }
+    void setResource(const char *id, MemBlock m) { CBaseChart_setResource(ptr, id, m.data, m.len); }
+    void setResource(const char *id, DrawArea *d) { CBaseChart_setResource2(ptr, id, DrawArea::safePtr(d)); }
 	TextBox *addText(int x, int y, const char *text, const char *font = 0, double fontSize = 8,
 		int fontColor = Chart::TextColor, int alignment = Chart::TopLeft, double angle = 0, bool vertical = false)
 	{ TextBox *ret = new TextBox(CBaseChart_addText(ptr, x, y, text, font, fontSize, fontColor, alignment, angle, vertical)); reg(ret); return ret; }
@@ -1168,7 +1238,7 @@ public :
 	MemBlock makeChart(int format)
 	{ const char *data; int len; makeChart(format, &data, &len); return MemBlock(data, len); }
 	DrawArea *makeChart()
-	{ return regDrawArea(CBaseChart_makeChart3(ptr)); }
+	{ return drawAreaCache.get(CBaseChart_makeChart3(ptr)); }
 	void setOutputOptions(const char *options) 
 	{ CBaseChart_setOutputOptions(ptr, options); }
 
@@ -1189,7 +1259,7 @@ public :
 	{ return CBaseChart_getAbsOffsetY(ptr); }
 
 	DrawArea *initDynamicLayer() 
-	{ return regDrawArea(CBaseChart_initDynamicLayer(ptr)); }
+	{ return drawAreaCache.get(CBaseChart_initDynamicLayer(ptr)); }
 	void removeDynamicLayer() 
 	{ CBaseChart_removeDynamicLayer(ptr); }
 	
@@ -1208,48 +1278,51 @@ private :
 	MultiChartInternal *ptr;
 
 	const BaseChart *mainChart;
-	BaseChart **charts;
-	int chartCount;
-	int maxChartCount;
+	CDVector<BaseChart> charts;
 
 public :
 	MultiChart(int width, int height, int bgColor = Chart::BackgroundColor,
-		int edgeColor = Chart::Transparent, int raisedEffect = 0) :
-		mainChart(0), charts(0), chartCount(0), maxChartCount(0)
-	{ ptr = CMultiChart_create(width, height, bgColor, edgeColor, raisedEffect);
-	  init(MultiChart2BaseChart(ptr)); mainChart = 0; }
+		int edgeColor = Chart::Transparent, int raisedEffect = 0) : mainChart(0)
+	{ ptr = CMultiChart_create(width, height, bgColor, edgeColor, raisedEffect); init(MultiChart2BaseChart(ptr)); }
 	static MultiChart *create(int width, int height, int bgColor = Chart::BackgroundColor,
 		int edgeColor = Chart::Transparent, int raisedEffect = 0)
 	{ return new MultiChart(width, height, bgColor, edgeColor, raisedEffect); }
-	~MultiChart() { delete[] charts; }
 	void addChart(int x, int y, BaseChart *c) {
-		if (0 != c) {
-			CMultiChart_addChart(ptr, x, y, c->getInternalPtr()); 
-			if (chartCount == maxChartCount) { 
-				maxChartCount = (maxChartCount < 10) ? 10 : maxChartCount * 2; 
-				BaseChart **temp = new BaseChart*[maxChartCount];
-				for (int i = 0; i < chartCount; ++i) temp[i] = charts[i];
-				delete[] charts; charts = temp;
-			}
-			charts[chartCount++] = c;
-		}
+		if (!c) return;
+		CMultiChart_addChart(ptr, x, y, BaseChart::safePtr(c));
+		charts.add(c);
 	}
 	BaseChart *getChart(int i = 0) {
-		if (i == -1)
-			return (BaseChart *)mainChart;
-		if ((i >= 0) && (i < chartCount))
-			return charts[i];
-		return 0;
+		return (i == -1) ? (BaseChart *)mainChart : charts.get(i);
 	}
 	int getChartCount() {
-		return chartCount;
+		return charts.size();
 	}
 	void setMainChart(const BaseChart *c) 
-	{ CMultiChart_setMainChart(ptr, c->getInternalPtr()); mainChart = c;}
+	{ CMultiChart_setMainChart(ptr, BaseChart::safePtr(c)); mainChart = c;}
 };
 
 
-class Sector : public AutoDestroy, protected GarbageContainer
+class MultiPagePDF
+{
+private:
+	//disable copying
+	MultiPagePDF(const MultiChart& rhs);
+	MultiPagePDF& operator=(const MultiChart& rhs);
+
+	MultiPagePDFInternal* ptr;
+
+public:
+	MultiPagePDF() : ptr(CMultiPagePDF_create()) {}
+	virtual ~MultiPagePDF() { CMultiPagePDF_destroy(ptr); }
+	void addPage(BaseChart* c) { if (c) addPage(c->makeChart()); }
+	void addPage(DrawArea* d) { CMultiPagePDF_addPage(ptr, DrawArea::safePtr(d)); }
+	bool outPDF(const char* pathname) { return CMultiPagePDF_outPDF(ptr, pathname); }
+	MemBlock outPDF() { MemBlock ret; CMultiPagePDF_outPDF2(ptr, &(ret.data), &(ret.len)); return ret; }
+};
+
+
+class Sector : public CDObject, protected GarbageContainer
 {
 private :
 	//disable copying
@@ -1266,8 +1339,7 @@ public :
 	{ CSector_setExplode(ptr, distance); }
 	void setLabelFormat(const char *formatString)
 	{ CSector_setLabelFormat(ptr, formatString); }
-	TextBox *setLabelStyle(const char *font = 0, double fontSize = 8,
-		int fontColor = Chart::TextColor)
+	TextBox *setLabelStyle(const char *font = 0, double fontSize = 8, int fontColor = Chart::TextColor)
 	{ TextBox *ret = new TextBox(CSector_setLabelStyle(ptr, font, fontSize, fontColor)); reg(ret); return ret;}
 	void setLabelPos(int pos, int joinLineColor = -1)
 	{ CSector_setLabelPos(ptr, pos, joinLineColor); }
@@ -1370,7 +1442,7 @@ public :
 };
 
 
-class Axis : public AutoDestroy, protected GarbageContainer
+class Axis : public CDObject, protected GarbageContainer
 {
 private :
 	//disable copying
@@ -1382,9 +1454,8 @@ private :
 public :
 	Axis(AxisInternal *_ptr) : ptr(_ptr) {}
 	~Axis() {}
-	AxisInternal *getInternalPtr() { return ptr; }
-	const AxisInternal *getInternalPtr() const { return ptr; }
-
+	static AxisInternal *safePtr(const Axis *self) { return self ? self->ptr : 0; }
+	
 	TextBox *setLabelStyle(const char *font = 0, double fontSize = 8,
 		int fontColor = Chart::TextColor, double fontAngle = 0)
 	{ TextBox *ret = new TextBox(CAxis_setLabelStyle(ptr, font, fontSize, fontColor, fontAngle)); reg(ret); return ret; }
@@ -1485,6 +1556,8 @@ public :
 
 	void syncAxis(const Axis *axis, double slope = 1, double intercept = 0)
 	{ CAxis_syncAxis(ptr, axis ? axis->ptr : 0, slope, intercept); }
+	void syncScale(const Axis* axis, double slope = 1, double intercept = 0)
+	{ CAxis_syncScale(ptr, axis ? axis->ptr : 0, slope, intercept); }
 	void copyAxis(const Axis *axis)
 	{ CAxis_copyAxis(ptr, axis ? axis->ptr : 0); }
 
@@ -1534,7 +1607,7 @@ typedef Axis RadialAxis;
 //
 //	AngularAxis for PolarChart
 //
-class AngularAxis : public AutoDestroy, protected GarbageContainer
+class AngularAxis : public CDObject, protected GarbageContainer
 {
 private :
 	//disable copying
@@ -1596,6 +1669,8 @@ public :
 	{ CColorAxis_setColorGradient(ptr, isContinuous, colors.data, colors.len, underflowColor, overflowColor); }
 	virtual void setColorScale(DoubleArray colorStops, int underflowColor = -1, int overflowColor = -1)
 	{ CColorAxis_setColorScale(ptr, colorStops.data, colorStops.len, underflowColor, overflowColor); }
+	virtual DoubleArray getColorScale() const
+	{ const double* d; int len; CColorAxis_getColorScale(ptr, &d, &len); return DoubleArray(d, len); }
 
 	void setAxisPos(int x, int y, int alignment) { CColorAxis_setAxisPos(ptr, x, y, alignment); }
 	void setLevels(int maxLevels) { CColorAxis_setLevels(ptr, maxLevels); }
@@ -1614,7 +1689,7 @@ public :
 };
 
 
-class DataSet : public AutoDestroy, protected GarbageContainer
+class DataSet : protected GarbageContainer
 {
 private :
 	//disable copying
@@ -1622,14 +1697,13 @@ private :
 	DataSet &operator=(const DataSet &rhs);
 
 	DataSetInternal *ptr;
-	Axis *useYAxisCache;
-
+	UniqueObjContainer<Axis> useYAxisCache;
+	
 public :
-	DataSet(DataSetInternal *_ptr) : ptr(_ptr), useYAxisCache(0) {}
+	DataSet(DataSetInternal *_ptr) : ptr(_ptr) {}
 	~DataSet() {}
-	DataSetInternal *getInternalPtr() { return ptr; }
-	const DataSetInternal *getInternalPtr() const { return ptr; }
-
+	static DataSetInternal *safePtr(const DataSet *self) { return self ? self->ptr : 0; }
+	
 	void setData(int noOfPoints, const double *data)
 	{ setData(DoubleArray(data, noOfPoints)); }
 	void setData(DoubleArray data)
@@ -1653,8 +1727,8 @@ public :
 	{ CDataSet_setDataSymbol(ptr, symbol, size, fillColor, edgeColor, lineWidth); }
 	void setDataSymbol(const char *image)
 	{ CDataSet_setDataSymbol2(ptr, image); }
-	void setDataSymbol(const DrawArea *obj)
-	{ CDataSet_setDataSymbol3(ptr, obj->getInternalPtr()); }
+	void setDataSymbol(const DrawArea *d)
+	{ CDataSet_setDataSymbol3(ptr, DrawArea::safePtr(d)); }
 	void setDataSymbol(IntArray polygon, int size = 11, int fillColor = -1, int edgeColor = -1)
 	{ CDataSet_setDataSymbol4(ptr, polygon.data, polygon.len, size, fillColor, edgeColor); }
 	void setSymbolOffset(int offsetX, int offsetY)
@@ -1670,55 +1744,28 @@ public :
 	{ TextBox *ret = new TextBox(CDataSet_setDataLabelStyle(ptr, font, fontSize, fontColor, fontAngle)); reg(ret); return ret;}
 
 	void setUseYAxis2(bool b = true) { CDataSet_setUseYAxis2(ptr, b); }
-	void setUseYAxis(const Axis* a) { CDataSet_setUseYAxis(ptr, a->getInternalPtr()); }
-	Axis *getUseYAxis() {
-		AxisInternal *retPtr = CDataSet_getUseYAxis(ptr);
-		if ((0 == useYAxisCache) || (retPtr != useYAxisCache->getInternalPtr())) {
-			useYAxisCache = new Axis(retPtr); reg(useYAxisCache); 
-		}
-		return useYAxisCache;
-	}
-
-	const char *getLegendIcon() 
-	{ return CDataSet_getLegendIcon(ptr); }		
+	void setUseYAxis(const Axis* a) { CDataSet_setUseYAxis(ptr, Axis::safePtr(a)); }
+	Axis* getUseYAxis() { return useYAxisCache.get(CDataSet_getUseYAxis(ptr)); }
+	const char *getLegendIcon() { return CDataSet_getLegendIcon(ptr); }		
 };
 
 
-class Layer : public AutoDestroy, protected GarbageContainer
+class Layer : protected GarbageContainer
 {
-private :
+private:
 	//disable copying
-	Layer(const Layer &rhs);
-	Layer &operator=(const Layer &rhs);
+	Layer(const Layer& rhs);
+	Layer& operator=(const Layer& rhs);
 
-	LayerInternal *ptr;
-
-	DataSet **dataSetCache;
-	int dataSetCacheCount;
-	int maxDataSetCacheCount;
-
-	DataSet *regDataSet(DataSetInternal *_ptr) {
-		if (!_ptr) return 0;
-		for (int i = 0; i < dataSetCacheCount; ++i)
-			if (dataSetCache[i]->getInternalPtr() == _ptr) return dataSetCache[i];
-		DataSet *ret = new DataSet(_ptr); reg(ret); 
-		if (dataSetCacheCount >= maxDataSetCacheCount) {
-			maxDataSetCacheCount = (maxDataSetCacheCount < 10) ? 10 : maxDataSetCacheCount * 2;
-			DataSet **temp = new DataSet*[maxDataSetCacheCount];
-			for (int i = 0; i < dataSetCacheCount; ++i) temp[i] = dataSetCache[i];
-			delete[] dataSetCache; dataSetCache = temp;
-		}
-		return dataSetCache[dataSetCacheCount++] = ret;
-	}
+	LayerInternal* ptr;
+	UniqueObjContainer<DataSet> dataSets;
 
 public :
-	Layer(LayerInternal *_ptr) : ptr(_ptr), dataSetCache(0), dataSetCacheCount(0), maxDataSetCacheCount(0) {}
-	~Layer() { delete[] dataSetCache; }
-	LayerInternal *getInternalPtr() { return ptr; }
-	const LayerInternal *getInternalPtr() const { return ptr; }
-
-	void moveFront(Layer *layer = 0) { CLayer_moveFront(ptr, layer ? layer->ptr : 0); }
-	void moveBack(Layer *layer = 0) { CLayer_moveBack(ptr, layer ? layer->ptr : 0); }
+	Layer(LayerInternal* _ptr) : ptr(_ptr) {}
+	static LayerInternal* safePtr(const Layer* self) { return self ? self->ptr : 0; }
+	
+	void moveFront(Layer *layer = 0) { CLayer_moveFront(ptr, safePtr(layer)); }
+	void moveBack(Layer *layer = 0) { CLayer_moveBack(ptr, safePtr(layer)); }
 	
 	void set3D(int d = -1, int zGap = 0) { CLayer_set3D(ptr, d, zGap); }
 	void setLineWidth(int w) { CLayer_setLineWidth(ptr, w); }
@@ -1739,20 +1786,20 @@ public :
 	DataSet *addDataSet(int noOfPoints, const double *d, int color = -1, const char *name = 0)
 	{ return addDataSet(DoubleArray(d, noOfPoints), color, name); }
 	DataSet *addDataSet(DoubleArray data, int color = -1, const char *name = 0)
-	{ return regDataSet(CLayer_addDataSet(ptr, data.data, data.len, color, name)); }
+	{ return dataSets.create(CLayer_addDataSet(ptr, data.data, data.len, color, name)); }
 	void addDataGroup(const char *name = 0) { CLayer_addDataGroup(ptr, name); }
 	void addExtraField(StringArray texts) { CLayer_addExtraField(ptr, texts.data, texts.len); }
 	void addExtraField(DoubleArray numbers) { CLayer_addExtraField2(ptr, numbers.data, numbers.len); }
 	
 	DataSet *getDataSet(int i)
-	{ return regDataSet(CLayer_getDataSet(ptr, i)); }
+	{ return dataSets.get(CLayer_getDataSet(ptr, i)); }
 	DataSet *getDataSetByZ(int i)
-	{ return regDataSet(CLayer_getDataSetByZ(ptr, i)); }
+	{ return dataSets.get(CLayer_getDataSetByZ(ptr, i)); }
 	int getDataSetCount() 
 	{ return CLayer_getDataSetCount(ptr); }
 
 	void setUseYAxis2(bool b = true) { CLayer_setUseYAxis2(ptr, b); }
-	void setUseYAxis(const Axis* a) { CLayer_setUseYAxis(ptr, a->getInternalPtr()); }
+	void setUseYAxis(const Axis* a) { CLayer_setUseYAxis(ptr, Axis::safePtr(a)); }
 
 	void setXData(DoubleArray xData) { CLayer_setXData(ptr, xData.data, xData.len); }
 	void setXData(double minValue, double maxValue) { CLayer_setXData2(ptr, minValue, maxValue); }
@@ -1762,19 +1809,19 @@ public :
 	{ return CLayer_getNearestXValue(ptr, target); }
 	int getXIndexOf(double xValue, double tolerance = 0) 
 	{ return CLayer_getXIndexOf(ptr, xValue, tolerance); }
-	void alignLayer(const Layer *layer, int dataSet) { CLayer_alignLayer(ptr, layer->getInternalPtr(), dataSet); } 
+	void alignLayer(const Layer *layer, int dataSet) { CLayer_alignLayer(ptr, Layer::safePtr(layer), dataSet); } 
 
 	int getXCoor(double v) const { return CLayer_getXCoor(ptr, v); }
 	int getYCoor(double v, bool yAxis = true) const { return CLayer_getYCoor(ptr, v, yAxis); }
 	int getYCoor(double v, const Axis *yAxis) const 
-	{ if (0 == yAxis) return getYCoor(v); else return CLayer_getYCoor2(ptr, v, yAxis->getInternalPtr()); }
+	{ if (0 == yAxis) return getYCoor(v); else return CLayer_getYCoor2(ptr, v, Axis::safePtr(yAxis)); }
 	int xZoneColor(double threshold, int belowColor, int aboveColor)
 	{ return CLayer_xZoneColor(ptr, threshold, belowColor, aboveColor); }
 	int yZoneColor(double threshold, int belowColor, int aboveColor, bool yAxis = true)
 	{ return CLayer_yZoneColor(ptr, threshold, belowColor, aboveColor, yAxis); }
 	int yZoneColor(double threshold, int belowColor, int aboveColor, const Axis *yAxis)
 	{ if (0 == yAxis) return yZoneColor(threshold, belowColor, aboveColor); 
-	  else return CLayer_yZoneColor2(ptr, threshold, belowColor, aboveColor, yAxis->getInternalPtr()); }
+	  else return CLayer_yZoneColor2(ptr, threshold, belowColor, aboveColor, Axis::safePtr(yAxis)); }
 	
 	//*** Note ***: The default value -0x7fffffff is maintained for compatibility
 	const char *getImageCoor(int dataSet, int dataItem = -0x7fffffff, int offsetX = 0, int offsetY = 0)
@@ -2113,6 +2160,15 @@ public :
 	{ CContourLayer_setContourColor(ptr, contourColor, minorContourColor); }
 	void setContourWidth(int contourWidth, int minorContourWidth = -1)
 	{ CContourLayer_setContourWidth(ptr, contourWidth, minorContourWidth); }
+	void setContourLabelFormat(const char* formatString)
+	{ CContourLayer_setContourLabelFormat(ptr, formatString); }
+	TextBox* setContourLabelStyle(const char* font = 0, double fontSize = 8, int fontColor = Chart::TextColor)
+	{ TextBox* ret = new TextBox(CContourLayer_setContourLabelStyle(ptr, font, fontSize, fontColor)); reg(ret); return ret; }
+	Mark* addCustomContour(double z, int contourColor, int contourWidth, const char* contourLabel,
+		const char* font = 0, int fontSize = 8, int fontColor = Chart::TextColor)
+	{ Mark* ret = new Mark(CContourLayer_addCustomContour(ptr, z, contourColor, contourWidth, contourLabel, font, fontSize, fontColor)); reg(ret); return ret; }
+	void setContourLabelSpacing(int labelSpacing, int minContourLen)
+	{ CContourLayer_setContourLabelSpacing(ptr, labelSpacing, minContourLen); }
 	void setExactContour(bool contour, bool markContour)
 	{ CContourLayer_setExactContour(ptr, contour, markContour); }
 	void setExactContour(bool contour = true) 
@@ -2121,10 +2177,37 @@ public :
 	{ ColorAxis *ret = new ColorAxis(CContourLayer_setColorAxis(ptr, x, y, alignment, length, orientation)); reg(ret); return ret; }
 	ColorAxis *colorAxis()
 	{ ColorAxis *ret = new ColorAxis(CContourLayer_colorAxis(ptr)); reg(ret); return ret; }
+	double getZ(double x, double y) { /* For compatibility - use getZAtValue instead */ return getZAtValue(x, y); } 
+	double getZAtValue(double x, double y) { return CContourLayer_getZAtValue(ptr, x, y); }
+	double getZAtPixel(int px, int py) { return CContourLayer_getZAtPixel(ptr, px, py); }
+	DoubleArray getCrossSection(int x0, int y0, int x1, int y1)
+	{ const double* d; int len; CContourLayer_getCrossSection(ptr, x0, y0, x1, y1, &d, &len); return DoubleArray(d, len); }
 };
 
 
-class PlotArea : public AutoDestroy
+class DiscreteHeatMapLayer : public Layer
+{
+private:
+	//disable copying
+	DiscreteHeatMapLayer(const DiscreteHeatMapLayer& rhs);
+	DiscreteHeatMapLayer& operator=(const DiscreteHeatMapLayer& rhs);
+
+	DiscreteHeatMapLayerInternal* ptr;
+
+public:
+	DiscreteHeatMapLayer(DiscreteHeatMapLayerInternal* _ptr) : Layer(DiscreteHeatMapLayer2Layer(_ptr)), ptr(_ptr) {}
+	~DiscreteHeatMapLayer() {}
+
+	void setDirectColoring(bool b = true) {	CDiscreteHeatMapLayer_setDirectColoring(ptr, b); }
+	void setCellGap(int gap) { CDiscreteHeatMapLayer_setCellGap(ptr, gap); }
+	ColorAxis* setColorAxis(int x, int y, int alignment, int length, int orientation)
+	{ ColorAxis* ret = new ColorAxis(CDiscreteHeatMapLayer_setColorAxis(ptr, x, y, alignment, length, orientation)); reg(ret); return ret; }
+	ColorAxis* colorAxis()
+	{ ColorAxis* ret = new ColorAxis(CDiscreteHeatMapLayer_colorAxis(ptr)); reg(ret); return ret; }
+};
+
+
+class PlotArea : public CDObject
 {
 private :
 	//disable copying
@@ -2136,7 +2219,7 @@ private :
 public :
 	PlotArea(PlotAreaInternal *_ptr) : ptr(_ptr) {}
 	~PlotArea() {}
-	PlotAreaInternal *getInternalPtr() { return ptr; }
+	static PlotAreaInternal *safePtr(const PlotArea *self) { return self ? self->ptr : 0; }
 
 	void setBackground(int color, int altBgColor = -1, int edgeColor = -1)
 	{ CPlotArea_setBackground(ptr, color, altBgColor, edgeColor); }
@@ -2153,8 +2236,8 @@ public :
 		int minorHGridWidth = -1, int minorVGridWidth = -1)
 	{ CPlotArea_setGridWidth(ptr, hGridWidth, vGridWidth, minorHGridWidth, minorVGridWidth); }
 	void setGridAxis(const Axis *xGridAxis, const Axis *yGridAxis)
-	{ CPlotArea_setGridAxis(ptr, xGridAxis ? xGridAxis->getInternalPtr() : 0, yGridAxis ? yGridAxis->getInternalPtr() : 0); }
-	void moveGridBefore(Layer *layer = 0) { CPlotArea_moveGridBefore(ptr, layer ? layer->getInternalPtr() : 0); }
+	{ CPlotArea_setGridAxis(ptr, Axis::safePtr(xGridAxis), Axis::safePtr(yGridAxis)); }
+	void moveGridBefore(Layer *layer = 0) { CPlotArea_moveGridBefore(ptr, Layer::safePtr(layer)); }
 
 	int getLeftX() const { return CPlotArea_getLeftX(ptr); }
 	int getTopY() const { return CPlotArea_getTopY(ptr); }
@@ -2174,69 +2257,26 @@ private :
 
 	XYChartInternal *ptr;
 
-	PlotArea *plotAreaCache;
-	PlotArea *regPlotArea(PlotAreaInternal *_ptr) {
-		if (!_ptr) return 0;
-		if ((0 == plotAreaCache) || (_ptr != plotAreaCache->getInternalPtr())) { 
-			plotAreaCache = new PlotArea(_ptr); reg(plotAreaCache); 
-		}
-		return plotAreaCache;
-	}
-
-	Layer **layerCache;
-	int layerCacheCount;
-	int maxLayerCacheCount;
-	Layer *regLayer(LayerInternal *_ptr) {
-		if (!_ptr) return 0;
-		for (int i = 0; i < layerCacheCount; ++i)
-			if (layerCache[i]->getInternalPtr() == _ptr) return layerCache[i];
-		Layer *ret = new Layer(_ptr); reg(ret); 
-		if (layerCacheCount >= maxLayerCacheCount) {
-			maxLayerCacheCount = (maxLayerCacheCount < 10) ? 10 : maxLayerCacheCount * 2;
-			Layer **temp = new Layer*[maxLayerCacheCount];
-			for (int i = 0; i < layerCacheCount; ++i) temp[i] = layerCache[i];
-			delete[] layerCache; layerCache = temp;
-		}
-		return layerCache[layerCacheCount++] = ret;
-	}
-
-	Axis **axisCache;
-	int axisCacheCount;
-	int maxAxisCacheCount;
-	Axis *regAxis(AxisInternal *_ptr) {
-		if (!_ptr) return 0;
-		for (int i = 0; i < axisCacheCount; ++i)
-			if (axisCache[i]->getInternalPtr() == _ptr) return axisCache[i];
-		Axis *ret = new Axis(_ptr); reg(ret); 
-		if (axisCacheCount >= maxAxisCacheCount) {
-			maxAxisCacheCount = (maxAxisCacheCount < 10) ? 10 : maxAxisCacheCount * 2;
-			Axis **temp = new Axis*[maxAxisCacheCount];
-			for (int i = 0; i < axisCacheCount; ++i) temp[i] = axisCache[i];
-			delete[] axisCache; axisCache = temp;
-		}
-		return axisCache[axisCacheCount++] = ret;
-	}
+	UniqueObjContainer<PlotArea> plotAreaCache;
+	UniqueObjContainer<Layer> layers;
+	UniqueObjContainer<Axis> axes;
 
 public :
-	XYChart(int width, int height, int bgColor = Chart::BackgroundColor,
-		int edgeColor = Chart::Transparent, int raisedEffect = 0) :
-		plotAreaCache(0), layerCache(0), layerCacheCount(0), maxLayerCacheCount(0),
-		axisCache(0), axisCacheCount(0), maxAxisCacheCount(0)
+	XYChart(int width, int height, int bgColor = Chart::BackgroundColor, int edgeColor = Chart::Transparent, int raisedEffect = 0)
 	{ ptr = CXYChart_create(width, height, bgColor, edgeColor, raisedEffect);
 	  init(XYChart2BaseChart(ptr)); }
 	static XYChart *create(int width, int height, int bgColor = Chart::BackgroundColor,
 		int edgeColor = Chart::Transparent, int raisedEffect = 0)
 	{ return new XYChart(width, height, bgColor, edgeColor, raisedEffect); }
-	~XYChart() { delete[] layerCache; delete[] axisCache; }
-
-	Axis *addAxis(int align, int offset) { return regAxis(CXYChart_addAxis(ptr, align, offset)); }
-	Axis *yAxis() { return regAxis(CXYChart_yAxis(ptr)); }
-	Axis *yAxis2() { return regAxis(CXYChart_yAxis2(ptr)); }
+	
+	Axis *addAxis(int align, int offset) { return axes.create(CXYChart_addAxis(ptr, align, offset)); }
+	Axis *yAxis() { return axes.get(CXYChart_yAxis(ptr)); }
+	Axis *yAxis2() { return axes.get(CXYChart_yAxis2(ptr)); }
 	void syncYAxis(double slope = 1, double intercept = 0)
 	{ CXYChart_syncYAxis(ptr, slope, intercept); }
 	void setYAxisOnRight(bool b = true) { CXYChart_setYAxisOnRight(ptr, b); }
-	Axis *xAxis() { return regAxis(CXYChart_xAxis(ptr)); }
-	Axis *xAxis2() { return regAxis(CXYChart_xAxis2(ptr)); }
+	Axis *xAxis() { return axes.get(CXYChart_xAxis(ptr)); }
+	Axis *xAxis2() { return axes.get(CXYChart_xAxis2(ptr)); }
 	void setXAxisOnTop(bool b = true) { CXYChart_setXAxisOnTop(ptr, b); }
 	void swapXY(bool b = true) { CXYChart_swapXY(ptr, b); }
 	void setAxisAtOrigin(int originMode = Chart::XYAxisAtOrigin, int symmetryMode = 0)
@@ -2244,125 +2284,130 @@ public :
 
 	int getXCoor(double v) const { return CXYChart_getXCoor(ptr, v); }
 	int getYCoor(double v, const Axis *_yAxis = 0) 
-	{ return CXYChart_getYCoor(ptr, v, (0 == _yAxis) ? 0 : _yAxis->getInternalPtr()); }
+	{ return CXYChart_getYCoor(ptr, v, Axis::safePtr(_yAxis)); }
 	double getXValue(int xCoor) 
 	{ return CXYChart_getXValue(ptr, xCoor); }
 	double getNearestXValue(double xCoor) 
 	{ return CXYChart_getNearestXValue(ptr, xCoor); }
 	double getYValue(int yCoor, const Axis *_yAxis = 0) 
-	{ return CXYChart_getYValue(ptr, yCoor, (0 == _yAxis) ? 0 : _yAxis->getInternalPtr()); }
+	{ return CXYChart_getYValue(ptr, yCoor, Axis::safePtr(_yAxis)); }
 
 	int xZoneColor(double threshold, int belowColor, int aboveColor)
 	{ return CXYChart_xZoneColor(ptr, threshold, belowColor, aboveColor); }
 	int yZoneColor(double threshold, int belowColor, int aboveColor, const Axis *_yAxis = 0)
-	{ return CXYChart_yZoneColor(ptr, threshold, belowColor, aboveColor, (0 == _yAxis) ? 0 : _yAxis->getInternalPtr()); }
+	{ return CXYChart_yZoneColor(ptr, threshold, belowColor, aboveColor, Axis::safePtr(_yAxis)); }
+	int xScaleColor(DoubleArray scale)
+	{ return CXYChart_xScaleColor(ptr, scale.data, scale.len); }
+	int yScaleColor(DoubleArray scale, const Axis *_yAxis = 0)
+	{ return CXYChart_yScaleColor(ptr, scale.data, scale.len, Axis::safePtr(_yAxis)); }
 
-	PlotArea *setPlotArea(int x, int y, int width, int height,
-		int bgColor = Chart::Transparent, int altBgColor = -1, int edgeColor = -1,
-		int hGridColor = 0xc0c0c0, int vGridColor = Chart::Transparent)
-	{ return regPlotArea(CXYChart_setPlotArea(ptr, x, y, width, height, bgColor, altBgColor, edgeColor, hGridColor, vGridColor)); }
-	PlotArea *getPlotArea() { return regPlotArea(CXYChart_getPlotArea(ptr)); }
+	PlotArea *setPlotArea(int x, int y, int width, int height, int bgColor = Chart::Transparent, int altBgColor = -1, 
+		int edgeColor = -1, int hGridColor = 0xc0c0c0, int vGridColor = Chart::Transparent)
+	{ return plotAreaCache.get(CXYChart_setPlotArea(ptr, x, y, width, height, bgColor, altBgColor, edgeColor, hGridColor, vGridColor)); }
+	PlotArea *getPlotArea() { return plotAreaCache.get(CXYChart_getPlotArea(ptr)); }
 	void setClipping(int margin = 0) { CXYChart_setClipping(ptr, margin); }
 	void setTrimData(int startPos, int len = 0x7fffffff) { CXYChart_setTrimData(ptr, startPos, len); }
 
 	BarLayer *addBarLayer(int noOfPoints, const double *data, int color = -1, const char *name = 0, int depth = 0)
 	{ return addBarLayer(DoubleArray(data, noOfPoints), color, name, depth); }
 	BarLayer *addBarLayer(DoubleArray data, int color = -1, const char *name = 0, int depth = 0)
-	{ BarLayer *ret = new BarLayer(CXYChart_addBarLayer(ptr, data.data, data.len, color, name, depth)); reg(ret); return ret; }
+	{ return layers.add(new BarLayer(CXYChart_addBarLayer(ptr, data.data, data.len, color, name, depth))); }
 	BarLayer *addBarLayer(int noOfPoints, const double *data, const int *colors, const char* const* names = 0, int depth = 0)
-	{ return addBarLayer(DoubleArray(data, noOfPoints), IntArray(colors, colors ? noOfPoints : 0), StringArray(names, names ? noOfPoints : 0), depth); }
+	{ return addBarLayer(DoubleArray(data, noOfPoints), IntArray(colors, colors ? noOfPoints : 0), 
+	  StringArray(names, names ? noOfPoints : 0), depth); }
 	BarLayer *addBarLayer(DoubleArray data, IntArray colors, StringArray names = StringArray(), int depth = 0)
-	{ BarLayer *ret = new BarLayer(CXYChart_addBarLayer3(ptr, data.data, data.len, colors.data, colors.len, names.data, names.len, depth)); reg(ret); return ret; }
+	{ return layers.add(new BarLayer(CXYChart_addBarLayer3(ptr, data.data, data.len, colors.data, colors.len, 
+	  names.data, names.len, depth))); }
 	BarLayer *addBarLayer(int dataCombineMethod = Chart::Side, int depth = 0)
-	{ BarLayer *ret = new BarLayer(CXYChart_addBarLayer2(ptr, dataCombineMethod, depth)); reg(ret); return ret; }
-
+	{ return layers.add(new BarLayer(CXYChart_addBarLayer2(ptr, dataCombineMethod, depth))); }
 	LineLayer *addLineLayer(int noOfPoints, const double *data, int color = -1, const char *name = 0, int depth = 0)
 	{ return addLineLayer(DoubleArray(data, noOfPoints), color, name, depth); }
 	LineLayer *addLineLayer(DoubleArray data, int color = -1, const char *name = 0, int depth = 0)
-	{ LineLayer *ret = new LineLayer(CXYChart_addLineLayer(ptr, data.data, data.len, color, name, depth)); reg(ret); return ret; }
+	{ return layers.add(new LineLayer(CXYChart_addLineLayer(ptr, data.data, data.len, color, name, depth))); }
 	LineLayer *addLineLayer(int dataCombineMethod = Chart::Overlay, int depth = 0)
-	{ LineLayer *ret = new LineLayer(CXYChart_addLineLayer2(ptr, dataCombineMethod, depth)); reg(ret); return ret; }
+	{ return layers.add(new LineLayer(CXYChart_addLineLayer2(ptr, dataCombineMethod, depth))); }
+	LineLayer *addLineLayer(const DataAccelerator *fastDB, const char *seriesId, int color = -1, const char *name = 0)
+	{ return layers.add(new LineLayer(CXYChart_addLineLayer3(ptr, DataAccelerator::safePtr(fastDB), seriesId, color, name))); }
 
 	AreaLayer *addAreaLayer(int noOfPoints, const double *data, int color = -1, const char *name = 0, int depth = 0)
 	{ return addAreaLayer(DoubleArray(data, noOfPoints), color, name, depth); }
 	AreaLayer *addAreaLayer(DoubleArray data, int color = -1, const char *name = 0, int depth = 0)
-	{ AreaLayer *ret = new AreaLayer(CXYChart_addAreaLayer(ptr, data.data, data.len, color, name, depth)); reg(ret); return ret; }
+	{ return layers.add(new AreaLayer(CXYChart_addAreaLayer(ptr, data.data, data.len, color, name, depth))); }
 	AreaLayer *addAreaLayer(int dataCombineMethod = Chart::Stack, int depth = 0)
-	{ AreaLayer *ret = new AreaLayer(CXYChart_addAreaLayer2(ptr, dataCombineMethod, depth)); reg(ret); return ret; }
+	{ return layers.add(new AreaLayer(CXYChart_addAreaLayer2(ptr, dataCombineMethod, depth))); }
 
 	HLOCLayer *addHLOCLayer()
-	{ HLOCLayer *ret = new HLOCLayer(CXYChart_addHLOCLayer2(ptr)); reg(ret); return ret; }
+	{ return layers.add(new HLOCLayer(CXYChart_addHLOCLayer2(ptr))); }
 	HLOCLayer *addHLOCLayer(int noOfPoints, const double *highData, const double *lowData, const double *openData = 0,
 		const double *closeData = 0, int color = -1)
 	{ return addHLOCLayer(DoubleArray(highData, highData ? noOfPoints : 0), DoubleArray(lowData, lowData ? noOfPoints : 0),
 		DoubleArray(openData, openData ? noOfPoints : 0), DoubleArray(closeData, closeData ? noOfPoints : 0), color); }
-	HLOCLayer *addHLOCLayer(DoubleArray highData, DoubleArray lowData, DoubleArray openData = DoubleArray(),
+	HLOCLayer *addHLOCLayer(DoubleArray highData, DoubleArray lowData, DoubleArray openData = DoubleArray(), 
 		DoubleArray closeData = DoubleArray(), int color = -1)
-	{ HLOCLayer *ret = new HLOCLayer(CXYChart_addHLOCLayer(ptr, highData.data, highData.len,
-		lowData.data, lowData.len, openData.data, openData.len, closeData.data, closeData.len, color)); reg(ret); return ret; }
-	HLOCLayer *addHLOCLayer(DoubleArray highData, DoubleArray lowData, DoubleArray openData,
-		DoubleArray closeData, int upColor, int downColor, int colorMode = -1, double leadValue = -1.7E308)
-	{ HLOCLayer *ret = new HLOCLayer(CXYChart_addHLOCLayer3(ptr, highData.data, highData.len,
-		lowData.data, lowData.len, openData.data, openData.len, closeData.data, closeData.len, 
-		upColor, downColor, colorMode, leadValue)); reg(ret); return ret; }
-
-	CandleStickLayer *addCandleStickLayer(
-		DoubleArray highData, DoubleArray lowData, DoubleArray openData, DoubleArray closeData,
+	{ return layers.add(new HLOCLayer(CXYChart_addHLOCLayer(ptr, highData.data, highData.len,
+	  lowData.data, lowData.len, openData.data, openData.len, closeData.data, closeData.len, color))); }
+	HLOCLayer *addHLOCLayer(DoubleArray highData, DoubleArray lowData, DoubleArray openData, DoubleArray closeData, 
+		int upColor, int downColor, int colorMode = -1, double leadValue = -1.7E308)
+	{ return layers.add(new HLOCLayer(CXYChart_addHLOCLayer3(ptr, highData.data, highData.len, lowData.data, lowData.len, 
+		openData.data, openData.len, closeData.data, closeData.len, upColor, downColor, colorMode, leadValue))); }
+	CandleStickLayer *addCandleStickLayer(DoubleArray highData, DoubleArray lowData, DoubleArray openData, DoubleArray closeData,
 		int riseColor = 0xffffff, int fallColor = 0x0, int edgeColor = Chart::LineColor)
-	{ CandleStickLayer *ret = new CandleStickLayer(CXYChart_addCandleStickLayer(ptr, highData.data, highData.len,
-		lowData.data, lowData.len, openData.data, openData.len, closeData.data, closeData.len,
-		riseColor, fallColor, edgeColor)); reg(ret); return ret; }
+	{ return layers.add(new CandleStickLayer(CXYChart_addCandleStickLayer(ptr, highData.data, highData.len, lowData.data, lowData.len, 
+	  openData.data, openData.len, closeData.data, closeData.len, riseColor, fallColor, edgeColor))); }
 
 	BoxWhiskerLayer *addBoxWhiskerLayer(
 		DoubleArray boxTop, DoubleArray boxBottom, DoubleArray maxData = DoubleArray(), DoubleArray minData = DoubleArray(),
 		DoubleArray midData = DoubleArray(), int fillColor = -1, int whiskerColor = Chart::LineColor, int edgeColor = -1)
-	{ BoxWhiskerLayer *ret = new BoxWhiskerLayer(CXYChart_addBoxWhiskerLayer(ptr, boxTop.data, boxTop.len,
-		boxBottom.data, boxBottom.len, maxData.data, maxData.len, minData.data, minData.len, midData.data, midData.len,
-		fillColor, whiskerColor, edgeColor)); reg(ret); return ret; }
+	{ return layers.add(new BoxWhiskerLayer(CXYChart_addBoxWhiskerLayer(ptr, boxTop.data, boxTop.len, boxBottom.data, boxBottom.len, 
+	  maxData.data, maxData.len, minData.data, minData.len, midData.data, midData.len, fillColor, whiskerColor, edgeColor))); }
 	BoxWhiskerLayer *addBoxWhiskerLayer2(DoubleArray boxTop, DoubleArray boxBottom, DoubleArray maxData = DoubleArray(),
 		DoubleArray minData = DoubleArray(), DoubleArray midData = DoubleArray(), IntArray fillColors = IntArray(), 
 		double whiskerBrightness = 0.5, StringArray names = StringArray())
-	{ BoxWhiskerLayer *ret = new BoxWhiskerLayer(CXYChart_addBoxWhiskerLayer2(ptr, boxTop.data, boxTop.len,
-		boxBottom.data, boxBottom.len, maxData.data, maxData.len, minData.data, minData.len, midData.data, midData.len,
-		fillColors.data, fillColors.len, whiskerBrightness, names.data, names.len)); reg(ret); return ret; }
+	{ return layers.add(new BoxWhiskerLayer(CXYChart_addBoxWhiskerLayer2(ptr, boxTop.data, boxTop.len, boxBottom.data, boxBottom.len,
+	  maxData.data, maxData.len, minData.data, minData.len, midData.data, midData.len, fillColors.data, fillColors.len, 
+	  whiskerBrightness, names.data, names.len))); }
 	BoxWhiskerLayer *addBoxLayer(DoubleArray boxTop, DoubleArray boxBottom, int color = -1, const char *name = 0)
-	{ BoxWhiskerLayer *ret = new BoxWhiskerLayer(CXYChart_addBoxLayer(ptr, boxTop.data, boxTop.len,
-		boxBottom.data, boxBottom.len, color, name)); reg(ret); return ret; }
+	{ return layers.add(new BoxWhiskerLayer(CXYChart_addBoxLayer(ptr, boxTop.data, boxTop.len, boxBottom.data, boxBottom.len, 
+		color, name))); }
 
 	ScatterLayer *addScatterLayer(DoubleArray xData, DoubleArray yData, const char *name = 0,
 		int symbol = Chart::SquareSymbol, int symbolSize = 5, int fillColor = -1, int edgeColor = -1)
-	{ ScatterLayer *ret = new ScatterLayer(CXYChart_addScatterLayer(ptr, xData.data, xData.len,
-		yData.data, yData.len, name, symbol, symbolSize, fillColor, edgeColor)); reg(ret); return ret; }
+	{ return layers.add(new ScatterLayer(CXYChart_addScatterLayer(ptr, xData.data, xData.len, yData.data, yData.len, 
+	  name, symbol, symbolSize, fillColor, edgeColor))); }
 
-	TrendLayer *addTrendLayer(DoubleArray data, int color = -1, const char *name = 0, int depth = 0)
-	{ TrendLayer *ret = new TrendLayer(CXYChart_addTrendLayer(ptr, data.data, data.len, color, name, depth)); reg(ret); return ret; }
 	TrendLayer *addTrendLayer(DoubleArray xData, DoubleArray yData, int color = -1, const char *name = 0, int depth = 0)
-	{ TrendLayer *ret = new TrendLayer(CXYChart_addTrendLayer2(ptr, xData.data, xData.len,
-		yData.data, yData.len, color, name, depth)); reg(ret); return ret; }
-
+	{ return layers.add(new TrendLayer(CXYChart_addTrendLayer2(ptr, xData.data, xData.len, yData.data, yData.len, color, name, depth))); }
+	TrendLayer* addTrendLayer(DoubleArray data, int color = -1, const char* name = 0, int depth = 0)
+	{ return addTrendLayer(DoubleArray(), data, color, name, depth); }
+	
 	SplineLayer *addSplineLayer(DoubleArray data = DoubleArray(), int color = -1, const char *name = 0)
-	{ SplineLayer *ret = new SplineLayer(CXYChart_addSplineLayer(ptr, data.data, data.len, color, name)); reg(ret); return ret; }
+	{ return layers.add(new SplineLayer(CXYChart_addSplineLayer(ptr, data.data, data.len, color, name))); }
 	StepLineLayer *addStepLineLayer(DoubleArray data = DoubleArray(), int color = -1, const char *name = 0)
-	{ StepLineLayer *ret = new StepLineLayer(CXYChart_addStepLineLayer(ptr, data.data, data.len, color, name)); reg(ret); return ret; }
+	{ return layers.add(new StepLineLayer(CXYChart_addStepLineLayer(ptr, data.data, data.len, color, name))); }
 
-	InterLineLayer *addInterLineLayer(LineObj *line1, LineObj *line2, int color12, int color21 = -1)
-	{ InterLineLayer *ret = new InterLineLayer(CXYChart_addInterLineLayer(ptr, (LineObjInternal *)line1, (LineObjInternal *)line2, color12, color21));
-	  reg(ret); return ret; }
+	InterLineLayer* addInterLineLayer(LineObj* line1, LineObj* line2, int color12, int color21 = -1)
+	{ return layers.add(new InterLineLayer(CXYChart_addInterLineLayer(ptr, (LineObjInternal*)line1, (LineObjInternal*)line2, 
+	  color12, color21))); }
 
-	VectorLayer *addVectorLayer(DoubleArray xData, DoubleArray yData, DoubleArray lengths, DoubleArray directions, 
-		int lengthScale = Chart::PixelScale, int color = -1, const char *name = 0)
-	{ VectorLayer *ret = new VectorLayer(CXYChart_addVectorLayer(ptr, xData.data, xData.len, 
-	  yData.data, yData.len, lengths.data, lengths.len, directions.data, directions.len, lengthScale, color, name)); 
-	  reg(ret); return ret; }
+	VectorLayer* addVectorLayer(DoubleArray xData, DoubleArray yData, DoubleArray lengths, DoubleArray directions, 
+		int lengthScale = Chart::PixelScale, int color = -1, const char* name = 0)
+	{ return layers.add(new VectorLayer(CXYChart_addVectorLayer(ptr, xData.data, xData.len, yData.data, yData.len, 
+	  lengths.data, lengths.len, directions.data, directions.len, lengthScale, color, name))); }
 
 	ContourLayer *addContourLayer(DoubleArray xData, DoubleArray yData, DoubleArray zData)
-	{ ContourLayer *ret = new ContourLayer(CXYChart_addContourLayer(ptr, xData.data, xData.len, yData.data, yData.len, zData.data, zData.len));
-	  reg(ret); return ret; }
+	{ return layers.add(new ContourLayer(CXYChart_addContourLayer(ptr, xData.data, xData.len, yData.data, yData.len, 
+	  zData.data, zData.len))); }
+
+	DiscreteHeatMapLayer* addDiscreteHeatMapLayer(DoubleArray xGrid, DoubleArray yGrid, DoubleArray zData)
+	{ return layers.add(new DiscreteHeatMapLayer(CXYChart_addDiscreteHeatMapLayer(ptr, xGrid.data, xGrid.len, yGrid.data, yGrid.len, 
+	  zData.data, zData.len))); }
+	DiscreteHeatMapLayer* addDiscreteHeatMapLayer(DoubleArray zData, int xCount)
+	{ return layers.add(new DiscreteHeatMapLayer(CXYChart_addDiscreteHeatMapLayer2(ptr, zData.data, zData.len, xCount))); }
 
 	Layer *getLayer(int i) 
-	{ return regLayer(CXYChart_getLayer(ptr, i)); }
+	{ return layers.get(CXYChart_getLayer(ptr, i)); }
 	Layer *getLayerByZ(int i) 
-	{ return regLayer(CXYChart_getLayerByZ(ptr, i)); }
+	{ return layers.get(CXYChart_getLayerByZ(ptr, i)); }
 	int getLayerCount() 
 	{ return CXYChart_getLayerCount(ptr); }	
 
@@ -2386,10 +2431,14 @@ public :
 
 	void setPlotRegion(int cx, int cy, int xWidth, int yDepth, int zHeight)
 	{ CThreeDChart_setPlotRegion(ptr, cx, cy, xWidth, yDepth, zHeight); }
+	int getPlotRegionWidth() { return CThreeDChart_getPlotRegionWidth(ptr); }
+	int getPlotRegionDepth() { return CThreeDChart_getPlotRegionDepth(ptr); }
+	int getPlotRegionHeight() { return CThreeDChart_getPlotRegionHeight(ptr); }
 	void setViewAngle(double elevation, double rotation = 0, double twist = 0)
 	{ CThreeDChart_setViewAngle(ptr, elevation, rotation, twist); }
-	void setPerspective(double perspective)
-	{ CThreeDChart_setPerspective(ptr, perspective); }
+	double getElevationAngle() { return CThreeDChart_getElevationAngle(ptr); }
+	double getRotationAngle() { return CThreeDChart_getRotationAngle(ptr); }
+	void setPerspective(double perspective) { CThreeDChart_setPerspective(ptr, perspective); }
 
 	Axis *xAxis() { Axis *ret = new Axis(CThreeDChart_xAxis(ptr)); reg(ret); return ret; }
 	Axis *yAxis() { Axis *ret = new Axis(CThreeDChart_yAxis(ptr)); reg(ret); return ret; }
@@ -2415,6 +2464,8 @@ public :
 	void setWallGrid(int majorXGridColor, int majorYGridColor = -1, int majorZGridColor = -1, 
 		int minorXGridColor = -1, int minorYGridColor = -1, int minorZGridColor = -1)
 	{ CThreeDChart_setWallGrid(ptr, majorXGridColor, majorYGridColor, majorZGridColor, minorXGridColor, minorYGridColor, minorZGridColor); }
+
+
 };
 
 
@@ -2433,11 +2484,13 @@ public :
 	{ ptr = CSurfaceChart_create(width, height, bgColor, edgeColor, raisedEffect);
 	  init(SurfaceChart2ThreeDChart(ptr)); }
 
-	void setData(DoubleArray xData, DoubleArray yData, DoubleArray zData)
-	{ CSurfaceChart_setData(ptr, xData.data, xData.len, yData.data, yData.len, zData.data, zData.len); }
+	void setData(DoubleArray xData, DoubleArray yData, DoubleArray zData, DoubleArray wData = DoubleArray())
+	{ CSurfaceChart_setData2(ptr, xData.data, xData.len, yData.data, yData.len, zData.data, zData.len, wData.data, wData.len); }
+	void setInterpolation(int xSamples, int ySamples, bool isSmooth, bool isColorSmooth)
+	{ CSurfaceChart_setInterpolation2(ptr, xSamples, ySamples, isSmooth, isColorSmooth); }
 	void setInterpolation(int xSamples, int ySamples = -1, bool isSmooth = true)
-	{ CSurfaceChart_setInterpolation(ptr, xSamples, ySamples, isSmooth); }
-	
+	{ setInterpolation(xSamples, ySamples, isSmooth, isSmooth); }
+
 	void setLighting(double ambientIntensity, double diffuseIntensity, double specularIntensity, double shininess)
 	{ CSurfaceChart_setLighting(ptr, ambientIntensity, diffuseIntensity, specularIntensity, shininess); }
 	void setShadingMode(int shadingMode, int wireWidth = 1)
@@ -2449,14 +2502,28 @@ public :
 	{ CSurfaceChart_setSurfaceDataGrid(ptr, xGridColor, yGridColor); }
 	void setContourColor(int contourColor, int minorContourColor = -1)
 	{ CSurfaceChart_setContourColor(ptr, contourColor, minorContourColor); }
-
+	void setWContourColor(int wContourColor, int wMinorContourColor = -1)
+	{ CSurfaceChart_setWContourColor(ptr, wContourColor, wMinorContourColor); }
+	void setSurfaceTexture(int _patternColor)
+	{ CSurfaceChart_setSurfaceTexture(ptr, _patternColor); }
+	void addXYProjection(int offset = 0)
+	{ CSurfaceChart_addXYProjection(ptr, offset); }
+	void addSurfaceLine(DoubleArray x, DoubleArray y, int color, int lineWidth = 1, int side = 0)
+	{ CSurfaceChart_addSurfaceLine(ptr, x.data, x.len, y.data, y.len, color, lineWidth, side); }
+	void addSurfaceLine(double x1, double y1, double x2, double y2, int color, int lineWidth = 1, int side = 0)
+	{ double x[] = { x1, x2 }; double y[] = { y1, y2 }; addSurfaceLine(DoubleArray(x, 2), DoubleArray(y, 2), color, lineWidth, side); }
+	void addSurfaceZone(double x1, double y1, double x2, double y2, int fillColor, int edgeColor = Chart::Transparent , int edgeWidth = 1)
+	{ CSurfaceChart_addSurfaceZone(ptr, x1, y1, x2, y2, fillColor, edgeColor, edgeWidth); }
 	void setBackSideBrightness(double brightness) { CSurfaceChart_setBackSideBrightness(ptr, brightness); }
 	void setBackSideColor(int color) { CSurfaceChart_setBackSideColor(ptr, color); }
 	void setBackSideLighting(double ambientLight, double diffuseLight, double specularLight, double shininess)
 	{ CSurfaceChart_setBackSideLighting(ptr, ambientLight, diffuseLight, specularLight, shininess); }
+
+    DoubleArray getValuesAtPixel(int x, int y) const
+    { const double *d; int len; CSurfaceChart_getValuesAtPixel(ptr, &d, &len, x, y); return DoubleArray(d, len); }
 };
 
-class ThreeDScatterGroup : public AutoDestroy
+class ThreeDScatterGroup : public CDObject
 {
 private :
 	//disable copying
@@ -2473,8 +2540,8 @@ public :
 	{ CThreeDScatterGroup_setDataSymbol(ptr, symbol, size, fillColor, edgeColor, lineWidth); }
 	void setDataSymbol(const char *image)
 	{ CThreeDScatterGroup_setDataSymbol2(ptr, image); }
-	void setDataSymbol(const DrawArea *obj)
-	{ CThreeDScatterGroup_setDataSymbol3(ptr, obj->getInternalPtr()); }
+	void setDataSymbol(const DrawArea *d)
+	{ CThreeDScatterGroup_setDataSymbol3(ptr, DrawArea::safePtr(d)); }
 	void setDataSymbol(IntArray polygon, int size = 11, int fillColor = -1, int edgeColor = -1)
 	{ CThreeDScatterGroup_setDataSymbol4(ptr, polygon.data, polygon.len, size, fillColor, edgeColor); }
 	void setSymbolOffset(int offsetX, int offsetY)
@@ -2509,7 +2576,7 @@ public :
 	}
 };
 
-class PolarLayer : public AutoDestroy, protected GarbageContainer
+class PolarLayer : public CDObject, protected GarbageContainer
 {
 private :
 	//disable copying
@@ -2531,7 +2598,7 @@ public :
 	void setLineWidth(int w) { CPolarLayer_setLineWidth(ptr, w); }
 
 	void setDataSymbol(const char *image) { CPolarLayer_setDataSymbol2(ptr, image); }
-	void setDataSymbol(const DrawArea *obj) { CPolarLayer_setDataSymbol3(ptr, obj->getInternalPtr()); }
+	void setDataSymbol(const DrawArea *d) { CPolarLayer_setDataSymbol3(ptr, DrawArea::safePtr(d)); }
 	void setDataSymbol(int symbol, int size = 7,
 		int fillColor = -1, int edgeColor = -1, int lineWidth = 1)
 	{ CPolarLayer_setDataSymbol(ptr, symbol, size, fillColor, edgeColor, lineWidth); }
@@ -2708,7 +2775,7 @@ public :
 };
 
 
-class PyramidLayer : public AutoDestroy, protected GarbageContainer
+class PyramidLayer : public CDObject, protected GarbageContainer
 {
 private :
 	//disable copying
@@ -2796,7 +2863,7 @@ public :
 };
 
 
-class TreeMapNode: public AutoDestroy, protected GarbageContainer
+class TreeMapNode: public CDObject, protected GarbageContainer
 {
 private :
 	//disable copying
@@ -2818,12 +2885,14 @@ public :
 
 	void setColors(int fillColor, int edgeColor = -1, int raisedEffect = -0x7fffffff)
 	{ CTreeMapNode_setColors(ptr, fillColor, edgeColor, raisedEffect); }
-	TextBox *setLabelFormat(const char *format = "{label}", const char *font = "normal", int fontSize = 10, 
+	TextBox *setLabelFormat(const char *format = "{label}", const char *font = 0, int fontSize = 8, 
 		int fontColor = Chart::TextColor, int alignment = Chart::TopLeft)
 	{ TextBox *ret = new TextBox(CTreeMapNode_setLabelFormat(ptr, format, font, fontSize, fontColor, alignment)); reg(ret); return ret; }
 	
-	void setLayoutMethod(int layoutMethod, int layoutDirection = Chart::TopLeft, int swapXY = 0)
-	{ CTreeMapNode_setLayoutMethod(ptr, layoutMethod, layoutDirection, swapXY); }
+	void setLayoutMethod(int layoutMethod, int layoutDirection, bool swapXY)
+	{ CTreeMapNode_setLayoutMethod(ptr, layoutMethod, layoutDirection, swapXY ? 1 : -1); }
+	void setLayoutMethod(int layoutMethod, int layoutDirection = -1) 
+	{ CTreeMapNode_setLayoutMethod(ptr, layoutMethod, layoutDirection, 0); }
     void setLayoutAspectRatio(double ratio)
 	{ CTreeMapNode_setLayoutAspectRatio(ptr, ratio); }
 	void setLayoutAspectMultiplier(double multiplier)
@@ -3040,7 +3109,8 @@ public :
 	TextBox *addZone(double startValue, double endValue, int color, const char *label = 0)
 	{ TextBox *ret = new TextBox(CLinearMeter_addZone(ptr, startValue, endValue, color, label)); reg(ret); return ret; }
     TextBox *addBar(double startValue, double endValue, int color, int effect = 0, int roundedCorners = 0)
-	{ TextBox *ret = new TextBox(CLinearMeter_addBar(ptr, startValue, endValue, color, effect, roundedCorners)); reg(ret); return ret; }
+	{ TextBox *ret = new TextBox(CLinearMeter_addBar(ptr, startValue, endValue, color, effect, roundedCorners)); 
+	  reg(ret); return ret; }
 };
 
 
@@ -3056,7 +3126,8 @@ public :
 	void destroy() { delete this; }
 
 	ArrayMath(const ArrayMath &rhs) { DoubleArray r  = rhs; ptr = CArrayMath_create(r.data, r.len); }
-	ArrayMath &operator=(const ArrayMath &rhs) { CArrayMath_destroy(ptr); DoubleArray r  = rhs; ptr = CArrayMath_create(r.data, r.len); return *this;}
+	ArrayMath &operator=(const ArrayMath &rhs) 
+	{ CArrayMath_destroy(ptr); DoubleArray r  = rhs; ptr = CArrayMath_create(r.data, r.len); return *this;}
 	operator DoubleArray() const { return result(); }
 
 	ArrayMath& add(DoubleArray b) { CArrayMath_add(ptr, b.data, b.len); return *this; }
@@ -3067,8 +3138,10 @@ public :
 	ArrayMath& mul(double b) { CArrayMath_mul2(ptr, b); return *this; }
 	ArrayMath& div(DoubleArray b) { CArrayMath_div(ptr, b.data, b.len); return *this; }
 	ArrayMath& div(double b) { CArrayMath_div2(ptr, b); return *this; }
-	ArrayMath& financeDiv(DoubleArray b, double zeroByZeroValue) { CArrayMath_financeDiv(ptr, b.data, b.len, zeroByZeroValue); return *this; }
-	ArrayMath& shift(int offset = 1, double fillValue = Chart::NoValue) { CArrayMath_shift(ptr, offset, fillValue); return *this; }
+	ArrayMath& financeDiv(DoubleArray b, double zeroByZeroValue) 
+	{ CArrayMath_financeDiv(ptr, b.data, b.len, zeroByZeroValue); return *this; }
+	ArrayMath& shift(int offset = 1, double fillValue = Chart::NoValue) 
+	{ CArrayMath_shift(ptr, offset, fillValue); return *this; }
 	ArrayMath& delta(int offset = 1) { CArrayMath_delta(ptr, offset); return *this; }
 	ArrayMath& rate(int offset = 1) { CArrayMath_rate(ptr, offset); return *this; }
 	ArrayMath& abs() { CArrayMath_abs(ptr); return *this; }
@@ -3093,13 +3166,13 @@ public :
 	{ CArrayMath_selectStartOfMinute(ptr, majorTickStep, initialMargin); return *this; }
 	ArrayMath& selectStartOfHour(int majorTickStep = 1, double initialMargin = 300)
 	{ CArrayMath_selectStartOfHour(ptr, majorTickStep, initialMargin); return *this; }
-	ArrayMath& selectStartOfDay(int majorTickStep = 1, double initialMargin = 3 * 3600)
+	ArrayMath& selectStartOfDay(int majorTickStep = 1, double initialMargin = 3.0 * 3600)
 	{ CArrayMath_selectStartOfDay(ptr, majorTickStep, initialMargin); return *this; }
-	ArrayMath& selectStartOfWeek(int majorTickStep = 1, double initialMargin = 2 * 86400)
+	ArrayMath& selectStartOfWeek(int majorTickStep = 1, double initialMargin = 2.0 * 86400)
 	{ CArrayMath_selectStartOfWeek(ptr, majorTickStep, initialMargin); return *this; }
-	ArrayMath& selectStartOfMonth(int majorTickStep = 1, double initialMargin = 5 * 86400)
+	ArrayMath& selectStartOfMonth(int majorTickStep = 1, double initialMargin = 5.0 * 86400)
 	{ CArrayMath_selectStartOfMonth(ptr, majorTickStep, initialMargin); return *this; }
-	ArrayMath& selectStartOfYear(int majorTickStep = 1, double initialMargin = 60 * 86400)
+	ArrayMath& selectStartOfYear(int majorTickStep = 1, double initialMargin = 60.0 * 86400)
 	{ CArrayMath_selectStartOfYear(ptr, majorTickStep, initialMargin); return *this; }
 	ArrayMath& selectRegularSpacing(int majorTickStep, int minorTickStep = 0, int initialMargin = 0)
 	{ CArrayMath_selectRegularSpacing(ptr, majorTickStep, minorTickStep, initialMargin); return *this; }
@@ -3203,6 +3276,14 @@ public :
 	static RanSeries *create(int seed) { return new RanSeries(seed); }
 	void destroy() { delete this; }
 
+	void fillSeries(double* ret, int len, double minValue, double maxValue)
+	{ CRanSeries_fillSeries(ptr, ret, len, minValue, maxValue); }
+	void fillSeries(double* ret, int len, double startValue, double minDelta, double maxDelta, 
+		double lowerLimit = -1E+308, double upperLimit = 1E+308)
+	{ CRanSeries_fillSeries2(ptr, ret, len, startValue, minDelta, maxDelta, lowerLimit, upperLimit); }
+	void fillDateSeries(double* ret, int len, double startTime, double tickInc, bool weekDayOnly = false)
+	{ CRanSeries_fillDateSeries(ptr, ret, len, startTime, tickInc, weekDayOnly); }
+
 	DoubleArray getSeries(int len, double minValue, double maxValue) 
 	{ const double *ret; int retLen; CRanSeries_getSeries(ptr, len, minValue, maxValue, &ret, &retLen);
 	  return DoubleArray(ret, retLen); }
@@ -3253,29 +3334,6 @@ public :
 	{ const double *d; int len; CFinanceSimulator_getVolData(ptr, &d, &len); return DoubleArray(d, len); }
 };
 
-class ImageMapHandler
-{
-private :
-	//disable copying
-	ImageMapHandler(const ImageMapHandler &rhs);
-	ImageMapHandler &operator=(const ImageMapHandler &rhs);
-
-	ImageMapHandlerInternal *ptr;
-
-public :
-	ImageMapHandler(const char *imageMap) : ptr(CImageMapHandler_create(imageMap)) {}
-	~ImageMapHandler() { CImageMapHandler_destroy(ptr); }
-
-	int getHotSpot(int x, int y)
-	{ return CImageMapHandler_getHotSpot(ptr, x, y); }
-	const char *getValue(const char *key)
-	{ return CImageMapHandler_getValue(ptr, key); }
-	const char *getKey(int i)
-	{ return CImageMapHandler_getKey(ptr, i); }
-	const char *getValue(int i)
-	{ return CImageMapHandler_getValue2(ptr, i); }
-};
-
 class ViewPortManager
 {
 private :
@@ -3289,14 +3347,14 @@ public :
 
 	ViewPortManager() : ptr(CViewPortManager_create()) {}
 	~ViewPortManager() { CViewPortManager_destroy(ptr); }
-	ViewPortManagerInternal *getInternalPtr() { return ptr; }
+	static ViewPortManagerInternal *safePtr(const ViewPortManager *self) { return self ? self->ptr : 0; }
 	
 	void setChartMetrics(const char *metrics) { CViewPortManager_setChartMetrics(ptr, metrics); }
 	int getPlotAreaLeft() { return CViewPortManager_getPlotAreaLeft(ptr); }
 	int getPlotAreaTop() { return CViewPortManager_getPlotAreaTop(ptr); }
 	int getPlotAreaWidth() { return CViewPortManager_getPlotAreaWidth(ptr); }
 	int getPlotAreaHeight() { return CViewPortManager_getPlotAreaHeight(ptr); }
-	bool inPlotArea(int x, int y) { return CViewPortManager_inPlotArea(ptr, x, y); }
+	bool inPlotArea(double x, double y) { return CViewPortManager_inPlotArea2(ptr, x, y); }
 
 	double getViewPortLeft() { return CViewPortManager_getViewPortLeft(ptr); }
 	void setViewPortLeft(double left) { CViewPortManager_setViewPortLeft(ptr, left); }
@@ -3316,18 +3374,20 @@ public :
 	void setZoomInHeightLimit(double viewPortHeight) { CViewPortManager_setZoomInHeightLimit(ptr, viewPortHeight); }
 	double getZoomOutHeightLimit() { return CViewPortManager_getZoomOutHeightLimit(ptr); }
 	void setZoomOutHeightLimit(double viewPortHeight){  CViewPortManager_setZoomOutHeightLimit(ptr, viewPortHeight); }
+	void setKeepAspectRatio(bool b) { CViewPortManager_setKeepAspectRatio(ptr, b); }
+	double getZoomXYRatio() { return CViewPortManager_getZoomXYRatio(ptr); }
 	bool canZoomIn(int zoomDirection) { return CViewPortManager_canZoomIn(ptr, zoomDirection); }
 	bool canZoomOut(int zoomDirection) { return CViewPortManager_canZoomOut(ptr, zoomDirection); }
-	bool zoomAt(int zoomDirection, int x, int y, double zoomRatio) 
-	{ return CViewPortManager_zoomAt(ptr, zoomDirection, x, y, zoomRatio); }
-	bool zoomTo(int zoomDirection, int x1, int y1, int x2, int y2) 
-	{ return CViewPortManager_zoomTo(ptr, zoomDirection, x1, y1, x2, y2); }
-	bool zoomAround(int x, int y, double xZoomRatio, double yZoomRatio)
-	{ return CViewPortManager_zoomAround(ptr, x, y, xZoomRatio, yZoomRatio); }
+	bool zoomAt(int zoomDirection, double x, double y, double zoomRatio)
+	{ return CViewPortManager_zoomAt2(ptr, zoomDirection, x, y, zoomRatio); }
+	bool zoomTo(int zoomDirection, double x1, double y1, double x2, double y2)
+	{ return CViewPortManager_zoomTo2(ptr, zoomDirection, x1, y1, x2, y2); }
+	bool zoomAround(double x, double y, double xZoomRatio, double yZoomRatio)
+	{ return CViewPortManager_zoomAround2(ptr, x, y, xZoomRatio, yZoomRatio); }
 
 	void startDrag() { CViewPortManager_startDrag(ptr); }
-	bool dragTo(int scrollDirection, int deltaX, int deltaY) 
-	{ return CViewPortManager_dragTo(ptr, scrollDirection, deltaX, deltaY); }
+	bool dragTo(int scrollDirection, double deltaX, double deltaY)
+	{ return CViewPortManager_dragTo2(ptr, scrollDirection, deltaX, deltaY); }
 
     void setFullRange(const char *id, double minValue, double maxValue)
 	{ CViewPortManager_setFullRange(ptr, id, minValue, maxValue); }
@@ -3341,14 +3401,14 @@ public :
 	{ return CViewPortManager_getValueAtViewPort(ptr, id, ratio, isLogScale); }
 	double getViewPortAtValue(const char *id, double ratio, bool isLogScale = false)
 	{ return CViewPortManager_getViewPortAtValue(ptr, id, ratio, isLogScale); }
-    void syncLinearAxisWithViewPort(const char *id, Axis *axis)
-	{ CViewPortManager_syncLinearAxisWithViewPort(ptr, id, axis->getInternalPtr()); }
-    void syncLogAxisWithViewPort(const char *id, Axis *axis)
-	{ CViewPortManager_syncLogAxisWithViewPort(ptr, id, axis->getInternalPtr()); }
-    void syncDateAxisWithViewPort(const char *id, Axis *axis)
-	{ CViewPortManager_syncDateAxisWithViewPort(ptr, id, axis->getInternalPtr()); }
+    void syncLinearAxisWithViewPort(const char *id, Axis *a)
+	{ CViewPortManager_syncLinearAxisWithViewPort(ptr, id, Axis::safePtr(a)); }
+    void syncLogAxisWithViewPort(const char *id, Axis *a)
+	{ CViewPortManager_syncLogAxisWithViewPort(ptr, id, Axis::safePtr(a)); }
+    void syncDateAxisWithViewPort(const char *id, Axis *a)
+	{ CViewPortManager_syncDateAxisWithViewPort(ptr, id, Axis::safePtr(a)); }
     void commitPendingSyncAxis(BaseChart *c)
-	{ CViewPortManager_commitPendingSyncAxis(ptr, c->getInternalPtr()); }
+	{ CViewPortManager_commitPendingSyncAxis(ptr, BaseChart::safePtr(c)); }
 
 	void setPlotAreaMouseMargin(int leftMargin, int rightMargin, int topMargin, int bottomMargin)
 	{ CViewPortManager_setPlotAreaMouseMargin(ptr, leftMargin, rightMargin, topMargin, bottomMargin); }
@@ -3356,18 +3416,33 @@ public :
 	{ return CViewPortManager_inExtendedPlotArea(ptr, x, y); }
 };
 
+
+class ImageMapHandler
+{
+private:
+	//disable copying
+	ImageMapHandler(const ImageMapHandler& rhs);
+	ImageMapHandler& operator=(const ImageMapHandler& rhs);
+
+	ImageMapHandlerInternal* ptr;
+	ViewPortManager* parent;
+
+public:
+	ImageMapHandler(const char* imageMap, ViewPortManager* _parent = 0) :
+		ptr(CImageMapHandler_create(imageMap)), parent(_parent) {}
+	~ImageMapHandler() { CImageMapHandler_destroy(ptr); }
+
+	int getHotSpot(double x, double y, BaseChart *c = 0)
+	{ return CImageMapHandler_getHotSpot2(ptr, x, y, BaseChart::safePtr(c)); }
+	const char* getValue(const char* key) { return CImageMapHandler_getValue(ptr, key); }
+	const char* getKey(int i) { return CImageMapHandler_getKey(ptr, i); }
+	const char* getValue(int i) { return CImageMapHandler_getValue2(ptr, i); }
+}; 
+
+
 class ViewPortControlBase
 {
 private :
-
-	enum
-	{	
-		VPC_DragInsideToMove, VPC_DragBorderToResize, VPC_DragOutsideToSelect, VPC_ClickToCenter,
-		VPC_MouseMargin, VPC_CornerMargin, VPC_VpExternalColor, VPC_VpEdgeColor, VPC_VpFillColor,
-		VPC_VpBorderWidth, VPC_SelectBoxLineColor, VPC_SelectBoxLineWidth, VPC_ZoomDirection,
-		VPC_ScrollDirection, VPC_MouseCursor, VPC_NeedUpdateDisplay, VPC_NeedUpdateChart,
-		VPC_NeedUpdateImageMap,
-	};
 
 	//disable copying
 	ViewPortControlBase(const ViewPortControlBase &rhs);
@@ -3377,13 +3452,22 @@ private :
 
 public :
 
+	enum
+	{
+		VPC_DragInsideToMove, VPC_DragBorderToResize, VPC_DragOutsideToSelect, VPC_ClickToCenter,
+		VPC_MouseMargin, VPC_CornerMargin, VPC_VpExternalColor, VPC_VpEdgeColor, VPC_VpFillColor,
+		VPC_VpBorderWidth, VPC_SelectBoxLineColor, VPC_SelectBoxLineWidth, VPC_ZoomDirection,
+		VPC_ScrollDirection, VPC_MouseCursor, VPC_NeedUpdateDisplay, VPC_NeedUpdateChart,
+		VPC_NeedUpdateImageMap,
+	};
+
 	ViewPortControlBase() : ptr(CViewPortControlBase_create()) {}
 	~ViewPortControlBase() { CViewPortControlBase_destroy(ptr); }
 
 	void setChart(BaseChart *c) 
-	{ CViewPortControlBase_setChart(ptr, (0 != c) ? c->getInternalPtr() : 0); }
+	{ CViewPortControlBase_setChart(ptr, BaseChart::safePtr(c)); }
 	void setViewPortManager(ViewPortManager *m)
-	{ CViewPortControlBase_setViewPortManager(ptr, (0 != m) ? m->getInternalPtr() : 0); }
+	{ CViewPortControlBase_setViewPortManager(ptr, ViewPortManager::safePtr(m)); }
 	void handleMouseDown(double x, double y)
 	{ CViewPortControlBase_handleMouseDown(ptr, x, y); }
 	void handleMouseUp(double x, double y) 
@@ -3434,7 +3518,7 @@ public :
 };
 
 
-#ifndef CHARTDIR_HIDE_OBSOLETE
+#ifdef CHARTDIR_INCLUDE_OBSOLETE
 
 //////////////////////////////////////////////////////////////////////////////////////
 //	This section is obsoleted - retained for compatibility only.

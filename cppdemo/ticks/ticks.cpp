@@ -4,10 +4,12 @@ void createChart(int chartIndex, const char *filename)
 {
     // The data for the chart
     double data[] = {100, 125, 265, 147, 67, 105};
-    const char *labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun"};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
+    const char* labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 250 x 250 pixels
-    XYChart *c = new XYChart(250, 250);
+    XYChart* c = new XYChart(250, 250);
 
     // Set the plot area at (27, 25) and of size 200 x 200 pixels
     c->setPlotArea(27, 25, 200, 200);
@@ -22,17 +24,17 @@ void createChart(int chartIndex, const char *filename)
     }
 
     // Set the labels on the x axis
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Add a color bar layer using the given data. Use a 1 pixel 3D border for the bars.
-    c->addBarLayer(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))), IntArray(0, 0)
-        )->setBorderColor(-1, 1);
+    c->addBarLayer(DoubleArray(data, data_size), IntArray(0, 0))->setBorderColor(-1, 1);
 
     // Output the chart
     c->makeChart(filename);
 
     //free up resources
     delete c;
+
 }
 
 int main(int argc, char *argv[])

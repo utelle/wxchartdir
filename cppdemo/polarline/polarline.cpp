@@ -4,18 +4,22 @@ int main(int argc, char *argv[])
 {
     // The data for the chart
     double data0[] = {90, 25, 40, 55, 68, 44, 79, 85, 50};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double angles0[] = {15, 60, 110, 180, 230, 260, 260, 310, 340};
+    const int angles0_size = (int)(sizeof(angles0)/sizeof(*angles0));
 
     double data1[] = {80, 91, 66, 80, 92, 87};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
     double angles1[] = {40, 65, 88, 110, 150, 200};
+    const int angles1_size = (int)(sizeof(angles1)/sizeof(*angles1));
 
     // Create a PolarChart object of size 460 x 500 pixels, with a grey (e0e0e0) background and 1
     // pixel 3D border
-    PolarChart *c = new PolarChart(460, 500, 0xe0e0e0, 0x000000, 1);
+    PolarChart* c = new PolarChart(460, 500, 0xe0e0e0, 0x000000, 1);
 
     // Add a title to the chart at the top left corner using 15pt Arial Bold Italic font. Use a wood
     // pattern as the title background.
-    c->addTitle("Polar Line Chart Demo", "arialbi.ttf", 15)->setBackground(c->patternColor(
+    c->addTitle("Polar Line Chart Demo", "Arial Bold Italic", 15)->setBackground(c->patternColor(
         "wood.png"));
 
     // Set center of plot area at (230, 280) with radius 180 pixels, and white (ffffff) background.
@@ -26,7 +30,7 @@ int main(int argc, char *argv[])
 
     // Add a legend box at top-center of plot area (230, 35) using horizontal layout. Use 10pt Arial
     // Bold font, with 1 pixel 3D border effect.
-    LegendBox *b = c->addLegend(230, 35, false, "arialbd.ttf", 9);
+    LegendBox* b = c->addLegend(230, 35, false, "Arial Bold", 9);
     b->setAlignment(Chart::TopCenter);
     b->setBackground(Chart::Transparent, Chart::Transparent, 1);
 
@@ -34,9 +38,9 @@ int main(int argc, char *argv[])
     c->angularAxis()->setLinearScale(0, 360, 30);
 
     // Add a blue (0xff) line layer to the chart using (data0, angle0)
-    PolarLineLayer *layer0 = c->addLineLayer(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0
-        ]))), 0x0000ff, "Close Loop Line");
-    layer0->setAngles(DoubleArray(angles0, (int)(sizeof(angles0) / sizeof(angles0[0]))));
+    PolarLineLayer* layer0 = c->addLineLayer(DoubleArray(data0, data0_size), 0x0000ff,
+        "Close Loop Line");
+    layer0->setAngles(DoubleArray(angles0, angles0_size));
 
     // Set the line width to 2 pixels
     layer0->setLineWidth(2);
@@ -52,9 +56,9 @@ int main(int argc, char *argv[])
     layer0->setDataLabelStyle()->setBackground(0x9999ff, Chart::Transparent, 1);
 
     // Add a red (0xff0000) line layer to the chart using (data1, angle1)
-    PolarLineLayer *layer1 = c->addLineLayer(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0
-        ]))), 0xff0000, "Open Loop Line");
-    layer1->setAngles(DoubleArray(angles1, (int)(sizeof(angles1) / sizeof(angles1[0]))));
+    PolarLineLayer* layer1 = c->addLineLayer(DoubleArray(data1, data1_size), 0xff0000,
+        "Open Loop Line");
+    layer1->setAngles(DoubleArray(angles1, angles1_size));
 
     // Set the line width to 2 pixels
     layer1->setLineWidth(2);
@@ -77,6 +81,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

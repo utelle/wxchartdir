@@ -4,20 +4,23 @@ int main(int argc, char *argv[])
 {
     // The data for the chart
     double data0[] = {0.05, 0.06, 0.48, 0.1, 0.01, 0.05};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double data1[] = {100, 125, 265, 147, 67, 105};
-    const char *labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun"};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
+    const char* labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 300 x 180 pixels
-    XYChart *c = new XYChart(300, 180);
+    XYChart* c = new XYChart(300, 180);
 
     // Set the plot area at (50, 20) and of size 200 x 130 pixels
     c->setPlotArea(50, 20, 200, 130);
 
     // Add a title to the chart using 8pt Arial Bold font
-    c->addTitle("Independent Y-Axis Demo", "arialbd.ttf", 8);
+    c->addTitle("Independent Y-Axis Demo", "Arial Bold", 8);
 
     // Set the labels on the x axis.
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Add a title to the primary (left) y axis
     c->yAxis()->setTitle("Packet Drop Rate (pps)");
@@ -35,19 +38,18 @@ int main(int argc, char *argv[])
 
     // Add a line layer to for the first data set using red (0xc00000) color with a line width to 3
     // pixels
-    c->addLineLayer(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0]))), 0xc00000
-        )->setLineWidth(3);
+    c->addLineLayer(DoubleArray(data0, data0_size), 0xc00000)->setLineWidth(3);
 
     // Add a bar layer to for the second data set using green (0x00C000) color. Bind the second data
     // set to the secondary (right) y axis
-    c->addBarLayer(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0]))), 0x00c000
-        )->setUseYAxis2();
+    c->addBarLayer(DoubleArray(data1, data1_size), 0x00c000)->setUseYAxis2();
 
     // Output the chart
     c->makeChart("dualyaxis.png");
 
     //free up resources
     delete c;
+
     return 0;
 }
 

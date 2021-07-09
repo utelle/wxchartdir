@@ -103,6 +103,16 @@
 #include "circlelabelpie/circlelabelpie.cpp"
 #undef main
 #undef createChart
+#define main circularbarmeter
+#define createChart createChart_circularbarmeter
+#include "circularbarmeter/circularbarmeter.cpp"
+#undef main
+#undef createChart
+#define main circularbarmeter2
+#define createChart createChart_circularbarmeter2
+#include "circularbarmeter2/circularbarmeter2.cpp"
+#undef main
+#undef createChart
 #define main colorbar
 #define createChart createChart_colorbar
 #include "colorbar/colorbar.cpp"
@@ -226,6 +236,11 @@
 #define main depthbar
 #define createChart createChart_depthbar
 #include "depthbar/depthbar.cpp"
+#undef main
+#undef createChart
+#define main discreteheatmap
+#define createChart createChart_discreteheatmap
+#include "discreteheatmap/discreteheatmap.cpp"
 #undef main
 #undef createChart
 #define main donut
@@ -363,6 +378,16 @@
 #include "hboxwhisker/hboxwhisker.cpp"
 #undef main
 #undef createChart
+#define main heatmapcelllabels
+#define createChart createChart_heatmapcelllabels
+#include "heatmapcelllabels/heatmapcelllabels.cpp"
+#undef main
+#undef createChart
+#define main heatmapcellsymbols
+#define createChart createChart_heatmapcellsymbols
+#include "heatmapcellsymbols/heatmapcellsymbols.cpp"
+#undef main
+#undef createChart
 #define main histogram
 #define createChart createChart_histogram
 #include "histogram/histogram.cpp"
@@ -468,6 +493,11 @@
 #include "multibar/multibar.cpp"
 #undef main
 #undef createChart
+#define main multicolorline
+#define createChart createChart_multicolorline
+#include "multicolorline/multicolorline.cpp"
+#undef main
+#undef createChart
 #define main multicylinder
 #define createChart createChart_multicylinder
 #include "multicylinder/multicylinder.cpp"
@@ -481,6 +511,16 @@
 #define main multihmeter
 #define createChart createChart_multihmeter
 #include "multihmeter/multihmeter.cpp"
+#undef main
+#undef createChart
+#define main multileveltreemap
+#define createChart createChart_multileveltreemap
+#include "multileveltreemap/multileveltreemap.cpp"
+#undef main
+#undef createChart
+#define main multileveltreemaplayout
+#define createChart createChart_multileveltreemaplayout
+#include "multileveltreemaplayout/multileveltreemaplayout.cpp"
 #undef main
 #undef createChart
 #define main multiline
@@ -753,6 +793,11 @@
 #include "simpleradar/simpleradar.cpp"
 #undef main
 #undef createChart
+#define main simpletreemap
+#define createChart createChart_simpletreemap
+#include "simpletreemap/simpletreemap.cpp"
+#undef main
+#undef createChart
 #define main smoothcontour
 #define createChart createChart_smoothcontour
 #include "smoothcontour/smoothcontour.cpp"
@@ -818,9 +863,19 @@
 #include "surface3/surface3.cpp"
 #undef main
 #undef createChart
+#define main surface4d
+#define createChart createChart_surface4d
+#include "surface4d/surface4d.cpp"
+#undef main
+#undef createChart
 #define main surfaceaxis
 #define createChart createChart_surfaceaxis
 #include "surfaceaxis/surfaceaxis.cpp"
+#undef main
+#undef createChart
+#define main surfacecolor
+#define createChart createChart_surfacecolor
+#include "surfacecolor/surfacecolor.cpp"
 #undef main
 #undef createChart
 #define main surfacelighting
@@ -828,14 +883,29 @@
 #include "surfacelighting/surfacelighting.cpp"
 #undef main
 #undef createChart
+#define main surfacelinezone
+#define createChart createChart_surfacelinezone
+#include "surfacelinezone/surfacelinezone.cpp"
+#undef main
+#undef createChart
 #define main surfaceperspective
 #define createChart createChart_surfaceperspective
 #include "surfaceperspective/surfaceperspective.cpp"
 #undef main
 #undef createChart
+#define main surfaceprojection
+#define createChart createChart_surfaceprojection
+#include "surfaceprojection/surfaceprojection.cpp"
+#undef main
+#undef createChart
 #define main surfaceshading
 #define createChart createChart_surfaceshading
 #include "surfaceshading/surfaceshading.cpp"
+#undef main
+#undef createChart
+#define main surfacetexture
+#define createChart createChart_surfacetexture
+#include "surfacetexture/surfacetexture.cpp"
 #undef main
 #undef createChart
 #define main surfacewireframe
@@ -948,6 +1018,16 @@
 #include "threedstackarea/threedstackarea.cpp"
 #undef main
 #undef createChart
+#define main treemapcolors
+#define createChart createChart_treemapcolors
+#include "treemapcolors/treemapcolors.cpp"
+#undef main
+#undef createChart
+#define main treemaplayout
+#define createChart createChart_treemaplayout
+#include "treemaplayout/treemaplayout.cpp"
+#undef main
+#undef createChart
 #define main ticks
 #define createChart createChart_ticks
 #include "ticks/ticks.cpp"
@@ -991,6 +1071,11 @@
 #define main vlinearmeterorientation
 #define createChart createChart_vlinearmeterorientation
 #include "vlinearmeterorientation/vlinearmeterorientation.cpp"
+#undef main
+#undef createChart
+#define main wafermap
+#define createChart createChart_wafermap
+#include "wafermap/wafermap.cpp"
 #undef main
 #undef createChart
 #define main waterfall

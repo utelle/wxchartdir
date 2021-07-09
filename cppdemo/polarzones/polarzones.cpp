@@ -4,25 +4,23 @@ int main(int argc, char *argv[])
 {
     // The data for the chart
     double data[] = {51, 15, 51, 40, 17, 87, 94, 21, 35, 88, 50, 60};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The labels for the chart
-    const char *labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct",
+    const char* labels[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct",
         "Nov", "Dec"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a PolarChart object of size 400 x 420 pixels
-    PolarChart *c = new PolarChart(400, 420);
+    PolarChart* c = new PolarChart(400, 420);
 
-    // Set background color to a 2 pixel pattern color, with a black border and 1 pixel 3D border
-    // effect
-    int pattern1[] = {0xffffff, 0xe0e0e0};
-    c->setBackground(c->patternColor(IntArray(pattern1, (int)(sizeof(pattern1) / sizeof(pattern1[0])
-        )), 2), 0, 1);
+    // Set background color to a pale grey f0f0f0, with a black border and 1 pixel 3D border effect
+    c->setBackground(0xf0f0f0, 0x000000, 1);
 
     // Add a title to the chart using 16pt Arial Bold Italic font. The title text is white
-    // (0xffffff) on 2 pixel pattern background
-    int pattern2[] = {0x000000, 0x000080};
-    c->addTitle("Chemical Concentration", "arialbi.ttf", 16, 0xffffff)->setBackground(
-        c->patternColor(IntArray(pattern2, (int)(sizeof(pattern2) / sizeof(pattern2[0]))), 2));
+    // (0xffffff) on a dark blue (000040) background
+    c->addTitle("Chemical Concentration", "Arial Bold Italic", 16, 0xffffff)->setBackground(0x000040
+        );
 
     // Set center of plot area at (200, 240) with radius 145 pixels. Set background color to blue
     // (9999ff)
@@ -45,7 +43,7 @@ int main(int argc, char *argv[])
 
     // Add a legend box at (200, 30) top center aligned, using 9pt Arial Bold font. with a black
     // border.
-    LegendBox *legendBox = c->addLegend(200, 30, false, "arialbd.ttf", 9);
+    LegendBox* legendBox = c->addLegend(200, 30, false, "Arial Bold", 9);
     legendBox->setAlignment(Chart::TopCenter);
 
     // Add legend keys to represent the red/green/blue zones
@@ -55,19 +53,19 @@ int main(int argc, char *argv[])
 
     // Add a blue (000080) spline line layer with line width set to 3 pixels and using yellow
     // (ffff00) circles to represent the data points
-    PolarSplineLineLayer *layer = c->addSplineLineLayer(DoubleArray(data, (int)(sizeof(data) /
-        sizeof(data[0]))), 0x000080);
+    PolarSplineLineLayer* layer = c->addSplineLineLayer(DoubleArray(data, data_size), 0x000080);
     layer->setLineWidth(3);
     layer->setDataSymbol(Chart::CircleShape, 11, 0xffff00);
 
     // Set the labels to the angular axis as spokes.
-    c->angularAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->angularAxis()->setLabels(StringArray(labels, labels_size));
 
     // Output the chart
     c->makeChart("polarzones.png");
 
     //free up resources
     delete c;
+
     return 0;
 }
 

@@ -4,14 +4,18 @@ void createChart(int chartIndex, const char *filename)
 {
     // The data for the pie chart
     double data0[] = {25, 18, 15};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double data1[] = {14, 32, 24};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
     double data2[] = {25, 23, 9};
+    const int data2_size = (int)(sizeof(data2)/sizeof(*data2));
 
     // The labels for the pie chart
-    const char *labels[] = {"Software", "Hardware", "Services"};
+    const char* labels[] = {"Software", "Hardware", "Services"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a PieChart object of size 180 x 160 pixels
-    PieChart *c = new PieChart(180, 160);
+    PieChart* c = new PieChart(180, 160);
 
     // Set the center of the pie at (90, 80) and the radius to 60 pixels
     c->setPieSize(90, 80, 60);
@@ -28,26 +32,23 @@ void createChart(int chartIndex, const char *filename)
 
     // Set the title, data and colors according to which pie to draw
     if (chartIndex == 0) {
-        c->addTitle("Alpha Division", "arialbd.ttf", 8);
-        c->setData(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0]))), StringArray(labels,
-            (int)(sizeof(labels) / sizeof(labels[0]))));
-        int pattern1[] = {0xff3333, 0xff9999, 0xffcccc};
-        c->setColors(Chart::DataColor, IntArray(pattern1, (int)(sizeof(pattern1) / sizeof(pattern1[0
-            ]))));
+        c->addTitle("Alpha Division", "Arial Bold", 8);
+        c->setData(DoubleArray(data0, data0_size), StringArray(labels, labels_size));
+        int colors0[] = {0xff3333, 0xff9999, 0xffcccc};
+        const int colors0_size = (int)(sizeof(colors0)/sizeof(*colors0));
+        c->setColors(Chart::DataColor, IntArray(colors0, colors0_size));
     } else if (chartIndex == 1) {
-        c->addTitle("Beta Division", "arialbd.ttf", 8);
-        c->setData(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0]))), StringArray(labels,
-            (int)(sizeof(labels) / sizeof(labels[0]))));
-        int pattern2[] = {0x33ff33, 0x99ff99, 0xccffcc};
-        c->setColors(Chart::DataColor, IntArray(pattern2, (int)(sizeof(pattern2) / sizeof(pattern2[0
-            ]))));
+        c->addTitle("Beta Division", "Arial Bold", 8);
+        c->setData(DoubleArray(data1, data1_size), StringArray(labels, labels_size));
+        int colors1[] = {0x33ff33, 0x99ff99, 0xccffcc};
+        const int colors1_size = (int)(sizeof(colors1)/sizeof(*colors1));
+        c->setColors(Chart::DataColor, IntArray(colors1, colors1_size));
     } else {
-        c->addTitle("Gamma Division", "arialbd.ttf", 8);
-        c->setData(DoubleArray(data2, (int)(sizeof(data2) / sizeof(data2[0]))), StringArray(labels,
-            (int)(sizeof(labels) / sizeof(labels[0]))));
-        int pattern3[] = {0x3333ff, 0x9999ff, 0xccccff};
-        c->setColors(Chart::DataColor, IntArray(pattern3, (int)(sizeof(pattern3) / sizeof(pattern3[0
-            ]))));
+        c->addTitle("Gamma Division", "Arial Bold", 8);
+        c->setData(DoubleArray(data2, data2_size), StringArray(labels, labels_size));
+        int colors2[] = {0x3333ff, 0x9999ff, 0xccccff};
+        const int colors2_size = (int)(sizeof(colors2)/sizeof(*colors2));
+        c->setColors(Chart::DataColor, IntArray(colors2, colors2_size));
     }
 
     // Output the chart
@@ -55,6 +56,7 @@ void createChart(int chartIndex, const char *filename)
 
     //free up resources
     delete c;
+
 }
 
 int main(int argc, char *argv[])

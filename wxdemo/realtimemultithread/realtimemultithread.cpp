@@ -3,7 +3,7 @@
 ** Purpose:     Multithreading Real-Time Chart with Zoom/Scroll and Track Line
 ** Author:      Ulrich Telle
 ** Created:     2018-07-02
-** Copyright:   (C) 2018, Ulrich Telle
+** Copyright:   (C) 2018-2021, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -131,46 +131,46 @@ RealTimeMultiThread::CreateControls()
 
   wxStaticBox* itemStaticBoxSizer1Static = new wxStaticBox(itemPanel2, wxID_ANY, wxEmptyString);
   wxStaticBoxSizer* itemStaticBoxSizer1 = new wxStaticBoxSizer(itemStaticBoxSizer1Static, wxVERTICAL);
-  itemBoxSizer3->Add(itemStaticBoxSizer1, 0, wxGROW | wxALL, 3);
+  itemBoxSizer3->Add(itemStaticBoxSizer1, 0, wxGROW | wxALL, FromDIP(3));
 
   m_pointerButton = new wxToggleButton( itemPanel2, ID_POINTER, _(" &Pointer"), wxDefaultPosition, wxDefaultSize, wxBU_LEFT );
   m_pointerButton->SetBitmap(GetBitmapResource("pointer.png"));
-  m_pointerButton->SetBitmapMargins(10, 0);
+  m_pointerButton->SetBitmapMargins(FromDIP(10), FromDIP(0));
   // Initially set the mouse to drag to scroll mode
   m_pointerButton->SetValue(true);
-  itemStaticBoxSizer1->Add(m_pointerButton, 0, wxGROW|wxALL, 3);
+  itemStaticBoxSizer1->Add(m_pointerButton, 0, wxGROW|wxALL, FromDIP(3));
 
   m_zoominButton = new wxToggleButton( itemPanel2, wxID_ZOOM_IN, _(" Zoom &In"), wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
   m_zoominButton->SetBitmap(GetBitmapResource("zoomin.png"));
-  m_zoominButton->SetBitmapMargins(10, 0);
+  m_zoominButton->SetBitmapMargins(FromDIP(10), FromDIP(0));
   m_zoominButton->SetValue(false);
-  itemStaticBoxSizer1->Add(m_zoominButton, 0, wxGROW|wxALL, 3);
+  itemStaticBoxSizer1->Add(m_zoominButton, 0, wxGROW|wxALL, FromDIP(3));
 
   m_zoomoutButton = new wxToggleButton( itemPanel2, wxID_ZOOM_OUT, _(" Zoom &Out"), wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
   m_zoomoutButton->SetBitmap(GetBitmapResource("zoomout.png"));
-  m_zoomoutButton->SetBitmapMargins(10, 0);
+  m_zoomoutButton->SetBitmapMargins(FromDIP(10), FromDIP(0));
   m_zoomoutButton->SetValue(false);
-  itemStaticBoxSizer1->Add(m_zoomoutButton, 0, wxGROW|wxALL, 3);
+  itemStaticBoxSizer1->Add(m_zoomoutButton, 0, wxGROW|wxALL, FromDIP(3));
 
-  itemStaticBoxSizer1->Add(5, 5, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 5);
+  itemStaticBoxSizer1->Add(3, 3, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, FromDIP(3));
 
   m_saveButton = new wxButton(itemPanel2, wxID_SAVE, _(" &Save"), wxDefaultPosition, wxDefaultSize, wxBU_LEFT);
   m_saveButton->SetBitmap(GetBitmapResource("save.png"));
-  m_saveButton->SetBitmapMargins(10, 0);
-  itemStaticBoxSizer1->Add(m_saveButton, 0, wxGROW | wxALL, 3);
+  m_saveButton->SetBitmapMargins(FromDIP(10), FromDIP(0));
+  itemStaticBoxSizer1->Add(m_saveButton, 0, wxGROW | wxALL, FromDIP(3));
 
   wxBoxSizer* itemBoxSizer8 = new wxBoxSizer(wxVERTICAL);
-  itemBoxSizer3->Add(itemBoxSizer8, 1, wxGROW|wxALL, 3);
+  itemBoxSizer3->Add(itemBoxSizer8, 1, wxGROW|wxALL, FromDIP(3));
 
   m_chartViewer = new wxChartViewer(itemPanel2, ID_CHARTVIEWER, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL|wxNO_BORDER);
-  m_chartViewer->SetMinSize(wxSize(650, 350));
+  m_chartViewer->SetMinSize(FromDIP(wxSize(650, 350)));
 
   m_chartViewer->SetExtraStyle(wxWS_EX_VALIDATE_RECURSIVELY);
-  itemBoxSizer8->Add(m_chartViewer, 1, wxGROW | wxALL, 3);
+  itemBoxSizer8->Add(m_chartViewer, 1, wxGROW | wxALL, FromDIP(3));
 
   m_scrollBar = new wxScrollBar(itemPanel2, ID_SCROLLBAR, wxDefaultPosition, wxDefaultSize, wxSB_HORIZONTAL);
   m_scrollBar->SetScrollbar(0, 0, 1000000000, 200000000);
-  itemBoxSizer8->Add(m_scrollBar, 0, wxGROW | wxALL, 3);
+  itemBoxSizer8->Add(m_scrollBar, 0, wxGROW | wxALL, FromDIP(3));
 
   // Initialize member variables
   m_currentIndex = 0;
@@ -472,26 +472,30 @@ wxBitmap
 RealTimeMultiThread::GetBitmapResource( const wxString& name )
 {
   // Bitmap retrieval
-  wxUnusedVar(name);
+  wxImage image;
   if (name == wxT("pointer.png"))
   {
-    wxBitmap bitmap(wxT("pointer.png"), wxBITMAP_TYPE_PNG);
-    return bitmap;
+    image.LoadFile(wxT("./icons/scroll_icon.png"), wxBITMAP_TYPE_PNG);
+    image.Rescale(FromDIP(16), FromDIP(16));
+    return wxBitmap(image);
   }
   else if (name == wxT("zoomin.png"))
   {
-    wxBitmap bitmap(wxT("zoomin.png"), wxBITMAP_TYPE_PNG);
-    return bitmap;
+    image.LoadFile(wxT("./icons/zoomin_icon.png"), wxBITMAP_TYPE_PNG);
+    image.Rescale(FromDIP(16), FromDIP(16));
+    return wxBitmap(image);
   }
   else if (name == wxT("zoomout.png"))
   {
-    wxBitmap bitmap(wxT("zoomout.png"), wxBITMAP_TYPE_PNG);
-    return bitmap;
+    image.LoadFile(wxT("./icons/zoomout_icon.png"), wxBITMAP_TYPE_PNG);
+    image.Rescale(FromDIP(16), FromDIP(16));
+    return wxBitmap(image);
   }
   else if (name == wxT("save.png"))
   {
-    wxBitmap bitmap(wxT("save.png"), wxBITMAP_TYPE_PNG);
-    return bitmap;
+    image.LoadFile(wxT("./icons/save_icon.png"), wxBITMAP_TYPE_PNG);
+    image.Rescale(FromDIP(16), FromDIP(16));
+    return wxBitmap(image);
   }
   return wxNullBitmap;
 }

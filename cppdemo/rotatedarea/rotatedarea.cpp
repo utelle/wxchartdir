@@ -5,13 +5,15 @@ int main(int argc, char *argv[])
     // The data for the area chart
     double data[] = {30, 28, 40, 55, 75, 68, 54, 60, 50, 62, 75, 65, 75, 89, 60, 55, 53, 35, 50, 66,
         56, 48, 52, 65, 62};
+    const int data_size = (int)(sizeof(data)/sizeof(*data));
 
     // The labels for the area chart
     double labels[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
         22, 23, 24};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 320 x 320 pixels
-    XYChart *c = new XYChart(320, 320);
+    XYChart* c = new XYChart(320, 320);
 
     // Swap the x and y axis to become a rotated chart
     c->swapXY();
@@ -27,12 +29,11 @@ int main(int argc, char *argv[])
     c->setPlotArea(50, 50, 250, 250)->setGridColor(0xc0c0c0, 0xc0c0c0);
 
     // Add a line chart layer using the given data
-    c->addAreaLayer(DoubleArray(data, (int)(sizeof(data) / sizeof(data[0]))), c->gradientColor(50,
-        0, 300, 0, 0xffffff, 0x0000ff));
+    c->addAreaLayer(DoubleArray(data, data_size), c->gradientColor(50, 0, 300, 0, 0xffffff, 0x0000ff
+        ));
 
     // Set the labels on the x axis. Append "m" after the value to show the unit.
-    c->xAxis()->setLabels(DoubleArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))),
-        "{value} m");
+    c->xAxis()->setLabels(DoubleArray(labels, labels_size), "{value} m");
 
     // Display 1 out of 3 labels.
     c->xAxis()->setLabelStep(3);
@@ -48,6 +49,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

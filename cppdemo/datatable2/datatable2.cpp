@@ -3,34 +3,37 @@
 
 int main(int argc, char *argv[])
 {
-    char buffer[256];
+    char buffer[1024];
 
     // The data for the line chart
     double data0[] = {410, 420, 500, 590};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double data1[] = {500, 370, 680, 850};
-    const char *labels[] = {"Q1", "Q2", "Q3", "Q4"};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
+    const char* labels[] = {"Q1", "Q2", "Q3", "Q4"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 600 x 400 pixels
-    XYChart *c = new XYChart(600, 400);
+    XYChart* c = new XYChart(600, 400);
 
     // Add a title to the chart using 18pt Times Bold Italic font
-    TextBox *title = c->addTitle("Product Line Global Revenue", "timesbi.ttf", 18);
+    TextBox* title = c->addTitle("Product Line Global Revenue", "Times New Roman Bold Italic", 18);
 
     // Tentatively set the plotarea at (50, 55) and of (chart_width - 100) x (chart_height - 150)
     // pixels in size. Use a vertical gradient color from sky blue (aaccff) t0 light blue (f9f9ff)
     // as background. Set both horizontal and vertical grid lines to dotted semi-transprent black
     // (aa000000).
-    PlotArea *plotArea = c->setPlotArea(50, 55, c->getWidth() - 100, c->getHeight() - 150,
+    PlotArea* plotArea = c->setPlotArea(50, 55, c->getWidth() - 100, c->getHeight() - 150,
         c->linearGradientColor(0, 55, 0, 55 + c->getHeight() - 150, 0xaaccff, 0xf9fcff), -1, -1,
         c->dashLineColor(0xaa000000, Chart::DotLine), -1);
 
     // Set y-axis title using 12 points Arial Bold Italic font, and set its position 10 pixels from
     // the axis.
-    c->yAxis()->setTitle("Revenue (USD millions)", "arialbi.ttf", 12);
+    c->yAxis()->setTitle("Revenue (USD millions)", "Arial Bold Italic", 12);
     c->yAxis()->setTitlePos(Chart::Left, 10);
 
     // Set y-axis label style to 10 points Arial Bold and axis color to transparent
-    c->yAxis()->setLabelStyle("arialbd.ttf", 10);
+    c->yAxis()->setLabelStyle("Arial Bold", 10);
     c->yAxis()->setColors(Chart::Transparent);
 
     // Set y-axis tick density to 30 pixels. ChartDirector auto-scaling will use this as the
@@ -38,32 +41,30 @@ int main(int argc, char *argv[])
     c->yAxis()->setTickDensity(30);
 
     // Add a bar layer to the chart with side layout
-    BarLayer *layer = c->addBarLayer(Chart::Side);
+    BarLayer* layer = c->addBarLayer(Chart::Side);
 
     // Add two data sets to the bar layer
-    layer->addDataSet(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0]))), 0xff6600,
-        "FY 2007");
-    layer->addDataSet(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0]))), 0x0088ff,
-        "FY 2008");
+    layer->addDataSet(DoubleArray(data0, data0_size), 0xff6600, "FY 2007");
+    layer->addDataSet(DoubleArray(data1, data1_size), 0x0088ff, "FY 2008");
 
     // Use soft lighting effect with light direction from the left
     layer->setBorderColor(Chart::Transparent, Chart::softLighting(Chart::Left));
 
     // Set the x axis labels
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Convert the labels on the x-axis to a CDMLTable
-    CDMLTable *table = c->xAxis()->makeLabelTable();
+    CDMLTable* table = c->xAxis()->makeLabelTable();
 
     // Set the default left/right margins to 5 pixels and top/bottom margins to 3 pixels. Set the
     // default font size to 10 points
-    TextBox *cellStyle = table->getStyle();
+    TextBox* cellStyle = table->getStyle();
     cellStyle->setMargin(5, 5, 4, 3);
     cellStyle->setFontSize(10);
 
     // Set the first row to use Arial Bold font, with a light grey (eeeeee) background.
-    TextBox *firstRowStyle = table->getRowStyle(0);
-    firstRowStyle->setFontStyle("arialbd.ttf");
+    TextBox* firstRowStyle = table->getRowStyle(0);
+    firstRowStyle->setFontStyle("Arial Bold");
     firstRowStyle->setBackground(0xeeeeee, Chart::LineColor);
 
     //
@@ -78,7 +79,7 @@ int main(int argc, char *argv[])
 
     // Put the values of the 2 data series in the first 2 rows. Put the percentage differences in
     // the 3rd row.
-    for(int i = 0; i < (int)(sizeof(data0) / sizeof(data0[0])); ++i) {
+    for(int i = 0; i < data0_size; ++i) {
         sprintf(buffer, "%g", data0[i]);
         table->setText(i, 1, buffer);
         sprintf(buffer, "%g", data1[i]);
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
         double percentageDiff = 100.0 * (data1[i] - data0[i]) / data0[i];
 
         // Use red or green color depending on whether the difference is positive or negative
-        const char *formatString = "<*color=008800*>+{value|1}%";
+        const char* formatString = "<*color=008800*>+{value|1}%";
         if (percentageDiff < 0) {
             formatString = "<*color=cc0000*>{value|1}%";
         }
@@ -95,7 +96,7 @@ int main(int argc, char *argv[])
     }
 
     // Insert a column on the left for the legend icons using Arial Bold font.
-    table->insertCol(0)->setFontStyle("arialbd.ttf");
+    table->insertCol(0)->setFontStyle("Arial Bold");
 
     // The top cell is set to transparent, so it is invisible
     table->getCell(0, 0)->setBackground(Chart::Transparent, Chart::Transparent);
@@ -116,8 +117,8 @@ int main(int argc, char *argv[])
     table->setText(table->getColCount() - 1, 0, "Total");
 
     // The next two cells are the total of the data series
-    double total0 = ArrayMath(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0])))).sum();
-    double total1 = ArrayMath(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0])))).sum();
+    double total0 = ArrayMath(DoubleArray(data0, data0_size)).sum();
+    double total1 = ArrayMath(DoubleArray(data1, data1_size)).sum();
     sprintf(buffer, "%g", total0);
     table->setText(table->getColCount() - 1, 1, buffer);
     sprintf(buffer, "%g", total1);
@@ -127,7 +128,7 @@ int main(int argc, char *argv[])
     double totalPercentageDiff = (total1 - total0) / total0 * 100;
 
     // Use red or green color depending on whether the difference is positive or negative
-    const char *totalFormatString = "<*color=008800*>+{value|1}%";
+    const char* totalFormatString = "<*color=008800*>+{value|1}%";
     if (totalPercentageDiff < 0) {
         totalFormatString = "<*color=cc0000*>{value|1}%";
     }
@@ -169,6 +170,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

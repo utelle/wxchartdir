@@ -4,15 +4,19 @@ int main(int argc, char *argv[])
 {
     // The data for the bar chart
     double data0[] = {100, 125, 245, 147, 67};
+    const int data0_size = (int)(sizeof(data0)/sizeof(*data0));
     double data1[] = {85, 156, 179, 211, 123};
+    const int data1_size = (int)(sizeof(data1)/sizeof(*data1));
     double data2[] = {97, 87, 56, 267, 157};
-    const char *labels[] = {"Mon", "Tue", "Wed", "Thur", "Fri"};
+    const int data2_size = (int)(sizeof(data2)/sizeof(*data2));
+    const char* labels[] = {"Mon", "Tue", "Wed", "Thur", "Fri"};
+    const int labels_size = (int)(sizeof(labels)/sizeof(*labels));
 
     // Create a XYChart object of size 540 x 375 pixels
-    XYChart *c = new XYChart(540, 375);
+    XYChart* c = new XYChart(540, 375);
 
     // Add a title to the chart using 18pt Times Bold Italic font
-    c->addTitle("Average Weekly Network Load", "timesbi.ttf", 18);
+    c->addTitle("Average Weekly Network Load", "Times New Roman Bold Italic", 18);
 
     // Set the plotarea at (50, 55) and of 440 x 280 pixels in size. Use a vertical gradient color
     // from light blue (f9f9ff) to blue (6666ff) as background. Set border and grid lines to white
@@ -22,17 +26,17 @@ int main(int argc, char *argv[])
 
     // Add a legend box at (50, 28) using horizontal layout. Use 10pt Arial Bold as font, with
     // transparent background.
-    c->addLegend(50, 28, false, "arialbd.ttf", 10)->setBackground(Chart::Transparent);
+    c->addLegend(50, 28, false, "Arial Bold", 10)->setBackground(Chart::Transparent);
 
     // Set the x axis labels
-    c->xAxis()->setLabels(StringArray(labels, (int)(sizeof(labels) / sizeof(labels[0]))));
+    c->xAxis()->setLabels(StringArray(labels, labels_size));
 
     // Draw the ticks between label positions (instead of at label positions)
     c->xAxis()->setTickOffset(0.5);
 
     // Set axis label style to 8pt Arial Bold
-    c->xAxis()->setLabelStyle("arialbd.ttf", 8);
-    c->yAxis()->setLabelStyle("arialbd.ttf", 8);
+    c->xAxis()->setLabelStyle("Arial Bold", 8);
+    c->yAxis()->setLabelStyle("Arial Bold", 8);
 
     // Set axis line width to 2 pixels
     c->xAxis()->setWidth(2);
@@ -42,13 +46,10 @@ int main(int argc, char *argv[])
     c->yAxis()->setTitle("Throughput (MBytes Per Hour)");
 
     // Add a multi-bar layer with 3 data sets
-    BarLayer *layer = c->addBarLayer(Chart::Side);
-    layer->addDataSet(DoubleArray(data0, (int)(sizeof(data0) / sizeof(data0[0]))), 0xff0000,
-        "Server #1");
-    layer->addDataSet(DoubleArray(data1, (int)(sizeof(data1) / sizeof(data1[0]))), 0x00ff00,
-        "Server #2");
-    layer->addDataSet(DoubleArray(data2, (int)(sizeof(data2) / sizeof(data2[0]))), 0xff8800,
-        "Server #3");
+    BarLayer* layer = c->addBarLayer(Chart::Side);
+    layer->addDataSet(DoubleArray(data0, data0_size), 0xff0000, "Server #1");
+    layer->addDataSet(DoubleArray(data1, data1_size), 0x00ff00, "Server #2");
+    layer->addDataSet(DoubleArray(data2, data2_size), 0xff8800, "Server #3");
 
     // Set bar border to transparent. Use glass lighting effect with light direction from left.
     layer->setBorderColor(Chart::Transparent, Chart::glassEffect(Chart::NormalGlare, Chart::Left));
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
 
     //free up resources
     delete c;
+
     return 0;
 }
 

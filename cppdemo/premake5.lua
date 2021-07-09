@@ -1,43 +1,12 @@
 -- wxChartDir cppdemo configuration file for premake5
 --
--- Copyright (C) 2018 Ulrich Telle <ulrich@telle-online.de>
+-- Copyright (C) 2018-2021 Ulrich Telle <ulrich@telle-online.de>
 --
 -- This file is covered by the same licence as the entire wxChartDir package. 
 
+dofile "wx_config.lua"
+
 BUILDDIR = _OPTIONS["builddir"] or "build"
-
--- Determine version of Visual Studio action
-vc_version = "";
-if _ACTION == "vs2003" then
-  vc_version = 7
-elseif _ACTION == "vs2005" then
-  vc_version = 8
-elseif _ACTION == "vs2008" then
-  vc_version = 9
-elseif _ACTION == "vs2010" then
-  vc_version = 10
-elseif _ACTION == "vs2012" then
-  vc_version = 11
-elseif _ACTION == "vs2013" then
-  vc_version = 12
-elseif _ACTION == "vs2015" then
-  vc_version = 14
-elseif _ACTION == "vs2017" then
-  vc_version = 15
-end
-
-is_msvc = false
-msvc_useProps = false
-if ( vc_version ~= "" ) then
-  is_msvc = true
-  msvc_useProps = vc_version >= 10
-  vc_with_ver = "vc"..vc_version
-end
-
--- Activate loading of separate props file
-if (msvc_useProps) then
-  premake.wxProject = true
-end
 
 workspace "cppdemo"
   configurations { "Debug", "Release" }
@@ -49,36 +18,7 @@ workspace "cppdemo"
     wks.filename = "cppdemo_" .. vc_with_ver
   end
 
-  defines {
-    "_WINDOWS",
-    "_CRT_SECURE_NO_WARNINGS",
-    "_CRT_SECURE_NO_DEPRECATE",
-    "_CRT_NONSTDC_NO_DEPRECATE"
-  }
-
-  filter { "platforms:Win32" }
-    system "Windows"
-    architecture "x32"
-
-  filter { "platforms:Win64" }
-    system "Windows"
-    architecture "x64"
-    targetsuffix "_x64"
-
-  filter { "configurations:Debug*" }
-    defines {
-      "DEBUG", 
-      "_DEBUG"
-    }
-    symbols "On"
-
-  filter { "configurations:Release*" }
-    defines {
-      "NDEBUG"
-    }
-    flags { "Optimize" }  
-
-  filter {}
+  wxWorkspaceCommon()
 
 -- Minimal sample
 project "cppdemoall"
@@ -89,6 +29,9 @@ project "cppdemoall"
   if (is_msvc) then
     local prj = project()
     prj.filename = "cppdemo_" .. vc_with_ver .. "_all"
+    if (msvc_useProps) then
+      wxUseProps(true)
+    end
   else
     toolset("gcc")
   end
@@ -101,17 +44,15 @@ project "cppdemoall"
   }
   includedirs { "../include" }
   characterset "Unicode"
-  flags { "WinMain" }  
 
   postbuildcommands {
-    "{COPY} %{wks.location}/../background/*.gif %{wks.location}/../bin",
     "{COPY} %{wks.location}/../background/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../customsymbolline/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../enhancedarea/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../errline/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../fontpie/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../hboxwhisker/*.png %{wks.location}/../bin",
-    "{COPY} %{wks.location}/../iconameter/*.gif %{wks.location}/../bin",
+    "{COPY} %{wks.location}/../iconameter/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../icondonut/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../iconpie/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../iconpie2/*.png %{wks.location}/../bin",
@@ -124,11 +65,12 @@ project "cppdemoall"
     "{COPY} %{wks.location}/../polarline/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../scattersymbols/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../splineline/*.png %{wks.location}/../bin",
+    "{COPY} %{wks.location}/../surfacetexture/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../texturedonut/*.png %{wks.location}/../bin",
     "{COPY} %{wks.location}/../yzonecolor/*.png %{wks.location}/../bin"
   }
 
-  links { "chartdir60" }
+  links { "chartdir70" }
   filter { "platforms:Win32" }
     libdirs { "../lib/win32" }
     debugenvs { "PATH=../../lib/win32;%PATH%" }

@@ -4,7 +4,7 @@ int main(int argc, char *argv[])
 {
     // Use random table to generate a random series. The random table is set to 1 col x 51 rows,
     // with 9 as the seed
-    RanTable *rantable = new RanTable(9, 1, 51);
+    RanTable* rantable = new RanTable(9, 1, 51);
 
     // Set the 1st column to start from 100, with changes between rows from -5 to +5
     rantable->setCol(0, 100, -5, 5);
@@ -13,20 +13,20 @@ int main(int argc, char *argv[])
     DoubleArray data = rantable->getCol(0);
 
     // Create a XYChart object of size 600 x 300 pixels
-    XYChart *c = new XYChart(600, 300);
+    XYChart* c = new XYChart(600, 300);
 
     // Set the plotarea at (50, 35) and of size 500 x 240 pixels. Enable both the horizontal and
     // vertical grids by setting their colors to grey (0xc0c0c0)
     c->setPlotArea(50, 35, 500, 240)->setGridColor(0xc0c0c0, 0xc0c0c0);
 
     // Add a title to the chart using 18 point Times Bold Itatic font.
-    c->addTitle("LOWESS Generic Curve Fitting Algorithm", "timesbi.ttf", 18);
+    c->addTitle("LOWESS Generic Curve Fitting Algorithm", "Times New Roman Bold Italic", 18);
 
     // Set the y axis line width to 3 pixels
     c->yAxis()->setWidth(3);
 
     // Add a title to the x axis using 12pt Arial Bold Italic font
-    c->xAxis()->setTitle("Server Load (TPS)", "arialbi.ttf", 12);
+    c->xAxis()->setTitle("Server Load (TPS)", "Arial Bold Italic", 12);
 
     // Set the x axis line width to 3 pixels
     c->xAxis()->setWidth(3);
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     c->xAxis()->setLinearScale(0, 50, 5, 1);
 
     // Add a blue layer to the chart
-    LineLayer *layer = c->addLineLayer();
+    LineLayer* layer = c->addLineLayer();
 
     // Add a red (0x80ff0000) data set to the chart with square symbols
     layer->addDataSet(data, 0x80ff0000)->setDataSymbol(Chart::SquareSymbol);
@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
     //free up resources
     delete rantable;
     delete c;
+
     return 0;
 }
 
