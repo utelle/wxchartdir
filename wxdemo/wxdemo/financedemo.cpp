@@ -631,6 +631,13 @@ void FinanceDemo::OnLineEditChanged()
   m_movAvg2->GetValue().ToLong(&avg2Value);
 
   wxString tickerKey = m_tickerSymbol->GetValue();
+  if (tickerKey.IsEmpty())
+  {
+    // Default tickerKey
+    tickerKey = "ASE";
+    m_tickerSymbol->SetValue(tickerKey);
+  }
+
   wxString compareKey = m_compareWith->GetValue();
 
   bool needReloadData = (m_tickerKey != tickerKey) || (m_compareKey != compareKey);
@@ -674,10 +681,16 @@ FinanceDemo::loadData(const wxString& ticker, const wxString& compare)
   if (m_compareKey != compare)
   {
     m_compareKey = compare;
-
-    // Simulator to generate realistic random OHLC values
-    FinanceSimulator db2(compare.ToUTF8(), Chart::chartTime(2010, 1, 1), Chart::chartTime(2020, 12, 31), 86400);
-    m_dailyPrice.compareData = arrayToVector(db2.getCloseData());
+    if (m_compareKey.IsEmpty())
+    {
+      m_dailyPrice.compareData.clear();
+    }
+    else
+    {
+      // Simulator to generate realistic random OHLC values
+      FinanceSimulator db2(compare.ToUTF8(), Chart::chartTime(2010, 1, 1), Chart::chartTime(2020, 12, 31), 86400);
+      m_dailyPrice.compareData = arrayToVector(db2.getCloseData());
+    }
   }
 
   // In this example, we will compute the weekly and monthly prices on demand. We just
