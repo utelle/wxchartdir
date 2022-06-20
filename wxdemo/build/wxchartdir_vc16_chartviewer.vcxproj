@@ -298,17 +298,20 @@
     <TargetName>wxchartdir$(wxFlavour)</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
+    <VcpkgEnabled>false</VcpkgEnabled>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -325,13 +328,13 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -348,7 +351,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -357,7 +360,7 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -375,7 +378,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -384,7 +387,7 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_lib\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -402,13 +405,13 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -425,13 +428,13 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -448,7 +451,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -457,7 +460,7 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -475,7 +478,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -484,7 +487,7 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_LIB;WXMAKINGLIB_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -502,13 +505,13 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -523,13 +526,13 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEBUG;_DEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;__WXDEBUG__;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -544,7 +547,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -553,7 +556,7 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
@@ -569,7 +572,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -578,7 +581,7 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;CHARTDIR_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_CHARTDIR;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>wxUSE_DPI_AWARE_MANIFEST=2;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;NDEBUG;WXCHARTVIEWER_DLLNAME=$(TargetName);_USRDLL;WXMAKINGDLL_WXCHARTVIEWER;_UNICODE;WXUSINGDLL;__WXMSW__;CHARTDIR_HIDE_OBSOLETE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(wxRootDir)\include\msvc;$(wxRootDir)\lib\$(wxCompilerPrefix)$(wxArchSuffix)_dll\msw$(wxSuffix);$(wxRootDir)\include;..\common;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>

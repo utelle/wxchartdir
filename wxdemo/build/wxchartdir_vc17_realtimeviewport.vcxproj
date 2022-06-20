@@ -110,73 +110,73 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -224,85 +224,85 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\vc16\Win32\Debug\</OutDir>
-    <IntDir>obj\vc16\Win32\Debug\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win32\Debug\</OutDir>
+    <IntDir>obj\vc17\Win32\Debug\realtimeviewport\</IntDir>
     <TargetName>realtimeviewportd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\vc16\Win64\Debug\</OutDir>
-    <IntDir>obj\vc16\Win64\Debug\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win64\Debug\</OutDir>
+    <IntDir>obj\vc17\Win64\Debug\realtimeviewport\</IntDir>
     <TargetName>realtimeviewportd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\vc16\Win32\Release\</OutDir>
-    <IntDir>obj\vc16\Win32\Release\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win32\Release\</OutDir>
+    <IntDir>obj\vc17\Win32\Release\realtimeviewport\</IntDir>
     <TargetName>realtimeviewport</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\vc16\Win64\Release\</OutDir>
-    <IntDir>obj\vc16\Win64\Release\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win64\Release\</OutDir>
+    <IntDir>obj\vc17\Win64\Release\realtimeviewport\</IntDir>
     <TargetName>realtimeviewport</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\vc16\Win32\Debug wxDLL\</OutDir>
-    <IntDir>obj\vc16\Win32\Debug wxDLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win32\Debug wxDLL\</OutDir>
+    <IntDir>obj\vc17\Win32\Debug wxDLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewportd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL Win64|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\vc16\Win64\Debug wxDLL\</OutDir>
-    <IntDir>obj\vc16\Win64\Debug wxDLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win64\Debug wxDLL\</OutDir>
+    <IntDir>obj\vc17\Win64\Debug wxDLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewportd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\vc16\Win32\Release wxDLL\</OutDir>
-    <IntDir>obj\vc16\Win32\Release wxDLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win32\Release wxDLL\</OutDir>
+    <IntDir>obj\vc17\Win32\Release wxDLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewport</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL Win64|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\vc16\Win64\Release wxDLL\</OutDir>
-    <IntDir>obj\vc16\Win64\Release wxDLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win64\Release wxDLL\</OutDir>
+    <IntDir>obj\vc17\Win64\Release wxDLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewport</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\vc16\Win32\Debug DLL\</OutDir>
-    <IntDir>obj\vc16\Win32\Debug DLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win32\Debug DLL\</OutDir>
+    <IntDir>obj\vc17\Win32\Debug DLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewportd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\vc16\Win64\Debug DLL\</OutDir>
-    <IntDir>obj\vc16\Win64\Debug DLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win64\Debug DLL\</OutDir>
+    <IntDir>obj\vc17\Win64\Debug DLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewportd</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\vc16\Win32\Release DLL\</OutDir>
-    <IntDir>obj\vc16\Win32\Release DLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win32\Release DLL\</OutDir>
+    <IntDir>obj\vc17\Win32\Release DLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewport</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\vc16\Win64\Release DLL\</OutDir>
-    <IntDir>obj\vc16\Win64\Release DLL\realtimeviewport\</IntDir>
+    <OutDir>bin\vc17\Win64\Release DLL\</OutDir>
+    <IntDir>obj\vc17\Win64\Release DLL\realtimeviewport\</IntDir>
     <TargetName>realtimeviewport</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -633,7 +633,7 @@
     <ResourceCompile Include="..\realtimeviewport\realtimeviewport.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="wxchartdir_vc16_chartviewer.vcxproj">
+    <ProjectReference Include="wxchartdir_vc17_chartviewer.vcxproj">
       <Project>{38E922D0-A4A9-9E06-6DE4-E783D963E3E2}</Project>
     </ProjectReference>
   </ItemGroup>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -110,73 +110,73 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL Win64|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL Win64|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -224,77 +224,77 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win32\Debug\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win32\Debug\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)d</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win64|x64'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win64\Debug\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win64\Debug\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)d</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win32\Release\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win32\Release\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win64|x64'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win64\Release\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win64\Release\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL|Win32'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win32\Debug wxDLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win32\Debug wxDLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)d</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug wxDLL Win64|x64'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win64\Debug wxDLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win64\Debug wxDLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)d</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL|Win32'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win32\Release wxDLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win32\Release wxDLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release wxDLL Win64|x64'">
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win64\Release wxDLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win64\Release wxDLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win32\Debug DLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win32\Debug DLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)d</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug DLL Win64|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win64\Debug DLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win64\Debug DLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)d</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win32\Release DLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win32\Release DLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release DLL Win64|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(wxOutDir)\</OutDir>
-    <IntDir>obj\vc14\Win64\Release DLL\wxchartviewer\</IntDir>
+    <IntDir>obj\vc17\Win64\Release DLL\wxchartviewer\</IntDir>
     <TargetName>wxchartdir$(wxFlavour)</TargetName>
     <TargetExt>.dll</TargetExt>
   </PropertyGroup>
