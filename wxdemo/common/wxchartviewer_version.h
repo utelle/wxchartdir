@@ -3,7 +3,7 @@
 ** Purpose:     wxChartViewer version numbers
 ** Author:      Ulrich Telle
 ** Created:     2018-07-09
-** Copyright:   (C) 2018-2021, Ulrich Telle
+** Copyright:   (C) 2018-2023, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -12,8 +12,8 @@
 
 #define WXCHARTVIEWER_MAJOR_VERSION      2
 #define WXCHARTVIEWER_MINOR_VERSION      0
-#define WXCHARTVIEWER_RELEASE_NUMBER     0
+#define WXCHARTVIEWER_RELEASE_NUMBER     1
 #define WXCHARTVIEWER_SUBRELEASE_NUMBER  0
-#define WXCHARTVIEWER_VERSION_STRING     "wxChartViewer 2.0.0"
+#define WXCHARTVIEWER_VERSION_STRING     "wxChartViewer 2.0.1"
 
 #endif // WXCHARTDIR_WXCHARTVIEWER_VERSION_H

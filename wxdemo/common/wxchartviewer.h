@@ -3,7 +3,7 @@
 ** Purpose:     wxChartViewer class declaration
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018-2021, Ulrich Telle
+** Copyright:   (C) 2018-2023, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -98,6 +98,10 @@ can be used as a reference in large parts, too.
 
 <dl>
 
+<dt><b>2.0.1</b> - <i>March 2023</i></dt>
+<dd>
+Workaround for issue #16
+</dd>
 <dt><b>2.0.0</b> - <i>July 2021</i></dt>
 <dd>
 Update to ChartDirector 7.0<br>

@@ -3,7 +3,7 @@
 ** Purpose:     wxChartViewer defines
 ** Author:      Ulrich Telle
 ** Created:     2018-05-09
-** Copyright:   (C) 2018-2021, Ulrich Telle
+** Copyright:   (C) 2018-2023, Ulrich Telle
 ** License:     LGPL - 3.0 + WITH WxWindows - exception - 3.1
 */
 
@@ -84,7 +84,7 @@ public:
 
   void DisplayChart(BaseChart* c, int dpi)
   {
-    wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1", dpi) : wxString("alpha=1");
+    wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1;", dpi) : wxString("alpha=1;");
     c->setOutputOptions(options.ToUTF8());
     MemBlock m = c->makeChart(Chart::BMP);
     wxMemoryInputStream in(m.data, m.len);
@@ -218,7 +218,7 @@ private:
       int y[] = { 19, 26, 28, 21 };
       d.polygon(IntArray(x, 4), IntArray(y, 4), 0x000000, 0x000000);
       char buffer[1024];
-      sprintf(buffer, "dpi=%d", dpi);
+      sprintf(buffer, "dpi=%d;", dpi);
       d.setOutputOptions(buffer);
       MemBlock m = d.outPNG();
       wxMemoryInputStream in(m.data, m.len);
@@ -414,7 +414,7 @@ void
 wxChartViewer::Render(wxDC& dc, BaseChart* c)
 {
   int dpi = getDPI();
-  wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1", dpi) : wxString("alpha=1");
+  wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1;", dpi) : wxString("alpha=1;");
   c->setOutputOptions(options.ToUTF8());
   MemBlock m = c->makeChart(Chart::BMP);
   wxMemoryInputStream in(m.data, m.len);
@@ -1736,7 +1736,7 @@ wxViewPortControl::Render(wxDC& dc, BaseChart* c)
 {
 #if 0
   int dpi = (m_chartViewer) ? m_chartViewer->getDPI() : 0;
-  wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1", dpi) : wxString("alpha=1");
+  wxString options = (dpi > 0) ? wxString::Format("+dpi=%d;alpha=1;", dpi) : wxString("alpha=1;");
   c->setOutputOptions(options.ToUTF8());
 #endif
   MemBlock m = c->makeChart(Chart::BMP);
