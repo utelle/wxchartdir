@@ -1,10 +1,10 @@
 dnl Process this script with autoconf to create configure for wxchartdir library
 dnl
-dnl Copyright (C) 2018-2021 Ulrich Telle <ulrich@telle-online.de>
+dnl Copyright (C) 2018-2025 Ulrich Telle <ulrich@telle-online.de>
 dnl
 dnl This file is covered by the same licence as the entire wxChartDir package.
 
-AC_INIT([wxchartdir], [2.0.1], [ulrich@telle-online.de])
+AC_INIT([wxchartdir], [2.0.2], [ulrich@telle-online.de])
 
 dnl This is the version tested with, might work with earlier ones.
 AC_PREREQ([2.69])

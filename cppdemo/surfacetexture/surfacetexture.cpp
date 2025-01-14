@@ -176,7 +176,7 @@ void createChart(int chartIndex, const char *filename)
         // Use a DrawArea to load the image
         DrawArea* d = new DrawArea();
         d->load("maptexture.png");
-        d->resize(240, 210);
+        d->resize(c->getPlotRegionWidth(), c->getPlotRegionDepth());
 
         // Set the DrawArea as a resource
         c->setResource("texture", d);

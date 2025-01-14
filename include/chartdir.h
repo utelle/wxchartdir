@@ -3287,9 +3287,9 @@ public :
 	DoubleArray getSeries(int len, double minValue, double maxValue) 
 	{ const double *ret; int retLen; CRanSeries_getSeries(ptr, len, minValue, maxValue, &ret, &retLen);
 	  return DoubleArray(ret, retLen); }
-	DoubleArray getSeries(int len, double minValue, double maxValue, double maxDelta, 
+	DoubleArray getSeries(int len, double startValue, double minDelta, double maxDelta, 
 		double lowerLimit = -1E+308, double upperLimit = 1E+308) 
-	{ const double *ret; int retLen; CRanSeries_getSeries2(ptr, len, minValue, maxValue, maxDelta, 
+	{ const double *ret; int retLen; CRanSeries_getSeries2(ptr, len, startValue, minDelta, maxDelta,
 	  lowerLimit, upperLimit, &ret, &retLen); return DoubleArray(ret, retLen); }
 	DoubleArray getGaussianSeries(int len, double mean, double stdDev)
 	{ const double *ret; int retLen; CRanSeries_getGaussianSeries(ptr, len, mean, stdDev,

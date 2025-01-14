@@ -41,7 +41,7 @@ void createChart(int chartIndex, const char *filename)
     root->getNode(0)->setData(series0, StringArray(), IntArray(colors0, colors0_size));
     root->getNode(1)->setData(series1, StringArray(), IntArray(colors1, colors1_size));
     root->getNode(2)->setData(series2, StringArray(), IntArray(colors2, colors2_size));
-    root->getNode(3)->setData(series3, StringArray(), IntArray(colors2, colors2_size));
+    root->getNode(3)->setData(series3, StringArray(), IntArray(colors3, colors3_size));
 
     // Get the prototype (template) for the first level nodes.
     TreeMapNode* nodeConfig = c->getLevelPrototype(1);
